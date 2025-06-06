@@ -1,22 +1,24 @@
 ﻿using Multiplayer;
 using System;
 using System.Reflection;
-
-public class NetPlayerReflectionAccessor
+namespace YxModDll.Patches
 {
-    private readonly NetPlayer player;
-
-    private static readonly FieldInfo playDeadField =
-        typeof(NetPlayer).GetField("playDead", BindingFlags.Instance | BindingFlags.NonPublic);
-
-    public NetPlayerReflectionAccessor(NetPlayer player)
+    public class NetPlayerReflectionAccessor
     {
-        this.player = player ?? throw new ArgumentNullException(nameof(player));
-    }
+        private readonly NetPlayer player;
 
-    public bool playDead
-    {
-        get => (bool)playDeadField.GetValue(player);
-        set => playDeadField.SetValue(player, value);
+        private static readonly FieldInfo playDeadField =
+            typeof(NetPlayer).GetField("playDead", BindingFlags.Instance | BindingFlags.NonPublic);
+
+        public NetPlayerReflectionAccessor(NetPlayer player)
+        {
+            this.player = player ?? throw new ArgumentNullException(nameof(player));
+        }
+
+        public bool playDead
+        {
+            get => (bool)playDeadField.GetValue(player);
+            set => playDeadField.SetValue(player, value);
+        }
     }
 }

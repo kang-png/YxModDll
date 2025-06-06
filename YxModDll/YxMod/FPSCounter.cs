@@ -3,7 +3,9 @@ using UnityEngine.UI;
 using Multiplayer;
 using HumanAPI;
 using System;  // 引入 System 命名空间用于时间处理
+using YxModDll.Patches;
 
+namespace YxModDll.Mod;
 public class FPSCounter : MonoBehaviour
 {
     private float elapsedTime;

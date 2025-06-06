@@ -1,7 +1,9 @@
 ﻿using Multiplayer;
 using UnityEngine;
 
+using YxModDll.Patches;
 
+namespace YxModDll.Mod;
 public class MiniMap : MonoBehaviour
 {
     private static Camera camera_0;

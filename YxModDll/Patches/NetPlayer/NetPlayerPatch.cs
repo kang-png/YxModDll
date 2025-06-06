@@ -1,18 +1,20 @@
 ﻿using HarmonyLib;
 using Multiplayer;
-
-[HarmonyPatch(typeof(NetPlayer), nameof(NetPlayer.PreFixedUpdate))]
-public static class NetPlayer_PreFixedUpdate_Patch
+namespace YxModDll.Patches
 {
-    public static bool Prefix(NetPlayer __instance)
+    [HarmonyPatch(typeof(NetPlayer), nameof(NetPlayer.PreFixedUpdate))]
+    public static class NetPlayer_PreFixedUpdate_Patch
     {
-        // 将原来的 if 判断逻辑放入 Prefix 中
-        if (__instance.isLocalPlayer &&
-            ((UI_Main.ShowShuBiao && UI_SheZhi.noKong_xianshishubiao) || FreeRoamCam.allowFreeRoam))
+        public static bool Prefix(NetPlayer __instance)
         {
-            return false; // 阻止原始 PreFixedUpdate 执行
-        }
+            // 将原来的 if 判断逻辑放入 Prefix 中
+            if (__instance.isLocalPlayer &&
+                ((UI_Main.ShowShuBiao && UI_SheZhi.noKong_xianshishubiao) || FreeRoamCam.allowFreeRoam))
+            {
+                return false; // 阻止原始 PreFixedUpdate 执行
+            }
 
-        return true; // 继续执行原方法
+            return true; // 继续执行原方法
+        }
     }
 }

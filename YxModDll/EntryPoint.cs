@@ -21,7 +21,7 @@ namespace Doorstop
             }
 
             Debug.Log("[YxMod] NetGame ready. Injecting YxMod.");
-            NetGame.instance.gameObject.AddComponent<YxMod>();
+            NetGame.instance.gameObject.AddComponent<YxModDll.Mod.YxMod>();
         }
     }
 

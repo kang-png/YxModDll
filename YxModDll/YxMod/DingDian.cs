@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
+using YxModDll.Patches;
 
+namespace YxModDll.Mod;
 public class DingDian
 {
     public bool q = true;

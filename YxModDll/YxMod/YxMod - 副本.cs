@@ -39,7 +39,9 @@ using UnityEngine.Networking;
 ///
 /// 
 /// </summary>
+using YxModDll.Patches;
 
+namespace YxModDll.Mod;
 public class YxMod : MonoBehaviour
 {
     public static bool YxModServer=false;

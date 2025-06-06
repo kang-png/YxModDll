@@ -1,6 +1,8 @@
 ﻿using Multiplayer;
 using UnityEngine;
+using YxModDll.Patches;
 
+namespace YxModDll.Mod;
 public class KeyDisplayUI : MonoBehaviour
 {
     public static bool showKeys;
