@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <NoWarn>0649,0169,0414</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -166,10 +167,15 @@
     <Compile Include="Patches\Human\HumanPatch.cs" />
     <Compile Include="Patches\Human\HumanReflectionAccessor.cs" />
     <Compile Include="Patches\Human\HumanStateExt.cs" />
+    <Compile Include="Patches\NetGame\NetGameHandler.cs" />
     <Compile Include="Patches\NetGame\NetGamePatch.cs" />
+    <Compile Include="Patches\NetGame\NetGameReflection.cs" />
     <Compile Include="Patches\NetPlayer\NetPlayerExtHelper.cs" />
     <Compile Include="Patches\NetPlayer\NetPlayerPatch.cs" />
     <Compile Include="Patches\NetPlayer\NetPlayerReflectionAccessor.cs" />
+    <Compile Include="Patches\Patcher2.cs" />
+    <Compile Include="Patches\Patcher_MenuSystem.cs" />
+    <Compile Include="Patches\Patcher_NetChat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="YxMod\Chat.cs" />
     <Compile Include="YxMod\DingDian.cs" />

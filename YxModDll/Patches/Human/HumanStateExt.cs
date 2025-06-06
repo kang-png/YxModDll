@@ -224,6 +224,18 @@ namespace YxModDll.Patches
         }
         public void YxModFixedUpdate()
         {
+            if (human == null)
+            {
+                Debug.LogWarning("[YxMod] YxModFixedUpdate: human 是 null");
+                return;
+            }
+
+            var ext = HumanStateExtHelper.GetExt(human);
+            if (ext == null)
+            {
+                Debug.LogWarning("[YxMod] YxModFixedUpdate: ext 是 null，可能初始化顺序有误");
+                return;
+            }
             if (accessor.thisFrameHit + accessor.lastFrameHit > 30f)
             {
                 human.MakeUnconscious();
@@ -472,14 +484,23 @@ namespace YxModDll.Patches
     public static class HumanStateExtHelper
     {
         // 通过 ConditionalWeakTable 把 Human 和扩展状态关联起来
-        private static readonly ConditionalWeakTable<Human, HumanStateExt> _extTable = new ConditionalWeakTable<Human, HumanStateExt>();
+        private static readonly ConditionalWeakTable<Human, HumanStateExt> table = new ConditionalWeakTable<Human, HumanStateExt>();
 
         /// <summary>
         /// 获取指定 Human 实例对应的扩展状态对象，如果没有则自动创建
         /// </summary>
         public static HumanStateExt GetExt(this Human human)
         {
-            return _extTable.GetOrCreateValue(human);
+            if (human == null)
+            {
+                Debug.LogError("[YxMod] GetExt: human 是 null");
+                return null;
+            }
+
+            return table.GetValue(human, h => {
+                Debug.Log("[YxMod] 创建 HumanStateExt 实例: " + h.name);
+                return new HumanStateExt(h);
+            });
         }
     }
 

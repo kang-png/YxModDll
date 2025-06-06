@@ -13,16 +13,22 @@ namespace Doorstop
             StartCoroutine(InjectWhenReady());
         }
 
+        private static bool _injected = false;
+
         private IEnumerator InjectWhenReady()
         {
-            while (NetGame.instance == null)
-            {
-                yield return null;
-            }
+            if (_injected) yield break;
 
-            Debug.Log("[YxMod] NetGame ready. Injecting YxMod.");
+            while (NetGame.instance == null || Human.all.Count == 0)
+                yield return null;
+
+            if (_injected) yield break; // 防止双重注入
+            _injected = true;
+
+            Debug.Log("[YxMod] Injecting YxMod.");
             NetGame.instance.gameObject.AddComponent<YxModDll.Mod.YxMod>();
         }
+
     }
 
     public static class Entrypoint

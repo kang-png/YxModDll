@@ -12,16 +12,17 @@ namespace YxModDll.Patches
             public static void Initialize_Postfix(Human __instance)
             {
                 var ext = HumanStateExtHelper.GetExt(__instance);
-                ext.YxModChuShiHua(); // <== 调用你放在 HumanStateExt 里的初始化方法
+                ext.human = __instance; // ✅ 必须设置 human 引用！
+                ext.YxModChuShiHua();   // 可选：调用你的初始化逻辑
             }
 
-            // 完全替换 FixedUpdate
-            [HarmonyPrefix]
+        // 完全替换 FixedUpdate
+        [HarmonyPrefix]
             [HarmonyPatch("FixedUpdate")]
             public static bool FixedUpdate_Prefix(Human __instance)
             {
                 var ext = HumanStateExtHelper.GetExt(__instance);
-
+                ext.human = __instance; // ✅ 必须设置 human 引用！
                 // 调用你扩展类的替代 FixedUpdate 逻辑
                 ext.YxModFixedUpdate();
 
@@ -35,6 +36,7 @@ namespace YxModDll.Patches
             public static bool ProcessInput_Prefix(Human __instance)
             {
                 var ext = HumanStateExtHelper.GetExt(__instance);
+                ext.human = __instance; // ✅ 必须设置 human 引用！
 
                 // 假设你把numY、yititui、titui、quanji字段也放到了ext里
                 ext.YxModProcessInput();

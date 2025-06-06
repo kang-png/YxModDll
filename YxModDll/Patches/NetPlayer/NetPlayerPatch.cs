@@ -1,5 +1,7 @@
 ﻿using HarmonyLib;
 using Multiplayer;
+using YxModDll.Mod;
+
 namespace YxModDll.Patches
 {
     [HarmonyPatch(typeof(NetPlayer), nameof(NetPlayer.PreFixedUpdate))]

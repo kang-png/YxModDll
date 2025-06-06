@@ -11,6 +11,7 @@ using System.Security.Policy;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
+using YxModDll.Patches;
 ////////修改的内容///////
 ///Human                             主要功能 <summary>
 ///NetGame.Awake/OnClientHelo        增加YxMod类,欢迎词/消息处理函数
@@ -40,7 +41,6 @@ using UnityEngine.Networking;
 ///
 /// 
 /// </summary>
-using YxModDll.Patches;
 
 namespace YxModDll.Mod
 {
@@ -251,14 +251,27 @@ namespace YxModDll.Mod
         private void Awake()
         {
 
+            NetGame.instance.gameObject.AddComponent <Patcher_MenuSystem>();
+            NetGame.instance.gameObject.AddComponent <Patcher_NetChat>();
             //StartCoroutine(JianChaGengXin());//检查更新
             //YanZheng_OK = true;
             NetGame.instance.gameObject.AddComponent<UI_Main>();
             NetGame.instance.gameObject.AddComponent<KeyDisplayUI>();//键盘UI
             NetGame.instance.gameObject.AddComponent<MiniMap>();//小地图
             NetGame.instance.gameObject.AddComponent<FPSCounter>();//FPS
+            StartCoroutine(DelayPatchAll());
+        }
+        private IEnumerator DelayPatchAll()
+        {
+            // 等待直到 Human 类加载且至少有一个实例
+            while (Human.all.Count == 0)
+            {
+                yield return null;
+            }
 
-
+            Debug.Log("[YxMod] Patching...");
+            new Harmony("com.yxmod.patch").PatchAll();
+            Debug.Log("[YxMod] PatchAll done.");
         }
         private void Start()
         {
