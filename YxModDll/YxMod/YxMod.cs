@@ -1,4 +1,5 @@
-﻿using HumanAPI;
+﻿using HarmonyLib;
+using HumanAPI;
 using Multiplayer;
 using System;
 using System.Collections;
@@ -1453,7 +1454,7 @@ public class YxMod : MonoBehaviour
             //float walkRight = human.player.walkRight;
             //bool jump = human.player.jump;
             //bool shooting = human.player.shooting;
-            bool playDead = human.player.playDead;
+            bool playDead = human.player.GetAccessor().playDead;
             if (human.controls.walkSpeed != 0f)
             {
                 human.SetPosition(human.transform.position + human.player.controls.walkDirection * 0.3f + new Vector3(0f, 0.01f, 0f));
@@ -1702,7 +1703,7 @@ public class YxMod : MonoBehaviour
             }
             return;
         }
-        human.overridenDrag = false;
+        human.GetExt().accessor.overridenDrag = false;
         human.ResetDrag();
     }
     public static void ChaoRen_Fun(Human human)//咸蛋超人
@@ -1711,16 +1712,16 @@ public class YxMod : MonoBehaviour
         { return; }
         if (!UI_GongNeng.feitianxitong_KaiGuan)
         {
-            human.chaoren = false;
+            human.GetExt().chaoren = false;
             return;
         }
-        if (human.chaoren)
+        if (human.GetExt().chaoren)
         {
             if (human.controls.walkSpeed != 0f && human.controls.walkLocalDirection.z >= 0f && human.controls.walkLocalDirection.x == 0f)
             {
-                if (human.enshan)
+                if (human.GetExt().enshan)
                 {
-                    human.enshan = true;
+                    human.GetExt().enshan = true;
                     enShan(human, true);
                     Rigidbody[] rigidbodies = human.rigidbodies;
                     for (int i = 0; i < rigidbodies.Length; i++)
@@ -1778,9 +1779,9 @@ public class YxMod : MonoBehaviour
                     }
                 }
             }
-            else if (!human.enshan)
+            else if (!human.GetExt().enshan)
             {
-                human.enshan = false;
+                human.GetExt().enshan = false;
                 enShan(human, false);
                 Rigidbody[] rigidbodies2 = human.rigidbodies;
                 for (int k = 0; k < rigidbodies2.Length; k++)
@@ -1793,7 +1794,7 @@ public class YxMod : MonoBehaviour
     public static void BengDi(Human human)
     {
         //human.bengdi = !human.bengdi;
-        if (human.bengdi)
+        if (human.GetExt().bengdi)
         {
             Rigidbody[] rigidbodies = human.rigidbodies;
             for (int i = 0; i < rigidbodies.Length; i++)
@@ -1835,7 +1836,7 @@ public class YxMod : MonoBehaviour
         Rigidbody[] rigidbodies = human.rigidbodies;
         foreach (Rigidbody rigidbody in rigidbodies)
         {
-            if (human.dongjie)
+            if (human.GetExt().dongjie)
             {
                 rigidbody.isKinematic = true;
             }
@@ -1853,19 +1854,19 @@ public class YxMod : MonoBehaviour
         {
             return;
         }
-        if (human.diantun)
+        if (human.GetExt().diantun)
         {
-            human.diantun_i++;
-            if (human.diantun_i > 7)
+            human.GetExt().diantun_i++;
+            if (human.GetExt().diantun_i > 7)
             {
-                human.diantun_i = 0;
-                human.Diantun_Mod = !human.Diantun_Mod;
+                human.GetExt().diantun_i = 0;
+                human.GetExt().Diantun_Mod = !human.GetExt().Diantun_Mod;
             }
             //human.ReleaseGrab(5f);
 
             Vector3 a = Quaternion.Euler(human.controls.targetPitchAngle, human.controls.targetYawAngle, 0f) * Vector3.forward;
             Vector3 b = Quaternion.Euler(Mathf.Clamp(human.controls.targetPitchAngle, -70f, 80f), human.controls.targetYawAngle, 0f) * Vector3.forward;
-            if (human.Diantun_Mod)
+            if (human.GetExt().Diantun_Mod)
             {
                 human.ragdoll.partHips.rigidbody.AddForce((a + b) * 350f, ForceMode.Force);
             }
@@ -1879,7 +1880,7 @@ public class YxMod : MonoBehaviour
     {
 
         //human.diantun = !human.diantun;
-        if (human.diantun)
+        if (human.GetExt().diantun)
         {
             human.ragdoll.partHead.rigidbody.drag = 2000000f;
             //"向您发起多人运动邀请"
@@ -1898,7 +1899,7 @@ public class YxMod : MonoBehaviour
         {
             return;
         }
-        if (human.qiqiu)
+        if (human.GetExt().qiqiu)
         {
             Human grabbedByHuman = human.grabbedByHuman;
             if (grabbedByHuman != null)
@@ -1917,7 +1918,7 @@ public class YxMod : MonoBehaviour
     public static void QiQiu(Human human)
     {
         //human.qiqiu = !human.qiqiu;
-        if (human.qiqiu)
+        if (human.GetExt().qiqiu)
         {
             Rigidbody[] rigidbodies = human.rigidbodies;
             for (int i = 0; i < rigidbodies.Length; i++)
@@ -1945,7 +1946,7 @@ public class YxMod : MonoBehaviour
         {
             return;
         }
-        if (human.qiqiuxifa)
+        if (human.GetExt().qiqiuxifa)
         {
             float num = 0f;
             for (int j = 0; j < human.rigidbodies.Length; j++)
@@ -1972,7 +1973,7 @@ public class YxMod : MonoBehaviour
         {
             return;
         }
-        if (human.ketouguai)
+        if (human.GetExt().ketouguai)
         {
             human.ragdoll.partHead.transform.localEulerAngles = new Vector3(180f, 0f, 0f) * Time.time * 10f;
         }
@@ -1988,8 +1989,8 @@ public class YxMod : MonoBehaviour
             return;
 
         // 检查是否在地面上且按下了跳跃键
-        bool isGrounded = human.groundDelay <= 0f && human.onGround;
-        bool canJump = human.jumpDelay <= 0f;
+        bool isGrounded = human.GetExt().accessor.groundDelay <= 0f && human.onGround;
+        bool canJump = human.GetExt().accessor.jumpDelay <= 0f;
 
         // 允许按住跳跃键连续跳跃
         if (isGrounded && canJump && human.controls.jump)
@@ -2006,8 +2007,8 @@ public class YxMod : MonoBehaviour
             }
 
             // 设置较短的跳跃延迟，允许快速连续跳跃
-            human.jumpDelay = 0.1f;
-            human.groundDelay = 0.1f;
+            human.GetExt().accessor.jumpDelay = 0.1f;
+            human.GetExt().accessor.groundDelay = 0.1f;
             human.state = HumanState.Jump;
         }
     }
@@ -2041,7 +2042,7 @@ public class YxMod : MonoBehaviour
         {
             return;
         }
-        if (!human.zhuanquan)
+        if (!human.GetExt().zhuanquan)
         {
             return;
         }
@@ -2089,7 +2090,7 @@ public class YxMod : MonoBehaviour
     }
     public static void TuoLuo_Fun(Human human)//陀螺
     {
-        if (human.tuoluo)
+        if (human.GetExt().tuoluo)
         {
             human.transform.RotateAround(human.transform.position, Vector3.up, Time.time * 1f);
         }
@@ -2102,7 +2103,7 @@ public class YxMod : MonoBehaviour
         {
             return;
         }
-        if (!human.qianshui)
+        if (!human.GetExt().qianshui)
         {
             return;
         }
@@ -2143,7 +2144,7 @@ public class YxMod : MonoBehaviour
         {
             return;
         }
-        if (!human.chaichu)
+        if (!human.GetExt().chaichu)
         {
             return;
         }
@@ -2227,45 +2228,45 @@ public class YxMod : MonoBehaviour
 
     public static void QuXiaoQianShou(Human human)
     {
-        //if(human.qianshou_zuo)
+        //if(human.GetExt().qianshou_zuo)
         //{
-        //    if (human.qianshou_zuo_humanHand == human.qianshou_zuo_human.ragdoll.partLeftHand)
+        //    if (human.GetExt().qianshou_zuo_humanHand == human.GetExt().qianshou_zuo_human.ragdoll.partLeftHand)
         //    {
         //        //Debug.Log("左牵左");
-        //        human.qianshou_zuo_human.beiqianshou_zuo = false;
+        //        human.GetExt().qianshou_zuo_human.beiqianshou_zuo = false;
         //    }
-        //    else if (human.qianshou_zuo_humanHand == human.qianshou_zuo_human.ragdoll.partRightHand)
+        //    else if (human.GetExt().qianshou_zuo_humanHand == human.GetExt().qianshou_zuo_human.ragdoll.partRightHand)
         //    {
         //        //Debug.Log("左牵右");
-        //        human.qianshou_zuo_human.beiqianshou_you = false;
+        //        human.GetExt().qianshou_zuo_human.beiqianshou_you = false;
         //    }
         //}
-        //if(human.qianshou_you)
+        //if(human.GetExt().qianshou_you)
         //{
-        //    if (human.qianshou_you_humanHand == human.qianshou_you_human.ragdoll.partLeftHand)
+        //    if (human.GetExt().qianshou_you_humanHand == human.GetExt().qianshou_you_human.ragdoll.partLeftHand)
         //    {
         //        //Debug.Log("右牵左");
-        //        human.qianshou_you_human.beiqianshou_zuo = false;
+        //        human.GetExt().qianshou_you_human.beiqianshou_zuo = false;
         //    }
-        //    else if (human.qianshou_you_humanHand == human.qianshou_you_human.ragdoll.partRightHand)
+        //    else if (human.GetExt().qianshou_you_humanHand == human.GetExt().qianshou_you_human.ragdoll.partRightHand)
         //    {
         //        //Debug.Log("右牵右");
-        //        human.qianshou_you_human.beiqianshou_you = false;
+        //        human.GetExt().qianshou_you_human.beiqianshou_you = false;
         //    }
         //}
 
-        human.qianshou_zuo = human.qianshou_you = false;
+        human.GetExt().qianshou_zuo = human.GetExt().qianshou_you = false;
         ////human.beiqianshou_zuo = human.beiqianshou_you = false;
-        //human.qianshou_zuo_human = human.qianshou_you_human = null;
-        //human.qianshou_zuo_humanHand = human.qianshou_you_humanHand = null;
+        //human.GetExt().qianshou_zuo_human = human.GetExt().qianshou_you_human = null;
+        //human.GetExt().qianshou_zuo_humanHand = human.GetExt().qianshou_you_humanHand = null;
     }
     private static bool ZuoShou(Human human)//左手是否空着
     {
-        return (!human.qianshou_zuo);// && !human.beiqianshou_zuo
+        return (!human.GetExt().qianshou_zuo);// && !human.beiqianshou_zuo
     }
     private static bool YouShou(Human human)//右手是否空着
     {
-        return (!human.qianshou_you);// && !human.beiqianshou_you
+        return (!human.GetExt().qianshou_you);// && !human.beiqianshou_you
     }
     public static void SetQianShou(Human human, Human human2, int qianshou_stype = 0)//牵human2的手
     {
@@ -2303,7 +2304,7 @@ public class YxMod : MonoBehaviour
         //}
 
         /////不能牵两只手
-        //if ((human.qianshou_zuo_human == human2) || (human.qianshou_you_human == human2))
+        //if ((human.GetExt().qianshou_zuo_human == human2) || (human.GetExt().qianshou_you_human == human2))
         //{
         //    Chat.TiShi(human.player.host, "你已经牵着他了~");
         //    return;
@@ -2374,65 +2375,65 @@ public class YxMod : MonoBehaviour
                 }
                 if (zuixiaozhi == juli1)
                 {
-                    if (human.qianshou_you_human != human2)
+                    if (human.GetExt().qianshou_you_human != human2)
                     {
-                        human.qianshou_zuo = true;
-                        human.qianshou_zuo_human = human2;
-                        human.qianshou_zuo_humanHand = human2.ragdoll.partRightHand;
+                        human.GetExt().qianshou_zuo = true;
+                        human.GetExt().qianshou_zuo_human = human2;
+                        human.GetExt().qianshou_zuo_humanHand = human2.ragdoll.partRightHand;
                         //    human2.beiqianshou_you = true;
                     }
 
                 }
                 else if (zuixiaozhi == juli2)
                 {
-                    if (human.qianshou_zuo_human != human2)
+                    if (human.GetExt().qianshou_zuo_human != human2)
                     {
-                        human.qianshou_you = true;
-                        human.qianshou_you_human = human2;
-                        human.qianshou_you_humanHand = human2.ragdoll.partLeftHand;
+                        human.GetExt().qianshou_you = true;
+                        human.GetExt().qianshou_you_human = human2;
+                        human.GetExt().qianshou_you_humanHand = human2.ragdoll.partLeftHand;
                         //    human2.beiqianshou_zuo = true;
                     }
                 }
                 else if (zuixiaozhi == juli3)
                 {
-                    if (human.qianshou_you_human != human2)
+                    if (human.GetExt().qianshou_you_human != human2)
                     {
-                        human.qianshou_zuo = true;
-                        human.qianshou_zuo_human = human2;
-                        human.qianshou_zuo_humanHand = human2.ragdoll.partLeftHand;
+                        human.GetExt().qianshou_zuo = true;
+                        human.GetExt().qianshou_zuo_human = human2;
+                        human.GetExt().qianshou_zuo_humanHand = human2.ragdoll.partLeftHand;
                         //    human2.beiqianshou_zuo = true;
                     }
                 }
                 else if (zuixiaozhi == juli4)
                 {
-                    if (human.qianshou_zuo_human != human2)
+                    if (human.GetExt().qianshou_zuo_human != human2)
                     {
-                        human.qianshou_you = true;
-                        human.qianshou_you_human = human2;
-                        human.qianshou_you_humanHand = human2.ragdoll.partRightHand;
+                        human.GetExt().qianshou_you = true;
+                        human.GetExt().qianshou_you_human = human2;
+                        human.GetExt().qianshou_you_humanHand = human2.ragdoll.partRightHand;
                         //    human2.beiqianshou_you = true;
                     }
                 }
                 break;
                 //case 1:
-                //    human.qianshou_zuo = true;
-                //    human.qianshou_zuo_human = human2;
-                //    human.qianshou_zuo_humanHand = human2.ragdoll.partRightHand;
+                //    human.GetExt().qianshou_zuo = true;
+                //    human.GetExt().qianshou_zuo_human = human2;
+                //    human.GetExt().qianshou_zuo_humanHand = human2.ragdoll.partRightHand;
                 //    break;
                 //case 2:
-                //    human.qianshou_you = true;
-                //    human.qianshou_you_human = human2;
-                //    human.qianshou_you_humanHand = human2.ragdoll.partLeftHand;
+                //    human.GetExt().qianshou_you = true;
+                //    human.GetExt().qianshou_you_human = human2;
+                //    human.GetExt().qianshou_you_humanHand = human2.ragdoll.partLeftHand;
                 //    break;
                 //case 3:
-                //    human.qianshou_zuo = true;
-                //    human.qianshou_zuo_human = human2;
-                //    human.qianshou_zuo_humanHand = human2.ragdoll.partLeftHand;
+                //    human.GetExt().qianshou_zuo = true;
+                //    human.GetExt().qianshou_zuo_human = human2;
+                //    human.GetExt().qianshou_zuo_humanHand = human2.ragdoll.partLeftHand;
                 //    break;
                 //case 4:
-                //    human.qianshou_you = true;
-                //    human.qianshou_you_human = human2;
-                //    human.qianshou_you_humanHand = human2.ragdoll.partRightHand;
+                //    human.GetExt().qianshou_you = true;
+                //    human.GetExt().qianshou_you_human = human2;
+                //    human.GetExt().qianshou_you_humanHand = human2.ragdoll.partRightHand;
                 //    break;
 
         }
@@ -2446,24 +2447,24 @@ public class YxMod : MonoBehaviour
         }
         if (!UI_GongNeng.qianshouxitong_KaiGuan)
         {
-            human.qianshou_zuo = human.qianshou_you = false;
+            human.GetExt().qianshou_zuo = human.GetExt().qianshou_you = false;
             //human.beiqianshou_zuo = human.beiqianshou_you = false;
-            human.qianshou_zuo_human = human.qianshou_you_human = null;
-            human.qianshou_zuo_humanHand = human.qianshou_you_humanHand = null;
+            human.GetExt().qianshou_zuo_human = human.GetExt().qianshou_you_human = null;
+            human.GetExt().qianshou_zuo_humanHand = human.GetExt().qianshou_you_humanHand = null;
             return;
         }
 
-        if (human.qianshou_zuo_human == null || human.qianshou_zuo_humanHand == null)
+        if (human.GetExt().qianshou_zuo_human == null || human.GetExt().qianshou_zuo_humanHand == null)
         {
-            human.qianshou_zuo = false;
-            human.qianshou_zuo_human = null;
-            human.qianshou_zuo_humanHand = null;
+            human.GetExt().qianshou_zuo = false;
+            human.GetExt().qianshou_zuo_human = null;
+            human.GetExt().qianshou_zuo_humanHand = null;
         }
-        if (human.qianshou_you_human == null || human.qianshou_you_humanHand == null)
+        if (human.GetExt().qianshou_you_human == null || human.GetExt().qianshou_you_humanHand == null)
         {
-            human.qianshou_you = false;
-            human.qianshou_you_human = null;
-            human.qianshou_you_humanHand = null;
+            human.GetExt().qianshou_you = false;
+            human.GetExt().qianshou_you_human = null;
+            human.GetExt().qianshou_you_humanHand = null;
         }
 
         try
@@ -2471,10 +2472,10 @@ public class YxMod : MonoBehaviour
             HumanSegment Hand = new HumanSegment();
             HumanSegment Hand2 = new HumanSegment();
 
-            if (human.qianshou_zuo && human.qianshou_zuo_humanHand != null)
+            if (human.GetExt().qianshou_zuo && human.GetExt().qianshou_zuo_humanHand != null)
             {
                 Hand = human.ragdoll.partLeftHand;
-                Hand2 = human.qianshou_zuo_humanHand;
+                Hand2 = human.GetExt().qianshou_zuo_humanHand;
 
                 float zuo_juli = Vector3.Distance(Hand.transform.position, Hand2.transform.position);
 
@@ -2485,14 +2486,14 @@ public class YxMod : MonoBehaviour
             }
             else
             {
-                human.qianshou_zuo = false;
-                human.qianshou_zuo_human = null;
-                human.qianshou_zuo_humanHand = null;
+                human.GetExt().qianshou_zuo = false;
+                human.GetExt().qianshou_zuo_human = null;
+                human.GetExt().qianshou_zuo_humanHand = null;
             }
-            if (human.qianshou_you && human.qianshou_you_humanHand != null)
+            if (human.GetExt().qianshou_you && human.GetExt().qianshou_you_humanHand != null)
             {
                 Hand = human.ragdoll.partRightHand;
-                Hand2 = human.qianshou_you_humanHand;
+                Hand2 = human.GetExt().qianshou_you_humanHand;
 
                 float you_juli = Vector3.Distance(Hand.transform.position, Hand2.transform.position);
 
@@ -2503,20 +2504,20 @@ public class YxMod : MonoBehaviour
             }
             else
             {
-                human.qianshou_you = false;
-                human.qianshou_you_human = null;
-                human.qianshou_you_humanHand = null;
+                human.GetExt().qianshou_you = false;
+                human.GetExt().qianshou_you_human = null;
+                human.GetExt().qianshou_you_humanHand = null;
             }
         }
         catch
         {
             Debug.Log("牵手出错");
-            human.qianshou_zuo = false;
-            human.qianshou_zuo_human = null;
-            human.qianshou_zuo_humanHand = null;
-            human.qianshou_you = false;
-            human.qianshou_you_human = null;
-            human.qianshou_you_humanHand = null;
+            human.GetExt().qianshou_zuo = false;
+            human.GetExt().qianshou_zuo_human = null;
+            human.GetExt().qianshou_zuo_humanHand = null;
+            human.GetExt().qianshou_you = false;
+            human.GetExt().qianshou_you_human = null;
+            human.GetExt().qianshou_you_humanHand = null;
         }
 
     }
@@ -2524,7 +2525,7 @@ public class YxMod : MonoBehaviour
     //<拳击>
     public static void QuanJiAnimation(Human human)  //y5后 拳击动作动画
     {
-        if (human.quanji)
+        if (human.GetExt().quanji)
         {
             //human.quanji = true;
             human.ReleaseGrab(0.1f);   ///手滑
@@ -2635,7 +2636,7 @@ public class YxMod : MonoBehaviour
 
             if (!human.controls.leftGrab && !human.controls.rightGrab)
             {
-                human.chuquan = true;
+                human.GetExt().chuquan = true;
             }
 
         }
@@ -2795,12 +2796,12 @@ public class YxMod : MonoBehaviour
 
     public static void QuanJi_Fun(Human human)//出拳打到
     {
-        if (!human.quanji || human == null)
+        if (!human.GetExt().quanji || human == null)
         {
             //Debug.Log($"{human.titui}");
             return;
         }
-        if (!human.chuquan)
+        if (!human.GetExt().chuquan)
         { return; }
         if (!UI_GongNeng.jifeixitong_KaiGuan)
         {
@@ -2871,7 +2872,7 @@ public class YxMod : MonoBehaviour
                                 //componentInParent.ragdoll.partBall.rigidbody.AddForce(targetRigidbody.mass * (human.ragdoll.partHead.transform.forward * 100f + Vector3.up * 50f) * 16.5f / 1, ForceMode.Impulse);
                                 componentInParent.rigidbodies[j].AddForce(componentInParent.rigidbodies[j].mass * (human.ragdoll.partHead.transform.forward * 10f + Vector3.up * 5f) * juli * 10f / componentInParent.rigidbodies.Length, ForceMode.Impulse);
                             }
-                            human.chuquan = false;
+                            human.GetExt().chuquan = false;
                             Debug.Log($" 击飞人 {targetCollider.transform.name}");
                             break;
                         }
@@ -2881,7 +2882,7 @@ public class YxMod : MonoBehaviour
                         //targetRigidbody = targetRigidbody.GetComponentInParent<Rigidbody>();
                         //targetRigidbody.AddForce(targetRigidbody.mass * (human.ragdoll.partHead.transform.forward * 10f + Vector3.up * 5f) * 2f, ForceMode.Impulse);
                         targetRigidbody.AddForce(targetRigidbody.mass * (human.ragdoll.partHead.transform.forward * 10f + Vector3.up * 5f) * juli * 1f, ForceMode.Impulse);
-                        human.chuquan = false;
+                        human.GetExt().chuquan = false;
                         //Debug.Log($"击飞物 {targetCollider.transform.name}");
                         break;
                     }
@@ -2937,7 +2938,7 @@ public class YxMod : MonoBehaviour
     {
         //if (human.sanjitiao)
         //{
-        if (human.controls.jump && human.GetExt().jumpDelay <= 0f && human.GetExt().tiaoing)
+        if (human.controls.jump && human.GetExt().accessor.jumpDelay <= 0f && human.GetExt().tiaoing)
         {
             human.onGround = true;
             if (human.GetExt().tiaoing)
@@ -2953,9 +2954,9 @@ public class YxMod : MonoBehaviour
         }
         else
         {
-            human.onGround = (human.groundDelay <= 0f && human.groundManager.onGround);
+            human.onGround = (human.GetExt().accessor.groundDelay <= 0f && human.GetExt().accessor.groundManager.onGround);
         }
-        if (human.groundManager.onGround)
+        if (human.GetExt().accessor.groundManager.onGround)
         {
             human.GetExt().tiaoing = true;
             human.GetExt().Jump_Times = 0;
@@ -2998,7 +2999,7 @@ public class YxMod : MonoBehaviour
         {
             return;
         }
-        if (human.pangxie)
+        if (human.GetExt().pangxie)
         {
             Vector3 a = Quaternion.Euler(0f, human.controls.cameraYawAngle - 90f, 0f) * Vector3.forward;
 
@@ -3014,12 +3015,16 @@ public class YxMod : MonoBehaviour
     }
     private static GrabManager GetGrabManager(Human human)
     {
-        if (human.grabManager() == null)
+        var accessor = human.GetExt().accessor;
+
+        if (accessor.grabManager == null)
         {
-            human.grabManager = human.GetComponent<GrabManager>();
+            accessor.grabManager = human.GetComponent<GrabManager>();
         }
-        return human.grabManager;
+
+        return accessor.grabManager;
     }
+
     public static void DaoLi_Fun(Human human)//倒立
     {
         if (human == null)

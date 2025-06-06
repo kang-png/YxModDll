@@ -170,9 +170,9 @@ public class Chat
         if (nick == "[YxMod]" && msg.Length == 0)//客机有Mod
         {
             //Debug.Log("服务端收到Hello2");
-            human.isClient = true;
+            human.GetExt().isClient = true;
             //发送主机上的设置给客机
-            SendYxModMsgServer(client, YxModMsgStr("kejiquanxian"), human.kejiquanxian ? "1" : "0");
+            SendYxModMsgServer(client, YxModMsgStr("kejiquanxian"), human.GetExt().kejiquanxian ? "1" : "0");
             return;
         }
         else if (nick == YxModMsgStr("kick") && msg.Length != 0)
@@ -185,7 +185,7 @@ public class Chat
             int result;
             if (int.TryParse(msg, out result))
             {
-                if (!Human.all[result].isClient)
+                if (!Human.all[result].GetExt().isClient)
                 {
                     TiShi($"玩家 {Human.all[result].player.host.name} 被 {netHost.name} 踢出去了");
                     UI_WanJia.TiChuFangJian(Human.all[result]);
@@ -277,12 +277,12 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result1])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result1])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result1].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result1].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result1].name} 禁止其他客机控制他");
                     return;
@@ -322,12 +322,12 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result1])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result1])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result1].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result1].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result1].name} 禁止其他客机控制他");
                     return;
@@ -363,12 +363,12 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
@@ -402,12 +402,12 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result1])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result1])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result1].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result1].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result1].name} 禁止其他客机控制他");
                     return;
@@ -443,12 +443,12 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
@@ -498,19 +498,19 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if(human.jinzhibeikong && human != Human.all[result])
+                if(human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
 
-                Human.all[result].dingdian.kaiguan = !Human.all[result].dingdian.kaiguan;
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].dingdian.kaiguan ? "打开" : "关闭")}了 {Human.all[result].player.host.name} 的个人定点");
+                Human.all[result].GetExt().dingdian.kaiguan = !Human.all[result].GetExt().dingdian.kaiguan;
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().dingdian.kaiguan ? "打开" : "关闭")}了 {Human.all[result].player.host.name} 的个人定点");
             }
             return;
         }
@@ -534,18 +534,18 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].wujiasi = !Human.all[result].wujiasi;
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].wujiasi ? "打开" : "关闭")}了 {Human.all[result].player.host.name} 的无假死");
+                Human.all[result].GetExt().wujiasi = !Human.all[result].GetExt().wujiasi;
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().wujiasi ? "打开" : "关闭")}了 {Human.all[result].player.host.name} 的无假死");
             }
             return;
         }
@@ -569,18 +569,18 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].wupengzhuang = !Human.all[result].wupengzhuang;
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].wupengzhuang ? "打开" : "关闭")}了 {Human.all[result].player.host.name} 的无碰撞");
+                Human.all[result].GetExt().wupengzhuang = !Human.all[result].GetExt().wupengzhuang;
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().wupengzhuang ? "打开" : "关闭")}了 {Human.all[result].player.host.name} 的无碰撞");
             }
             return;
         }
@@ -604,20 +604,20 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].feitian = !Human.all[result].feitian;
+                Human.all[result].GetExt().feitian = !Human.all[result].GetExt().feitian;
                 YxMod.SetFeiTian(Human.all[result]);
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].feitian ? "赋予" : "取消了")} {Human.all[result].player.host.name} 飞天能力");
-                if (Human.all[result].feitian)
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().feitian ? "赋予" : "取消了")} {Human.all[result].player.host.name} 飞天能力");
+                if (Human.all[result].GetExt().feitian)
                 {
                     Chat.TiShi(Human.all[result].player.host, "普通情况下是正常飞天。按住左键，W，空格，保持两秒，可进入超人状态。");
                 }
@@ -645,18 +645,18 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].chaoren = !Human.all[result].chaoren;
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].chaoren ? "赋予" : "取消了")} {Human.all[result].player.host.name} 超人能力");
+                Human.all[result].GetExt().chaoren = !Human.all[result].GetExt().chaoren;
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().chaoren ? "赋予" : "取消了")} {Human.all[result].player.host.name} 超人能力");
             }
             return;
         }
@@ -680,18 +680,18 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].shanxian = !Human.all[result].shanxian;
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].shanxian ? "赋予" : "取消了")} {Human.all[result].player.host.name} 闪现能力");
+                Human.all[result].GetExt().shanxian = !Human.all[result].GetExt().shanxian;
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().shanxian ? "赋予" : "取消了")} {Human.all[result].player.host.name} 闪现能力");
             }
             return;
         }
@@ -715,19 +715,19 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].dongjie = !Human.all[result].dongjie;
+                Human.all[result].GetExt().dongjie = !Human.all[result].GetExt().dongjie;
                 YxMod.DongJie(Human.all[result]);
-                Chat.TiShi($"玩家 {netHost.name} 把 {Human.all[result].player.host.name} {(Human.all[result].dongjie ? "冻结了" : "解冻了")}");
+                Chat.TiShi($"玩家 {netHost.name} 把 {Human.all[result].player.host.name} {(Human.all[result].GetExt().dongjie ? "冻结了" : "解冻了")}");
             }
             return;
         }
@@ -751,20 +751,20 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].banshen = !Human.all[result].banshen;
+                Human.all[result].GetExt().banshen = !Human.all[result].GetExt().banshen;
                 YxMod.BanShen(Human.all[result]);
-                //Chat.TiShi($"玩家 {netHost.name} 把 {Human.all[result].player.host.name} {(Human.all[result].banshen ? "冻结了" : "解冻了")}");
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].banshen ? "赋予了" : "取消了")} {Human.all[result].player.host.name} 半身不遂");
+                //Chat.TiShi($"玩家 {netHost.name} 把 {Human.all[result].player.host.name} {(Human.all[result].GetExt().banshen ? "冻结了" : "解冻了")}");
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().banshen ? "赋予了" : "取消了")} {Human.all[result].player.host.name} 半身不遂");
             }
             return;
         }
@@ -788,19 +788,19 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].bengdi = !Human.all[result].bengdi;
+                Human.all[result].GetExt().bengdi = !Human.all[result].GetExt().bengdi;
                 YxMod.BengDi(Human.all[result]);
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].bengdi ? "赋予" : "取消了")} {Human.all[result].player.host.name} 蹦迪能力");
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().bengdi ? "赋予" : "取消了")} {Human.all[result].player.host.name} 蹦迪能力");
             }
             return;
         }
@@ -824,19 +824,19 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].chaojitiao = !Human.all[result].chaojitiao;
+                Human.all[result].GetExt().chaojitiao = !Human.all[result].GetExt().chaojitiao;
                 YxMod.chaojitiao(Human.all[result]);
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].chaojitiao ? "赋予" : "取消了")} {Human.all[result].player.host.name} 超级跳能力");
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().chaojitiao ? "赋予" : "取消了")} {Human.all[result].player.host.name} 超级跳能力");
             }
             return;
         }
@@ -861,18 +861,18 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].sanjitiao = !Human.all[result].sanjitiao;
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].sanjitiao ? "赋予" : "取消了")} {Human.all[result].player.host.name} 三级跳能力");
+                Human.all[result].GetExt().sanjitiao = !Human.all[result].GetExt().sanjitiao;
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().sanjitiao ? "赋予" : "取消了")} {Human.all[result].player.host.name} 三级跳能力");
             }
             return;
         }
@@ -896,19 +896,19 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].diantun = !Human.all[result].diantun;
+                Human.all[result].GetExt().diantun = !Human.all[result].GetExt().diantun;
                 YxMod.DianTun(Human.all[result]);
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].diantun ? "赋予" : "取消了")} {Human.all[result].player.host.name} 电臀能力");
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().diantun ? "赋予" : "取消了")} {Human.all[result].player.host.name} 电臀能力");
             }
             return;
         }
@@ -932,19 +932,19 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].qiqiu = !Human.all[result].qiqiu;
+                Human.all[result].GetExt().qiqiu = !Human.all[result].GetExt().qiqiu;
                 YxMod.QiQiu(Human.all[result]);
-                Chat.TiShi($"玩家 {netHost.name} 把 {Human.all[result].player.host.name} {(Human.all[result].qiqiu ? "变成了气球" : "恢复正常")}");
+                Chat.TiShi($"玩家 {netHost.name} 把 {Human.all[result].player.host.name} {(Human.all[result].GetExt().qiqiu ? "变成了气球" : "恢复正常")}");
             }
             return;
         }
@@ -968,18 +968,18 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].qiqiuxifa = !Human.all[result].qiqiuxifa;
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].qiqiuxifa ? "赋予" : "取消了")} {Human.all[result].player.host.name} 左键抓住物品可以起飞的气球戏法能力");
+                Human.all[result].GetExt().qiqiuxifa = !Human.all[result].GetExt().qiqiuxifa;
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().qiqiuxifa ? "赋予" : "取消了")} {Human.all[result].player.host.name} 左键抓住物品可以起飞的气球戏法能力");
             }
             return;
         }
@@ -1003,19 +1003,19 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].daoli = !Human.all[result].daoli;
+                Human.all[result].GetExt().daoli = !Human.all[result].GetExt().daoli;
                 YxMod.DaoLi(Human.all[result]);
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].daoli ? "赋予" : "取消了")} {Human.all[result].player.host.name} 双手抓地使用倒立能力");
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().daoli ? "赋予" : "取消了")} {Human.all[result].player.host.name} 双手抓地使用倒立能力");
             }
             return;
         }
@@ -1039,18 +1039,18 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].zhuanquan = !Human.all[result].zhuanquan;
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].zhuanquan ? "赋予" : "取消了")} {Human.all[result].player.host.name} 按住空格可以转圈圈能力");
+                Human.all[result].GetExt().zhuanquan = !Human.all[result].GetExt().zhuanquan;
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().zhuanquan ? "赋予" : "取消了")} {Human.all[result].player.host.name} 按住空格可以转圈圈能力");
             }
             return;
         }
@@ -1074,18 +1074,18 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].tuoluo = !Human.all[result].tuoluo;
-                Chat.TiShi($"玩家 {netHost.name} 把 {Human.all[result].player.host.name} {(Human.all[result].tuoluo ? "变成了小陀螺" : "恢复正常")}");
+                Human.all[result].GetExt().tuoluo = !Human.all[result].GetExt().tuoluo;
+                Chat.TiShi($"玩家 {netHost.name} 把 {Human.all[result].player.host.name} {(Human.all[result].GetExt().tuoluo ? "变成了小陀螺" : "恢复正常")}");
             }
             return;
         }
@@ -1109,18 +1109,18 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].ketouguai = !Human.all[result].ketouguai;
-                Chat.TiShi($"玩家 {netHost.name} 把 {Human.all[result].player.host.name} {(Human.all[result].ketouguai ? "变成了磕头怪" : "恢复正常")}");
+                Human.all[result].GetExt().ketouguai = !Human.all[result].GetExt().ketouguai;
+                Chat.TiShi($"玩家 {netHost.name} 把 {Human.all[result].player.host.name} {(Human.all[result].GetExt().ketouguai ? "变成了磕头怪" : "恢复正常")}");
             }
             return;
         }
@@ -1144,19 +1144,19 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].diaosigui = !Human.all[result].diaosigui;
+                Human.all[result].GetExt().diaosigui = !Human.all[result].GetExt().diaosigui;
                 YxMod.DiaoSiGui(Human.all[result]);
-                Chat.TiShi($"玩家 {netHost.name} 把 {Human.all[result].player.host.name} {(Human.all[result].diaosigui ? "变成了吊死鬼" : "恢复正常")}");
+                Chat.TiShi($"玩家 {netHost.name} 把 {Human.all[result].player.host.name} {(Human.all[result].GetExt().diaosigui ? "变成了吊死鬼" : "恢复正常")}");
             }
             return;
         }
@@ -1180,18 +1180,18 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].pangxie = !Human.all[result].pangxie;
-                Chat.TiShi($"玩家 {netHost.name} 把 {Human.all[result].player.host.name} {(Human.all[result].pangxie ? "变成了大闸蟹" : "恢复正常")}");
+                Human.all[result].GetExt().pangxie = !Human.all[result].GetExt().pangxie;
+                Chat.TiShi($"玩家 {netHost.name} 把 {Human.all[result].player.host.name} {(Human.all[result].GetExt().pangxie ? "变成了大闸蟹" : "恢复正常")}");
             }
             return;
         }
@@ -1215,18 +1215,18 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].qianshui = !Human.all[result].qianshui;
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].qianshui ? "赋予" : "取消了")} {Human.all[result].player.host.name} 潜水能力");
+                Human.all[result].GetExt().qianshui = !Human.all[result].GetExt().qianshui;
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().qianshui ? "赋予" : "取消了")} {Human.all[result].player.host.name} 潜水能力");
             }
             return;
         }
@@ -1250,19 +1250,19 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].tuique = !Human.all[result].tuique;
+                Human.all[result].GetExt().tuique = !Human.all[result].GetExt().tuique;
                 YxMod.TuiQue(Human.all[result]);
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].tuique ? "打瘸了" : "治好了")} {Human.all[result].player.host.name} 一条腿");
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().tuique ? "打瘸了" : "治好了")} {Human.all[result].player.host.name} 一条腿");
             }
             return;
         }
@@ -1286,19 +1286,19 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].tuiguai = !Human.all[result].tuiguai;
+                Human.all[result].GetExt().tuiguai = !Human.all[result].GetExt().tuiguai;
                 YxMod.TuiGuai(Human.all[result]);
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].tuiguai ? "送给" : "收回了")} {Human.all[result].player.host.name} 一支拐杖");
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().tuiguai ? "送给" : "收回了")} {Human.all[result].player.host.name} 一支拐杖");
             }
             return;
         }
@@ -1323,19 +1323,19 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].chaichu = !Human.all[result].chaichu;
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].chaichu ? "赋予" : "取消了")} {Human.all[result].player.host.name} 拆除能力");
-                if (Human.all[result].chaichu)
+                Human.all[result].GetExt().chaichu = !Human.all[result].GetExt().chaichu;
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().chaichu ? "赋予" : "取消了")} {Human.all[result].player.host.name} 拆除能力");
+                if (Human.all[result].GetExt().chaichu)
                 {
                     Chat.TiShi(Human.all[result].player.host, "开启拆除,左手抓住目标，即可拆卸。");
                 }
@@ -1362,19 +1362,19 @@ public class Chat
                     Chat.TiShi(netHost, $"房主不让你控制他");
                     return;
                 }
-                if (human.jinzhibeikong && human != Human.all[result])
+                if (human.GetExt().jinzhibeikong && human != Human.all[result])
                 {
                     Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                     return;
                 }
-                if (Human.all[result].jinzhibeikong && human != Human.all[0])
+                if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                 {
                     Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                     return;
                 }
-                Human.all[result].kongqipao = !Human.all[result].kongqipao;
-                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].kongqipao ? "赋予" : "取消了")} {Human.all[result].player.host.name} 空气炮能力");
-                if (Human.all[result].kongqipao)
+                Human.all[result].GetExt().kongqipao = !Human.all[result].GetExt().kongqipao;
+                Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().kongqipao ? "赋予" : "取消了")} {Human.all[result].player.host.name} 空气炮能力");
+                if (Human.all[result].GetExt().kongqipao)
                 {
                     Chat.TiShi(Human.all[result].player.host, "长按 鼠标左键 向前方打出空气炮，被击中的物体会被击飞。");
                 }
@@ -1387,7 +1387,7 @@ public class Chat
             int result;
             if (int.TryParse(msg, out result))
             {
-                human.dingdian.huisu = result == 1;
+                human.GetExt().dingdian.huisu = result == 1;
             }
             return;
         }
@@ -1396,7 +1396,7 @@ public class Chat
             int result;
             if (int.TryParse(msg, out result))
             {
-                human.dingdian.guanxing = result == 1;
+                human.GetExt().dingdian.guanxing = result == 1;
             }
             return;
         }
@@ -1405,7 +1405,7 @@ public class Chat
             int result;
             if (int.TryParse(msg, out result))
             {
-                human.dingdian.q = result == 1;
+                human.GetExt().dingdian.q = result == 1;
             }
             return;
         }
@@ -1414,7 +1414,7 @@ public class Chat
             int result;
             if (int.TryParse(msg, out result))
             {
-                human.dingdian.se = result == 1;
+                human.GetExt().dingdian.se = result == 1;
             }
             return;
         }
@@ -1423,7 +1423,7 @@ public class Chat
             float result;
             if (float.TryParse(msg, out result))
             {
-                human.dingdian.gaodu = result;
+                human.GetExt().dingdian.gaodu = result;
             }
             return;
         }
@@ -1433,14 +1433,14 @@ public class Chat
             int result;
             if (int.TryParse(msg, out result))
             {
-                human.dingdian.geshu = result;
+                human.GetExt().dingdian.geshu = result;
             }
             return;
         }
 
         else if (nick == YxModMsgStr("dingdiantishi"))//&& msg.Length != 0    //有时候会有空值
         {
-            human.dingdian.tishiStr = msg;
+            human.GetExt().dingdian.tishiStr = msg;
             return;
         }
 
@@ -1452,16 +1452,16 @@ public class Chat
                 Chat.TiShi(netHost, $"定点系统已关闭");
                 return;
             }
-            if (!human.dingdian.kaiguan)
+            if (!human.GetExt().dingdian.kaiguan)
             {
                 Chat.TiShi(netHost, $"你的个人定点已关闭");
                 return;
             }
 
-            //if (human.dingdian.DingDianFangShi == 0 || human.dingdian.DingDianFangShi == 2)//q定点
-            if (human.dingdian.q)
+            //if (human.dingdian.GetExt().DingDianFangShi == 0 || human.dingdian.GetExt().DingDianFangShi == 2)//q定点
+            if (human.GetExt().dingdian.q)
             {
-                human.dingdian.CunDian(human, true);
+                human.GetExt().dingdian.CunDian(human, true);
             }
 
             return;
@@ -1472,7 +1472,7 @@ public class Chat
             int result;
             if (int.TryParse(msg, out result))
             {
-                human.jinzhibeikong = result == 1;
+                human.GetExt().jinzhibeikong = result == 1;
             }
             return;
         }
@@ -1610,27 +1610,27 @@ public class Chat
             isZhaFang = true;
             return isZhaFang;
         }
-        //Debug.Log($"{human.player.host.name} 发言内容:{text} 上一次发言内容:{human.lastFaYanStr}");
-        if (text != human.lastFaYanStr)
+        //Debug.Log($"{human.player.host.name} 发言内容:{text} 上一次发言内容:{human.GetExt().lastFaYanStr}");
+        if (text != human.GetExt().lastFaYanStr)
         {
-            human.lastFaYanCount = 1;
-            human.lastFaYanStr = text;
+            human.GetExt().lastFaYanCount = 1;
+            human.GetExt().lastFaYanStr = text;
             //Debug.Log("不相同,清空计数");
         }
         else
         {
             if (text != "q" && text != "Q" && text != "up" && text != "UP" && text != "ifg" && text != "IFG")///不拦截q
             {
-                human.lastFaYanCount += 1;
-                if (human.lastFaYanCount > UI_SheZhi.pingbicishu && UI_SheZhi.pingbicishu != 0)
+                human.GetExt().lastFaYanCount += 1;
+                if (human.GetExt().lastFaYanCount > UI_SheZhi.pingbicishu && UI_SheZhi.pingbicishu != 0)
                 {
-                    Debug.Log($"玩家 {human.player.host.name} 重复发言次数:{human.lastFaYanCount},重复发言限制次数:{UI_SheZhi.pingbicishu}");
+                    Debug.Log($"玩家 {human.player.host.name} 重复发言次数:{human.GetExt().lastFaYanCount},重复发言限制次数:{UI_SheZhi.pingbicishu}");
                     isZhaFang = true;
                     return isZhaFang;
                 }
             }
         }
-        float jiange = Time.time - human.lastFaYanTimer;
+        float jiange = Time.time - human.GetExt().lastFaYanTimer;
         
         if (jiange < UI_SheZhi.fayanjiange && UI_SheZhi.fayanjiange !=0)
         {
@@ -1642,7 +1642,7 @@ public class Chat
             }
 
         }
-        human.lastFaYanTimer=Time.time;
+        human.GetExt().lastFaYanTimer=Time.time;
         return isZhaFang;
     }
 
@@ -1684,8 +1684,8 @@ public class Chat
                 TiShi(netHost, "定点系统已关闭");
                 return;
             }
-            human.dingdian.tishiStr = msg.Substring(5);
-            TiShi($"玩家 {netHost.name} 的个人定点提示修改为“{human.dingdian.tishiStr}”");
+            human.GetExt().dingdian.tishiStr = msg.Substring(5);
+            TiShi($"玩家 {netHost.name} 的个人定点提示修改为“{human.GetExt().dingdian.tishiStr}”");
         }
         else if (msg.StartsWith("挂件") && msg.Length > 2)
         {
@@ -1694,7 +1694,7 @@ public class Chat
                 TiShi(netHost, $"聊天框权限系统已关闭");
                 return;
             }
-            if (!human.liaotiankuangquanxian)
+            if (!human.GetExt().liaotiankuangquanxian)
             {
                 TiShi(netHost, $"你没有聊天框权限");
                 return;
@@ -1731,7 +1731,7 @@ public class Chat
                 TiShi(netHost, $"聊天框权限系统已关闭");
                 return;
             }
-            if (!human.liaotiankuangquanxian)
+            if (!human.GetExt().liaotiankuangquanxian)
             {
                 TiShi(netHost, $"你没有聊天框权限");
                 return;
@@ -1769,7 +1769,7 @@ public class Chat
                 TiShi(netHost, $"聊天框权限系统已关闭");
                 return;
             }
-            if (!human.liaotiankuangquanxian)
+            if (!human.GetExt().liaotiankuangquanxian)
             {
                 TiShi(netHost, $"你没有聊天框权限");
                 return;
@@ -1794,9 +1794,9 @@ public class Chat
             if (num == 0)
             {
                 //human.qianshou = false;
-                human.qianshou_zuo = human.qianshou_you = false;
-                human.qianshou_zuo_human = human.qianshou_you_human = null;
-                human.qianshou_zuo_humanHand = human.qianshou_you_humanHand = null;
+                human.GetExt().qianshou_zuo = human.GetExt().qianshou_you = false;
+                human.GetExt().qianshou_zuo_human = human.GetExt().qianshou_you_human = null;
+                human.GetExt().qianshou_zuo_humanHand = human.GetExt().qianshou_you_humanHand = null;
                 return;
             }
 
@@ -1823,8 +1823,8 @@ public class Chat
                 return;
             }
 
-            human.dingdian.gaodu = num;
-            TiShi($"玩家 {netHost.name} 的个人普通定点高度修改为 {human.dingdian.gaodu}");
+            human.GetExt().dingdian.gaodu = num;
+            TiShi($"玩家 {netHost.name} 的个人普通定点高度修改为 {human.GetExt().dingdian.gaodu}");
         }
         else if (msg.StartsWith("定点个数") && msg.Length > 4)
         {
@@ -1844,8 +1844,8 @@ public class Chat
                 return;
             }
 
-            human.dingdian.geshu = num;
-            TiShi($"玩家 {netHost.name} 的个人定点个数修改为 {human.dingdian.geshu}");
+            human.GetExt().dingdian.geshu = num;
+            TiShi($"玩家 {netHost.name} 的个人定点个数修改为 {human.GetExt().dingdian.geshu}");
         }
         else if ((msg.StartsWith("Y") || msg.StartsWith("y")) && msg.Length > 1)
         {
@@ -1860,27 +1860,27 @@ public class Chat
             }
             if (num == 0)
             {
-                human.numY = num;
+                human.GetExt().numY = num;
                 Chat.TiShi(human.player.host, "Y键动作已更改为 晕倒");
             }
             else if (num == 1)
             {
-                human.numY = num;
+                human.GetExt().numY = num;
                 Chat.TiShi(human.player.host, "Y键动作已更改为 坐下");
             }
             else if (num == 2)
             {
-                human.numY = num;
+                human.GetExt().numY = num;
                 Chat.TiShi(human.player.host, "Y键动作已更改为 跪下");
             }
             else if (num == 3)
             {
-                human.numY = num;
+                human.GetExt().numY = num;
                 Chat.TiShi(human.player.host, "Y键动作已更改为 一字马");
             }
             else if (num == 4)
             {
-                human.numY = num;
+                human.GetExt().numY = num;
                 Chat.TiShi(human.player.host, "Y键动作已更改为 大力金刚脚");
                 if (!UI_GongNeng.jifeixitong_KaiGuan)
                 {
@@ -1889,7 +1889,7 @@ public class Chat
             }
             else if (num == 5)
             {
-                human.numY = num;
+                human.GetExt().numY = num;
                 Chat.TiShi(human.player.host, "Y键动作已更改为 拳王");
                 if (!UI_GongNeng.jifeixitong_KaiGuan)
                 {
@@ -1910,16 +1910,16 @@ public class Chat
                         TiShi(netHost, $"定点系统已关闭");
                         break;
                     }
-                    if (!human.dingdian.kaiguan)
+                    if (!human.GetExt().dingdian.kaiguan)
                     {
                         TiShi(netHost, $"你的个人定点已关闭");
                         break;
                     }
-                    if (human.dingdian.kaiguan)
+                    if (human.GetExt().dingdian.kaiguan)
                     {
-                        if (human.dingdian.q)//q定点
+                        if (human.GetExt().dingdian.q)//q定点
                         {
-                            human.dingdian.CunDian(human, true);
+                            human.GetExt().dingdian.CunDian(human, true);
                             return;
                         }
                     }
@@ -1930,7 +1930,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -1949,7 +1949,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -1960,7 +1960,7 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.挂件);
-                    if (!human.ntp)
+                    if (!human.GetExt().ntp)
                     {
                         YxMod.SetGuaJian(NetGame.instance.server.players[0].human, human);
                     }
@@ -1975,7 +1975,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -1995,7 +1995,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2016,7 +2016,7 @@ public class Chat
                         break;
                     }
 
-                    TiShi($"你的个人定点已{(human.dingdian.kaiguan ? "打开" : "关闭")}。发送以下命令进行设置。", TiShiMsgId.Null);
+                    TiShi($"你的个人定点已{(human.GetExt().dingdian.kaiguan ? "打开" : "关闭")}。发送以下命令进行设置。", TiShiMsgId.Null);
                     TiShi($"“定点”           \t---\t打开/关闭 个人定点。", TiShiMsgId.Null);
                     TiShi($"“回溯”           \t---\t定点模式改为回溯模式。", TiShiMsgId.Null);
                     TiShi($"“惯性”           \t---\t带惯性定点已打开", TiShiMsgId.Null);
@@ -2033,8 +2033,8 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.定点);
-                    human.dingdian.kaiguan = !human.dingdian.kaiguan;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.dingdian.kaiguan ? "打开了" : "关闭了")} 个人定点");
+                    human.GetExt().dingdian.kaiguan = !human.GetExt().dingdian.kaiguan;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().dingdian.kaiguan ? "打开了" : "关闭了")} 个人定点");
                     break;
                 case "打开定点":
                 case "打开个人定点":
@@ -2047,8 +2047,8 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.定点);
-                    human.dingdian.kaiguan = true;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.dingdian.kaiguan ? "打开了" : "关闭了")} 个人定点");
+                    human.GetExt().dingdian.kaiguan = true;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().dingdian.kaiguan ? "打开了" : "关闭了")} 个人定点");
                     break;
                 case "关闭定点":
                 case "关闭个人定点":
@@ -2060,8 +2060,8 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.定点);
-                    human.dingdian.kaiguan = false;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.dingdian.kaiguan ? "打开了" : "关闭了")} 个人定点");
+                    human.GetExt().dingdian.kaiguan = false;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().dingdian.kaiguan ? "打开了" : "关闭了")} 个人定点");
                     break;
                 case "关闭回溯":
                 case "回溯关闭":
@@ -2074,7 +2074,7 @@ public class Chat
                         TiShi(netHost, $"定点系统已关闭");
                         break;
                     }
-                    human.dingdian.huisu=false;
+                    human.GetExt().dingdian.huisu=false;
                     TiShi($"玩家 {netHost.name} 的个人定点模式修改为 普通模式");
                     break;
                 case "huisu":
@@ -2085,7 +2085,7 @@ public class Chat
                         TiShi(netHost, $"定点系统已关闭");
                         break;
                     }
-                    human.dingdian.huisu = !human.dingdian.huisu;
+                    human.GetExt().dingdian.huisu = !human.GetExt().dingdian.huisu;
                     TiShi($"玩家 {netHost.name} 的个人定点模式修改为 回溯模式");
                     break;
                 case "打开回溯定点":
@@ -2097,7 +2097,7 @@ public class Chat
                         TiShi(netHost, $"定点系统已关闭");
                         break;
                     }
-                    human.dingdian.huisu=true;
+                    human.GetExt().dingdian.huisu=true;
                     TiShi($"玩家 {netHost.name} 的个人定点模式修改为 回溯模式");
                     break;
                 case "惯性":
@@ -2107,8 +2107,8 @@ public class Chat
                         TiShi(netHost, $"定点系统已关闭");
                         break;
                     }
-                    human.dingdian.guanxing = !human.dingdian.guanxing;
-                    TiShi($"玩家 {netHost.name} 的带惯性定点已 {(human.dingdian.guanxing ? "打开" : "关闭")}");
+                    human.GetExt().dingdian.guanxing = !human.GetExt().dingdian.guanxing;
+                    TiShi($"玩家 {netHost.name} 的带惯性定点已 {(human.GetExt().dingdian.guanxing ? "打开" : "关闭")}");
                     break;
                 case "打开惯性定点":
                 case "打开惯性":
@@ -2119,7 +2119,7 @@ public class Chat
                         TiShi(netHost, $"定点系统已关闭");
                         break;
                     }
-                    human.dingdian.guanxing = true;
+                    human.GetExt().dingdian.guanxing = true;
                     TiShi($"玩家 {netHost.name} 的带惯性定点已 打开");
                     break;
                 case "关闭惯性定点":
@@ -2131,7 +2131,7 @@ public class Chat
                         TiShi(netHost, $"定点系统已关闭");
                         break;
                     }
-                    human.dingdian.guanxing = false;
+                    human.GetExt().dingdian.guanxing = false;
                     TiShi($"玩家 {netHost.name} 的带惯性定点已 关闭");
                     break;
                 case "Q定点":
@@ -2155,7 +2155,7 @@ public class Chat
                         TiShi(netHost, $"定点系统已关闭");
                         break;
                     }
-                    human.dingdian.q=true;
+                    human.GetExt().dingdian.q=true;
                     TiShi($"玩家 {netHost.name} 的个人定点方式修改为 Q模式");
                     break;
                 case "SE定点":
@@ -2180,7 +2180,7 @@ public class Chat
                         TiShi(netHost, $"定点系统已关闭");
                         break;
                     }
-                    human.dingdian.se=true;
+                    human.GetExt().dingdian.se=true;
                     TiShi($"玩家 {netHost.name} 的个人定点方式修改为 SE模式");
                     break;
                 case "ALL定点":
@@ -2207,7 +2207,7 @@ public class Chat
                         TiShi(netHost, $"定点系统已关闭");
                         break;
                     }
-                    human.dingdian.q = human.dingdian.se = true;
+                    human.GetExt().dingdian.q = human.GetExt().dingdian.se = true;
                     TiShi($"玩家 {netHost.name} 的个人定点方式修改为 Q模式/SE模式");
                     break;
 
@@ -2217,7 +2217,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2228,8 +2228,8 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.无假死);
-                    human.wujiasi = !human.wujiasi;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.wujiasi ? "打开了" : "关闭了")} 无假死");
+                    human.GetExt().wujiasi = !human.GetExt().wujiasi;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().wujiasi ? "打开了" : "关闭了")} 无假死");
                     break;
                 case "无碰撞":
                     if (!UI_GongNeng.liaotiankuangquanxian_KaiGuan)
@@ -2237,7 +2237,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2248,8 +2248,8 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.无碰撞);
-                    human.wupengzhuang = !human.wupengzhuang;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.wupengzhuang ? "打开了" : "关闭了")} 无碰撞");
+                    human.GetExt().wupengzhuang = !human.GetExt().wupengzhuang;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().wupengzhuang ? "打开了" : "关闭了")} 无碰撞");
                     break;
                 case "飞行":
                 case "飞天":
@@ -2258,7 +2258,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2268,10 +2268,10 @@ public class Chat
                         TiShi(netHost, $"飞天系统已关闭");
                         break;
                     }
-                    human.feitian = !human.feitian;
+                    human.GetExt().feitian = !human.GetExt().feitian;
                     YxMod.SetFeiTian(human);
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.feitian ? "学会了" : "忘记了")} 个人飞天");
-                    if (human.feitian)
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().feitian ? "学会了" : "忘记了")} 个人飞天");
+                    if (human.GetExt().feitian)
                     {
                         Chat.TiShi(human.player.host, "普通情况下是正常飞天。按住左键，W，空格，保持两秒，可进入超人状态。");
                     }
@@ -2282,7 +2282,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2293,8 +2293,8 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.超人);
-                    human.chaoren = !human.chaoren;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.chaoren ? "学会了" : "忘记了")} 超人");
+                    human.GetExt().chaoren = !human.GetExt().chaoren;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().chaoren ? "学会了" : "忘记了")} 超人");
                     break;
 
                 case "闪现":
@@ -2303,7 +2303,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2314,8 +2314,8 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.闪现);
-                    human.shanxian = !human.shanxian;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.shanxian ? "学会了" : "忘记了")} 闪现");
+                    human.GetExt().shanxian = !human.GetExt().shanxian;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().shanxian ? "学会了" : "忘记了")} 闪现");
                     break;
                 case "转圈":
                 case "转圈圈":
@@ -2324,7 +2324,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2335,8 +2335,8 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.转圈圈);
-                    human.zhuanquan = !human.zhuanquan;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.zhuanquan ? "学会了" : "忘记了")} 转圈圈{(human.zhuanquan ? "，按住空格可以转圈圈" : "")}");
+                    human.GetExt().zhuanquan = !human.GetExt().zhuanquan;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().zhuanquan ? "学会了" : "忘记了")} 转圈圈{(human.GetExt().zhuanquan ? "，按住空格可以转圈圈" : "")}");
                     break;
                 case "陀螺":
                 case "小陀螺":
@@ -2345,7 +2345,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2356,8 +2356,8 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.陀螺);
-                    human.tuoluo = !human.tuoluo;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.tuoluo ? "变成了" : "忘记了")} 小陀螺");
+                    human.GetExt().tuoluo = !human.GetExt().tuoluo;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().tuoluo ? "变成了" : "忘记了")} 小陀螺");
                     break;
                 case "跳舞":
                 case "蹦迪":
@@ -2366,7 +2366,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2376,9 +2376,9 @@ public class Chat
                         TiShi(netHost, $"娱乐系统已关闭");
                         break;
                     }
-                    human.bengdi = !human.bengdi;
+                    human.GetExt().bengdi = !human.GetExt().bengdi;
                     YxMod. BengDi(human);
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.bengdi ? "学会了" : "忘记了")} 蹦迪");
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().bengdi ? "学会了" : "忘记了")} 蹦迪");
                     break;
                 case "冻结":
                 case "冻住":
@@ -2387,7 +2387,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2397,9 +2397,9 @@ public class Chat
                         TiShi(netHost, $"娱乐系统已关闭");
                         break;
                     }
-                    human.dongjie = !human.dongjie;
+                    human.GetExt().dongjie = !human.GetExt().dongjie;
                     YxMod.DongJie(human);
-                    Chat.TiShi($"玩家 {human.player.host.name} 被 {(human.dongjie ? "冻结了" : "解冻了")}");
+                    Chat.TiShi($"玩家 {human.player.host.name} 被 {(human.GetExt().dongjie ? "冻结了" : "解冻了")}");
                     break;
                 case "半身":
                 case "半身不遂":
@@ -2408,7 +2408,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2418,9 +2418,9 @@ public class Chat
                         TiShi(netHost, $"娱乐系统已关闭");
                         break;
                     }
-                    human.banshen = true;
+                    human.GetExt().banshen = true;
                     YxMod.BanShen(human);
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.banshen ? "学会了" : "取消了")} 半身不遂");
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().banshen ? "学会了" : "取消了")} 半身不遂");
                     break;
                 case "三段跳":
                 case "三级跳":
@@ -2429,7 +2429,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2440,8 +2440,8 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.三级跳);
-                    human.sanjitiao = !human.sanjitiao;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.sanjitiao ? "学会了" : "忘记了")} 三级跳");
+                    human.GetExt().sanjitiao = !human.GetExt().sanjitiao;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().sanjitiao ? "学会了" : "忘记了")} 三级跳");
                     break;
                 case "电臀":
                     if (!UI_GongNeng.liaotiankuangquanxian_KaiGuan)
@@ -2449,7 +2449,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2459,9 +2459,9 @@ public class Chat
                         TiShi(netHost, $"娱乐系统已关闭");
                         break;
                     }
-                    human.diantun = !human.diantun;
+                    human.GetExt().diantun = !human.GetExt().diantun;
                     YxMod.DianTun(human);
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.diantun ? "学会了" : "忘记了")} 电臀");
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().diantun ? "学会了" : "忘记了")} 电臀");
                     break;
                 case "气球":
                     if (!UI_GongNeng.liaotiankuangquanxian_KaiGuan)
@@ -2469,7 +2469,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2479,9 +2479,9 @@ public class Chat
                         TiShi(netHost, $"娱乐系统已关闭");
                         break;
                     }
-                    human.qiqiu = !human.qiqiu;
+                    human.GetExt().qiqiu = !human.GetExt().qiqiu;
                     YxMod.QiQiu(human);
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.qiqiu ? "变成了" : "忘记了")} 气球");
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().qiqiu ? "变成了" : "忘记了")} 气球");
                     break;
                 case "气球戏法":
                     if (!UI_GongNeng.liaotiankuangquanxian_KaiGuan)
@@ -2489,7 +2489,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2500,8 +2500,8 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.气球戏法);
-                    human.qiqiuxifa = !human.qiqiuxifa;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.qiqiuxifa ? "学会了" : "忘记了")} 左键抓住物品可以起飞的气球戏法");
+                    human.GetExt().qiqiuxifa = !human.GetExt().qiqiuxifa;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().qiqiuxifa ? "学会了" : "忘记了")} 左键抓住物品可以起飞的气球戏法");
                     break;
                 case "倒立":
                     if (!UI_GongNeng.liaotiankuangquanxian_KaiGuan)
@@ -2509,7 +2509,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2519,9 +2519,9 @@ public class Chat
                         TiShi(netHost, $"娱乐系统已关闭");
                         break;
                     }
-                    human.daoli = !human.daoli;
+                    human.GetExt().daoli = !human.GetExt().daoli;
                     YxMod.DaoLi(human);
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.daoli ? "学会了" : "忘记了")} 双手抓地使用倒立");
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().daoli ? "学会了" : "忘记了")} 双手抓地使用倒立");
                     break;
                 case "磕头怪":
                     if (!UI_GongNeng.liaotiankuangquanxian_KaiGuan)
@@ -2529,7 +2529,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2540,8 +2540,8 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.磕头怪);
-                    human.ketouguai = !human.ketouguai;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.ketouguai ? "变成了" : "忘记了")} 磕头怪");
+                    human.GetExt().ketouguai = !human.GetExt().ketouguai;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().ketouguai ? "变成了" : "忘记了")} 磕头怪");
 
                     break;
                 case "吊死鬼":
@@ -2550,7 +2550,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2560,9 +2560,9 @@ public class Chat
                         TiShi(netHost, $"娱乐系统已关闭");
                         break;
                     }
-                    human.diaosigui = !human.diaosigui;
+                    human.GetExt().diaosigui = !human.GetExt().diaosigui;
                     YxMod.DiaoSiGui(human);
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.diaosigui ? "变成了" : "忘记了")} 吊死鬼");
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().diaosigui ? "变成了" : "忘记了")} 吊死鬼");
                     break;
                 case "螃蟹":
                     if (!UI_GongNeng.liaotiankuangquanxian_KaiGuan)
@@ -2570,7 +2570,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2581,8 +2581,8 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.螃蟹);
-                    human.pangxie = !human.pangxie;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.pangxie ? "变成了" : "忘记了")} 一只大螃蟹");
+                    human.GetExt().pangxie = !human.GetExt().pangxie;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().pangxie ? "变成了" : "忘记了")} 一只大螃蟹");
                     break;
                 case "腿瘸":
                     if (!UI_GongNeng.liaotiankuangquanxian_KaiGuan)
@@ -2590,7 +2590,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2600,9 +2600,9 @@ public class Chat
                         TiShi(netHost, $"娱乐系统已关闭");
                         break;
                     }
-                    human.tuique = !human.tuique;
+                    human.GetExt().tuique = !human.GetExt().tuique;
                     YxMod. TuiQue(human);
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.tuique ? "变成了" : "治好了")} 瘸腿");
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().tuique ? "变成了" : "治好了")} 瘸腿");
                     break;
                 case "腿拐":
                     if (!UI_GongNeng.liaotiankuangquanxian_KaiGuan)
@@ -2610,7 +2610,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2620,9 +2620,9 @@ public class Chat
                         TiShi(netHost, $"娱乐系统已关闭");
                         break;
                     }
-                    human.tuiguai = !human.tuiguai;
+                    human.GetExt().tuiguai = !human.GetExt().tuiguai;
                     YxMod.TuiGuai(human);
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.tuiguai ? "变成了" : "治好了")} 拐腿");
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().tuiguai ? "变成了" : "治好了")} 拐腿");
                     break;
                 case "潜水":
                     if (!UI_GongNeng.liaotiankuangquanxian_KaiGuan)
@@ -2630,7 +2630,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2641,8 +2641,8 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.潜水);
-                    human.qianshui = !human.qianshui;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.qianshui ? "学会了" : "忘记了")} 潜水");
+                    human.GetExt().qianshui = !human.GetExt().qianshui;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().qianshui ? "学会了" : "忘记了")} 潜水");
                     break;
                 case "拆除":
                     if (!UI_GongNeng.liaotiankuangquanxian_KaiGuan)
@@ -2650,7 +2650,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2661,9 +2661,9 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.拆除);
-                    human.chaichu = !human.chaichu;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.chaichu ? "学会了" : "忘记了")} 拆除");
-                    if (human.chaichu)
+                    human.GetExt().chaichu = !human.GetExt().chaichu;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().chaichu ? "学会了" : "忘记了")} 拆除");
+                    if (human.GetExt().chaichu)
                     {
                         Chat.TiShi(human.player.host, "开启拆除,左手抓住目标，即可拆卸。");
                     }
@@ -2674,7 +2674,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2685,9 +2685,9 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.空气炮);
-                    human.kongqipao = !human.kongqipao;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.kongqipao ? "获取了" : "丢掉了")} 空气炮");
-                    if (human.kongqipao)
+                    human.GetExt().kongqipao = !human.GetExt().kongqipao;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().kongqipao ? "获取了" : "丢掉了")} 空气炮");
+                    if (human.GetExt().kongqipao)
                     {
                         Chat.TiShi(human.player.host, "长按 鼠标左键 向前方打出空气炮，被击中的物体会被击飞。");
                     }
@@ -2698,7 +2698,7 @@ public class Chat
                         TiShi(netHost, $"聊天框权限系统已关闭");
                         break;
                     }
-                    if (!human.liaotiankuangquanxian)
+                    if (!human.GetExt().liaotiankuangquanxian)
                     {
                         TiShi(netHost, $"你没有聊天框权限");
                         break;
@@ -2709,8 +2709,8 @@ public class Chat
                         break;
                     }
                     //YxMod.SetHumanKaiGuan(human, NengLi.超级跳);
-                    human.chaojitiao = !human.chaojitiao;
-                    Chat.TiShi($"玩家 {human.player.host.name} {(human.chaojitiao ? "学会了" : "忘记了")} 超级跳");
+                    human.GetExt().chaojitiao = !human.GetExt().chaojitiao;
+                    Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().chaojitiao ? "学会了" : "忘记了")} 超级跳");
                     break;
 
 

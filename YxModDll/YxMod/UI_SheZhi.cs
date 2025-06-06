@@ -884,13 +884,13 @@ internal class UI_SheZhi : MonoBehaviour
         }
         if(!guajitixing)
         {
-            if(human.YiGuaJi)
+            if(human.GetExt().YiGuaJi)
             {
-                human.YiGuaJi = false;
-                //human.lastCaoZuoTime = Time.time;
+                human.GetExt().YiGuaJi = false;
+                //human.GetExt().lastCaoZuoTime = Time.time;
                 YxMod.enThrowing(human, true);
-                //human.ntp = false;
-                human.guajiNtpHuman = null;
+                //human.GetExt().ntp = false;
+                human.GetExt().guajiNtpHuman = null;
                 Rigidbody[] rigidbodies2 = human.rigidbodies;
                 for (int j = 0; j < rigidbodies2.Length; j++)
                 {
@@ -901,15 +901,15 @@ internal class UI_SheZhi : MonoBehaviour
 
             return;
         }
-        if (YouCaoZuo(human) || human.cameraPitchAngle != human.controls.cameraPitchAngle || human.cameraYawAngle != human.controls.cameraYawAngle)
+        if (YouCaoZuo(human) || human.GetExt().cameraPitchAngle != human.controls.cameraPitchAngle || human.GetExt().cameraYawAngle != human.controls.cameraYawAngle)
         {
-            if (human.YiGuaJi)
+            if (human.GetExt().YiGuaJi)
             {
-                human.YiGuaJi = false;
+                human.GetExt().YiGuaJi = false;
                 Chat.TiShi($"玩家 {human.player.host.name} 回到了游戏");
 
                 YxMod.enThrowing(human, true);
-                human.guajiNtpHuman = null;
+                human.GetExt().guajiNtpHuman = null;
                 Rigidbody[] rigidbodies2 = human.rigidbodies;
                 for (int j = 0; j < rigidbodies2.Length; j++)
                 {
@@ -922,16 +922,16 @@ internal class UI_SheZhi : MonoBehaviour
                 //    Game.instance.RespawnAllPlayers(human.player.host);
                 //}
             }
-            human.lastCaoZuoTime = Time.time;
+            human.GetExt().lastCaoZuoTime = Time.time;
         }
         else
         {
-            if (!human.YiGuaJi)
+            if (!human.GetExt().YiGuaJi)
             {
-                if (Time.time - human.lastCaoZuoTime >= UI_SheZhi.guajishijian * 60) ///UI_SheZhi.guajishijian
+                if (Time.time - human.GetExt().lastCaoZuoTime >= UI_SheZhi.guajishijian * 60) ///UI_SheZhi.guajishijian
                 {
                     Chat.TiShi($"玩家 {human.player.host.name} {UI_SheZhi.guajishijian}分钟无操作,已挂机");
-                    human.YiGuaJi = true;
+                    human.GetExt().YiGuaJi = true;
                 }
             }
             else
@@ -939,13 +939,13 @@ internal class UI_SheZhi : MonoBehaviour
                 //ZuoXia(Human.all[0]);
             }
         }
-        human.cameraPitchAngle = human.controls.cameraPitchAngle;
-        human.cameraYawAngle = human.controls.cameraYawAngle;
+        human.GetExt().cameraPitchAngle = human.controls.cameraPitchAngle;
+        human.GetExt().cameraYawAngle = human.controls.cameraYawAngle;
 
 
         //"跌落", "睡觉", "气球", "坐下", "挂件"
 
-        if (human.YiGuaJi)
+        if (human.GetExt().YiGuaJi)
         {
             if (guajidongzuoID == 0)
             {
@@ -955,27 +955,27 @@ internal class UI_SheZhi : MonoBehaviour
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    if (Human.all[i].guajiNtpHuman != human && Human.all[i] != human)
+                    if (Human.all[i].GetExt().guajiNtpHuman != human && Human.all[i] != human)
                     {
-                        human.guajiNtpHuman = Human.all[i];
+                        human.GetExt().guajiNtpHuman = Human.all[i];
                     }
                 }
-                if (human.guajiNtpHuman != null)
+                if (human.GetExt().guajiNtpHuman != null)
                 {
-                    //human.ntp = true;
+                    //human.GetExt().ntp = true;
                     YxMod.enThrowing(human, false);
                     for (int i = 0; i < human.rigidbodies.Length; i++)
                     {
-                        human.rigidbodies[i].rotation = human.guajiNtpHuman.rigidbodies[i].rotation;
-                        Vector3 position = human.guajiNtpHuman.rigidbodies[i].position;
+                        human.rigidbodies[i].rotation = human.GetExt().guajiNtpHuman.rigidbodies[i].rotation;
+                        Vector3 position = human.GetExt().guajiNtpHuman.rigidbodies[i].position;
                         position.y += 2f;
                         human.rigidbodies[i].position = position;
-                        human.rigidbodies[i].velocity = human.guajiNtpHuman.rigidbodies[i].velocity;
+                        human.rigidbodies[i].velocity = human.GetExt().guajiNtpHuman.rigidbodies[i].velocity;
                     }
                 }
                 else
                 {
-                    //human.ntp = false;
+                    //human.GetExt().ntp = false;
                     YxMod.enThrowing(human, true);
                 }
 
@@ -1001,13 +1001,13 @@ internal class UI_SheZhi : MonoBehaviour
         //else
         //{
         //    YxMod.enThrowing(human, flag: true);
-        //    //human.ntp = false;
-        //    human.guajiNtpHuman = null;
+        //    //human.GetExt().ntp = false;
+        //    human.GetExt().guajiNtpHuman = null;
         //}
         Rigidbody[] rigidbodies = human.rigidbodies;
         for (int j = 0; j < rigidbodies.Length; j++)
         {
-            if (human.YiGuaJi)
+            if (human.GetExt().YiGuaJi)
             {
                 if (guajidongzuoID == 0 || guajidongzuoID == 1 || guajidongzuoID == 4)
                 {
@@ -1045,7 +1045,7 @@ internal class UI_SheZhi : MonoBehaviour
     {
         if(NetGame.isServer)
         {
-            Human.all[0].dingdian.huisu = huisu;
+            Human.all[0].GetExt().dingdian.huisu = huisu;
 
         }
         else if (NetGame.isClient)
@@ -1063,7 +1063,7 @@ internal class UI_SheZhi : MonoBehaviour
     {
         if (NetGame.isServer)
         {
-            Human.all[0].dingdian.guanxing = guanxing;
+            Human.all[0].GetExt().dingdian.guanxing = guanxing;
 
         }
         else if (NetGame.isClient)
@@ -1079,7 +1079,7 @@ internal class UI_SheZhi : MonoBehaviour
     {
         if (NetGame.isServer)
         {
-            Human.all[0].dingdian.q = q;
+            Human.all[0].GetExt().dingdian.q = q;
         }
         else if (NetGame.isClient)
         {
@@ -1094,7 +1094,7 @@ internal class UI_SheZhi : MonoBehaviour
     {
         if (NetGame.isServer)
         {
-            Human.all[0].dingdian.se = se;
+            Human.all[0].GetExt().dingdian.se = se;
         }
         else if (NetGame.isClient)
         {
@@ -1109,7 +1109,7 @@ internal class UI_SheZhi : MonoBehaviour
     {
         if (NetGame.isServer)
         {
-            Human.all[0].dingdian.gaodu = gaodu;
+            Human.all[0].GetExt().dingdian.gaodu = gaodu;
         }
         else if (NetGame.isClient)
         {
@@ -1124,7 +1124,7 @@ internal class UI_SheZhi : MonoBehaviour
     {
         if (NetGame.isServer)
         {
-            Human.all[0].dingdian.geshu = geshu;
+            Human.all[0].GetExt().dingdian.geshu = geshu;
         }
         else if (NetGame.isClient)
         {
@@ -1139,7 +1139,7 @@ internal class UI_SheZhi : MonoBehaviour
     {
         if (NetGame.isServer)
         {
-            Human.all[0].dingdian.tishiStr = tishiStr;
+            Human.all[0].GetExt().dingdian.tishiStr = tishiStr;
         }
         else if (NetGame.isClient)
         {

@@ -22,6 +22,14 @@ public class HumanReflectionAccessor
     private static readonly MethodInfo limitFallSpeedMethod = typeof(Human).GetMethod("LimitFallSpeed", flags);
     private static readonly MethodInfo processUnconsciousMethod = typeof(Human).GetMethod("ProcessUnconscious", flags);
     private static readonly MethodInfo processFallMethod = typeof(Human).GetMethod("ProcessFall", flags);
+    private static readonly FieldInfo overridenDragField = typeof(Human).GetField("overridenDrag", BindingFlags.Instance | BindingFlags.NonPublic);
+
+    public bool overridenDrag
+    {
+        get => (bool)overridenDragField.GetValue(human);
+        set => overridenDragField.SetValue(human, value);
+    }
+
 
     public HumanReflectionAccessor(Human human)
     {

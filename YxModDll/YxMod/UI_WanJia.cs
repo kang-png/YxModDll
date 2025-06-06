@@ -156,26 +156,26 @@ internal class UI_WanJia
             GUILayout.BeginHorizontal();
             if (NetGame.isServer)
             {
-                if (human.isClient && humanID != 1)
+                if (human.GetExt().isClient && humanID != 1)
                 {
-                    UI.CreatAnNiu_AnXia("客机权限", ref human.kejiquanxian, false, KeJiQuanXian);
+                    UI.CreatAnNiu_AnXia("客机权限", ref human.GetExt().kejiquanxian, false, KeJiQuanXian);
                 }
-                UI.CreatAnNiu_AnXia("聊天框权限", ref human.liaotiankuangquanxian, false);
+                UI.CreatAnNiu_AnXia("聊天框权限", ref human.GetExt().liaotiankuangquanxian, false);
             }
             GUILayout.EndHorizontal();
 
             if (NetGame.isServer || (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))) //自己
             {
                 GUILayout.BeginHorizontal();
-                UI.CreatAnNiu_AnXia("个人定点", ref human.dingdian.kaiguan, false, GeRenDingDian);
-                UI.CreatAnNiu_AnXia("无假死", ref human.wujiasi, false, WuJiaSi);
-                UI.CreatAnNiu_AnXia("无碰撞", ref human.wupengzhuang, false, WuPengZhuang);
+                UI.CreatAnNiu_AnXia("个人定点", ref human.GetExt().dingdian.kaiguan, false, GeRenDingDian);
+                UI.CreatAnNiu_AnXia("无假死", ref human.GetExt().wujiasi, false, WuJiaSi);
+                UI.CreatAnNiu_AnXia("无碰撞", ref human.GetExt().wupengzhuang, false, WuPengZhuang);
                 GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
-                UI.CreatAnNiu_AnXia("飞天", ref human.feitian, false, FeiTian);
-                UI.CreatAnNiu_AnXia("超人", ref human.chaoren, false, ChaoRen);
-                UI.CreatAnNiu_AnXia("闪现", ref human.shanxian, false, ShanXian);
+                UI.CreatAnNiu_AnXia("飞天", ref human.GetExt().feitian, false, FeiTian);
+                UI.CreatAnNiu_AnXia("超人", ref human.GetExt().chaoren, false, ChaoRen);
+                UI.CreatAnNiu_AnXia("闪现", ref human.GetExt().shanxian, false, ShanXian);
                 GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
@@ -185,40 +185,40 @@ internal class UI_WanJia
                 GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
-                UI.CreatAnNiu_AnXia("冻结", ref human.dongjie, false, DongJie);
-                UI.CreatAnNiu_AnXia("半身不遂", ref human.banshen, false, BanShen);
+                UI.CreatAnNiu_AnXia("冻结", ref human.GetExt().dongjie, false, DongJie);
+                UI.CreatAnNiu_AnXia("半身不遂", ref human.GetExt().banshen, false, BanShen);
                 GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
-                UI.CreatAnNiu_AnXia("蹦迪", ref human.bengdi, false, BengDi);
-                UI.CreatAnNiu_AnXia("三级跳", ref human.sanjitiao, false, SanJiTiao);
-                UI.CreatAnNiu_AnXia("电臀", ref human.diantun, false, DianTun);
-                UI.CreatAnNiu_AnXia("气球", ref human.qiqiu, false, QiQiu);
+                UI.CreatAnNiu_AnXia("蹦迪", ref human.GetExt().bengdi, false, BengDi);
+                UI.CreatAnNiu_AnXia("三级跳", ref human.GetExt().sanjitiao, false, SanJiTiao);
+                UI.CreatAnNiu_AnXia("电臀", ref human.GetExt().diantun, false, DianTun);
+                UI.CreatAnNiu_AnXia("气球", ref human.GetExt().qiqiu, false, QiQiu);
                 GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
-                UI.CreatAnNiu_AnXia("气球戏法", ref human.qiqiuxifa, false, QiQiuXiFa);
-                UI.CreatAnNiu_AnXia("倒立", ref human.daoli, false, DaoLi);
-                UI.CreatAnNiu_AnXia("转圈圈", ref human.zhuanquan, false, ZhuanQuan);
-                UI.CreatAnNiu_AnXia("陀螺", ref human.tuoluo, false, TuoLuo);
+                UI.CreatAnNiu_AnXia("气球戏法", ref human.GetExt().qiqiuxifa, false, QiQiuXiFa);
+                UI.CreatAnNiu_AnXia("倒立", ref human.GetExt().daoli, false, DaoLi);
+                UI.CreatAnNiu_AnXia("转圈圈", ref human.GetExt().zhuanquan, false, ZhuanQuan);
+                UI.CreatAnNiu_AnXia("陀螺", ref human.GetExt().tuoluo, false, TuoLuo);
                 GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
-                UI.CreatAnNiu_AnXia("磕头怪", ref human.ketouguai, false, KeTouGuai);
-                UI.CreatAnNiu_AnXia("吊死鬼", ref human.diaosigui, false, DiaoSiGui);
-                UI.CreatAnNiu_AnXia("螃蟹", ref human.pangxie, false, PangXie);
-                UI.CreatAnNiu_AnXia("潜水", ref human.qianshui, false, QianShui);
+                UI.CreatAnNiu_AnXia("磕头怪", ref human.GetExt().ketouguai, false, KeTouGuai);
+                UI.CreatAnNiu_AnXia("吊死鬼", ref human.GetExt().diaosigui, false, DiaoSiGui);
+                UI.CreatAnNiu_AnXia("螃蟹", ref human.GetExt().pangxie, false, PangXie);
+                UI.CreatAnNiu_AnXia("潜水", ref human.GetExt().qianshui, false, QianShui);
                 GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
-                UI.CreatAnNiu_AnXia("腿瘸", ref human.tuique, false, TuiQue);
-                UI.CreatAnNiu_AnXia("腿拐", ref human.tuiguai, false, TuiGuai);
-                UI.CreatAnNiu_AnXia("拆除", ref human.chaichu, false, ChaiChu);
-                UI.CreatAnNiu_AnXia("空气炮", ref human.kongqipao, false, KongQiPao);
+                UI.CreatAnNiu_AnXia("腿瘸", ref human.GetExt().tuique, false, TuiQue);
+                UI.CreatAnNiu_AnXia("腿拐", ref human.GetExt().tuiguai, false, TuiGuai);
+                UI.CreatAnNiu_AnXia("拆除", ref human.GetExt().chaichu, false, ChaiChu);
+                UI.CreatAnNiu_AnXia("空气炮", ref human.GetExt().kongqipao, false, KongQiPao);
                 GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
-                UI.CreatAnNiu_AnXia("超级跳", ref human.chaojitiao, false, chaojitiao);
+                UI.CreatAnNiu_AnXia("超级跳", ref human.GetExt().chaojitiao, false, chaojitiao);
                 GUILayout.EndHorizontal();
             }
         }
@@ -358,10 +358,10 @@ internal class UI_WanJia
             {
                 for(int i = 0; i < Human.all.Count;i++ )
                 {
-                    if (Human.all[i].isClient)
+                    if (Human.all[i].GetExt().isClient)
                     {
-                        Human.all[i].kejiquanxian = allkejiquanxian ;
-                        Chat.SendYxModMsgServer(Human.all[i].player.host, Chat.YxModMsgStr("kejiquanxian"), human.kejiquanxian ? "1" : "0");
+                        Human.all[i].GetExt().kejiquanxian = allkejiquanxian ;
+                        Chat.SendYxModMsgServer(Human.all[i].player.host, Chat.YxModMsgStr("kejiquanxian"), human.GetExt().kejiquanxian ? "1" : "0");
                     }
 
                     Chat.TiShi($"所有客机 的 客机权限 已 {(allkejiquanxian ? "打开" : "关闭")}");
@@ -369,7 +369,7 @@ internal class UI_WanJia
             }
             else
             {
-                Chat.SendYxModMsgServer(human.player.host, Chat.YxModMsgStr("kejiquanxian"), human.kejiquanxian ? "1" : "0");
+                Chat.SendYxModMsgServer(human.player.host, Chat.YxModMsgStr("kejiquanxian"), human.GetExt().kejiquanxian ? "1" : "0");
 
             }
         }
@@ -385,7 +385,7 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].liaotiankuangquanxian = allliaotiankuangquanxian ;
+                    Human.all[i].GetExt().liaotiankuangquanxian = allliaotiankuangquanxian ;
                 }
                 Chat.TiShi($"所有玩家 的 聊天框权限 已 {(allliaotiankuangquanxian ? "打开" : "关闭")}");
             }
@@ -409,13 +409,13 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].dingdian.kaiguan = alldingdian ;
+                    Human.all[i].GetExt().dingdian.kaiguan = alldingdian ;
                 }
                 Chat.TiShi($"所有玩家 的 个人定点 已 {(alldingdian ? "打开" : "关闭")}");
             }
             else
             {
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.dingdian.kaiguan ? "打开" : "关闭")}了 {human.player.host.name} 的个人定点");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().dingdian.kaiguan ? "打开" : "关闭")}了 {human.player.host.name} 的个人定点");
             }
             
         }
@@ -438,13 +438,13 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].wujiasi = allwujiasi;
+                    Human.all[i].GetExt().wujiasi = allwujiasi;
                 }
                 Chat.TiShi($"所有玩家 的 无假死 已 {(allwujiasi ? "打开" : "关闭")}");
             }
             else
             {
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.wujiasi ? "打开" : "关闭")}了 {human.player.host.name} 的无假死");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().wujiasi ? "打开" : "关闭")}了 {human.player.host.name} 的无假死");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -465,13 +465,13 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].wupengzhuang = allwupengzhuang;
+                    Human.all[i].GetExt().wupengzhuang = allwupengzhuang;
                 }
                 Chat.TiShi($"所有玩家 的 无碰撞 已 {(allwupengzhuang ? "打开" : "关闭")}");
             }
             else
             {
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.wupengzhuang ? "打开" : "关闭")}了 {human.player.host.name} 的无碰撞");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().wupengzhuang ? "打开" : "关闭")}了 {human.player.host.name} 的无碰撞");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -493,9 +493,9 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].feitian = allfeitian;
+                    Human.all[i].GetExt().feitian = allfeitian;
                     YxMod.SetFeiTian(Human.all[i]);
-                    if (Human.all[i].feitian)
+                    if (Human.all[i].GetExt().feitian)
                     {
                         Chat.TiShi(Human.all[i].player.host, "普通情况下是正常飞天。按住左键，W，空格，保持两秒，可进入超人状态。");
                     }
@@ -505,8 +505,8 @@ internal class UI_WanJia
             else
             {
                 YxMod.SetFeiTian(human);
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.feitian ? "赋予" : "取消了")} {human.player.host.name} 飞天能力");
-                if (human.feitian)
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().feitian ? "赋予" : "取消了")} {human.player.host.name} 飞天能力");
+                if (human.GetExt().feitian)
                 {
                     Chat.TiShi(human.player.host, "普通情况下是正常飞天。按住左键，W，空格，保持两秒，可进入超人状态。");
                 }
@@ -531,13 +531,13 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].chaoren = allchaoren;
+                    Human.all[i].GetExt().chaoren = allchaoren;
                 }
                 Chat.TiShi($"所有玩家 都 {(allchaoren ? "变成了 超人" : "恢复为人类")}");
             }
             else
             {
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.chaoren ? "赋予" : "取消了")} {human.player.host.name} 超人能力");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().chaoren ? "赋予" : "取消了")} {human.player.host.name} 超人能力");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -558,13 +558,13 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].shanxian = allshanxian;
+                    Human.all[i].GetExt().shanxian = allshanxian;
                 }
                 Chat.TiShi($"所有玩家 都 {(allshanxian ? "学会了" : "忘记了")} 闪现");
             }
             else
             {
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.shanxian ? "赋予" : "取消了")} {human.player.host.name} 闪现能力");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().shanxian ? "赋予" : "取消了")} {human.player.host.name} 闪现能力");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -588,7 +588,7 @@ internal class UI_WanJia
                 for (int i = 0; i < Human.all.Count; i++)
                 {
                     
-                    Human.all[i].dongjie = alldongjie;
+                    Human.all[i].GetExt().dongjie = alldongjie;
                     YxMod.DongJie(Human.all[i]);
                 }
                 Chat.TiShi($"所有玩家 都被 {(alldongjie ? "冻结" : "解冻")} 了");
@@ -596,7 +596,7 @@ internal class UI_WanJia
             else
             {
                 YxMod.DongJie(human);
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} 把 {human.player.host.name} {(human.dongjie ? "冻结了" : "解冻了")}");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} 把 {human.player.host.name} {(human.GetExt().dongjie ? "冻结了" : "解冻了")}");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -618,7 +618,7 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].banshen = allbanshen;
+                    Human.all[i].GetExt().banshen = allbanshen;
                     YxMod.BanShen(Human.all[i]);
                 }
                 Chat.TiShi($"所有玩家 都 {(allbanshen ? "学会" : "忘记")} 了 半身不遂");
@@ -626,7 +626,7 @@ internal class UI_WanJia
             else
             {
                 YxMod.BanShen(human);
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.banshen ? "赋予了" : "取消了")} {human.player.host.name} 半身不遂");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().banshen ? "赋予了" : "取消了")} {human.player.host.name} 半身不遂");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -649,7 +649,7 @@ internal class UI_WanJia
                 for (int i = 0; i < Human.all.Count; i++)
                 {
 
-                    Human.all[i].bengdi = allbengdi;
+                    Human.all[i].GetExt().bengdi = allbengdi;
                     YxMod.BengDi(Human.all[i]);
                 }
                 Chat.TiShi($"所有玩家 都 {(allbengdi ? "学会了" : "忘记了")} 蹦迪");
@@ -657,7 +657,7 @@ internal class UI_WanJia
             else
             {
                 YxMod.BengDi(human);
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.bengdi ? "赋予" : "取消了")} {human.player.host.name} 蹦迪能力");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().bengdi ? "赋予" : "取消了")} {human.player.host.name} 蹦迪能力");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -678,13 +678,13 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].sanjitiao = allsanjitiao;
+                    Human.all[i].GetExt().sanjitiao = allsanjitiao;
                 }
                 Chat.TiShi($"所有玩家 都 {(allsanjitiao ? "学会了" : "忘记了")} 三级跳");
             }
             else
             {
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.sanjitiao ? "赋予" : "取消了")} {human.player.host.name} 三级跳能力");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().sanjitiao ? "赋予" : "取消了")} {human.player.host.name} 三级跳能力");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -706,7 +706,7 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].diantun = alldiantun;
+                    Human.all[i].GetExt().diantun = alldiantun;
                     YxMod.DianTun(Human.all[i]);
                 }
                 Chat.TiShi($"所有玩家 都 {(alldiantun ? "学会了" : "忘记了")} 电臀");
@@ -714,7 +714,7 @@ internal class UI_WanJia
             else
             {
                 YxMod.DianTun(human);
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.diantun ? "赋予" : "取消了")} {human.player.host.name} 电臀能力");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().diantun ? "赋予" : "取消了")} {human.player.host.name} 电臀能力");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -736,7 +736,7 @@ internal class UI_WanJia
                 for (int i = 0; i < Human.all.Count; i++)
                 {
 
-                    Human.all[i].qiqiu = allqiqiu;
+                    Human.all[i].GetExt().qiqiu = allqiqiu;
                     YxMod.QiQiu(Human.all[i]);
                 }
                 Chat.TiShi($"所有玩家 都 {(allqiqiu ? "变成了 气球" : "恢复了")}");
@@ -744,7 +744,7 @@ internal class UI_WanJia
             else
             {
                 YxMod.QiQiu(human);
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} 把 {human.player.host.name} {(human.qiqiu ? "变成了气球" : "恢复正常")}");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} 把 {human.player.host.name} {(human.GetExt().qiqiu ? "变成了气球" : "恢复正常")}");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -765,13 +765,13 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].qiqiuxifa = allqiqiuxifa;
+                    Human.all[i].GetExt().qiqiuxifa = allqiqiuxifa;
                 }
                 Chat.TiShi($"所有玩家 都 {(allqiqiuxifa ? "学会了" : "忘记了")} 左键抓住物品可以起飞的气球戏法");
             }
             else
             {
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.qiqiuxifa ? "赋予" : "取消了")} {human.player.host.name} 左键抓住物品可以起飞的气球戏法能力");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().qiqiuxifa ? "赋予" : "取消了")} {human.player.host.name} 左键抓住物品可以起飞的气球戏法能力");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -792,7 +792,7 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].daoli = alldaoli;
+                    Human.all[i].GetExt().daoli = alldaoli;
                     YxMod.DaoLi(Human.all[i]);
                 }
                 Chat.TiShi($"所有玩家 都 {(alldaoli ? "学会了" : "忘记了")} 双手抓地使用倒立");
@@ -800,7 +800,7 @@ internal class UI_WanJia
             else
             {
                 YxMod.DaoLi(human);
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.daoli ? "赋予" : "取消了")} {human.player.host.name} 双手抓地使用倒立能力");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().daoli ? "赋予" : "取消了")} {human.player.host.name} 双手抓地使用倒立能力");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -821,13 +821,13 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].zhuanquan = allzhuanquan;
+                    Human.all[i].GetExt().zhuanquan = allzhuanquan;
                 }
                 Chat.TiShi($"所有玩家 都 {(allzhuanquan ? "学会了" : "忘记了")} 按住空格可以转圈圈");
             }
             else
             {
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.zhuanquan ? "赋予" : "取消了")} {human.player.host.name} 按住空格可以转圈圈能力");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().zhuanquan ? "赋予" : "取消了")} {human.player.host.name} 按住空格可以转圈圈能力");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -848,13 +848,13 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].tuoluo = alltuoluo;
+                    Human.all[i].GetExt().tuoluo = alltuoluo;
                 }
                 Chat.TiShi($"所有玩家 都 {(alltuoluo ? "变成了 小陀螺" : "恢复了")} ");
             }
             else
             {
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} 把 {human.player.host.name} {(human.tuoluo ? "变成了小陀螺" : "恢复正常")}");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} 把 {human.player.host.name} {(human.GetExt().tuoluo ? "变成了小陀螺" : "恢复正常")}");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -875,13 +875,13 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].ketouguai = allketouguai;
+                    Human.all[i].GetExt().ketouguai = allketouguai;
                 }
                 Chat.TiShi($"所有玩家 都 {(allketouguai ? "变成了 磕头怪" : "恢复了")}");
             }
             else
             {
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} 把 {human.player.host.name} {(human.ketouguai ? "变成了磕头怪" : "恢复正常")}");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} 把 {human.player.host.name} {(human.GetExt().ketouguai ? "变成了磕头怪" : "恢复正常")}");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -902,7 +902,7 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].diaosigui = alldiaosigui;
+                    Human.all[i].GetExt().diaosigui = alldiaosigui;
                     YxMod.DiaoSiGui(Human.all[i]);
                 }
                 Chat.TiShi($"所有玩家 都 {(alldiaosigui ? "变成了 吊死鬼" : "恢复了")}");
@@ -910,7 +910,7 @@ internal class UI_WanJia
             else
             {
                 YxMod.DiaoSiGui(human);
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} 把 {human.player.host.name} {(human.diaosigui ? "变成了吊死鬼" : "恢复正常")}");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} 把 {human.player.host.name} {(human.GetExt().diaosigui ? "变成了吊死鬼" : "恢复正常")}");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -931,13 +931,13 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].pangxie = allpangxie;
+                    Human.all[i].GetExt().pangxie = allpangxie;
                 }
                 Chat.TiShi($"所有玩家 都 {(allpangxie ? "变成了 大闸蟹" : "恢复了")}");
             }
             else
             {
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} 把 {human.player.host.name} {(human.pangxie ? "变成了大闸蟹" : "恢复正常")}");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} 把 {human.player.host.name} {(human.GetExt().pangxie ? "变成了大闸蟹" : "恢复正常")}");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -958,13 +958,13 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].qianshui = allqianshui;
+                    Human.all[i].GetExt().qianshui = allqianshui;
                 }
                 Chat.TiShi($"所有玩家 都 {(allqianshui ? "学会了" : "忘记了")} 潜水");
             }
             else
             {
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.qianshui ? "赋予" : "取消了")} {human.player.host.name} 潜水能力");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().qianshui ? "赋予" : "取消了")} {human.player.host.name} 潜水能力");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -986,7 +986,7 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].tuique = alltuique;
+                    Human.all[i].GetExt().tuique = alltuique;
                     YxMod.TuiQue(Human.all[i]);
                 }
                 Chat.TiShi($"所有玩家 都 {(alltuique ? "瘸了一条腿" : "被治好了")}");
@@ -994,7 +994,7 @@ internal class UI_WanJia
             else
             {
                 YxMod.TuiQue(human);
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.tuique ? "打瘸了" : "治好了")} {human.player.host.name} 一条腿");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().tuique ? "打瘸了" : "治好了")} {human.player.host.name} 一条腿");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -1015,7 +1015,7 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].tuiguai = alltuiguai;
+                    Human.all[i].GetExt().tuiguai = alltuiguai;
                     YxMod.TuiGuai(Human.all[i]);
                 }
                 Chat.TiShi($"所有玩家 都 {(alltuiguai ? "获得了" : "丢掉了")} 拐杖");
@@ -1023,7 +1023,7 @@ internal class UI_WanJia
             else
             {
                 YxMod.TuiGuai(human);
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.tuiguai ? "送给" : "收回了")} {human.player.host.name} 一支拐杖");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().tuiguai ? "送给" : "收回了")} {human.player.host.name} 一支拐杖");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -1044,8 +1044,8 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].chaichu = allchaichu;
-                    if (Human.all[i].chaichu)
+                    Human.all[i].GetExt().chaichu = allchaichu;
+                    if (Human.all[i].GetExt().chaichu)
                     {
                         Chat.TiShi(Human.all[i].player.host, "开启拆除,左手抓住目标，即可拆卸。");
                     }
@@ -1054,8 +1054,8 @@ internal class UI_WanJia
             }
             else
             {
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.chaichu ? "赋予" : "取消了")} {human.player.host.name} 拆除能力");
-                if (human.chaichu)
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().chaichu ? "赋予" : "取消了")} {human.player.host.name} 拆除能力");
+                if (human.GetExt().chaichu)
                 {
                     Chat.TiShi(human.player.host, "开启拆除,左手抓住目标，即可拆卸。");
                 }
@@ -1079,8 +1079,8 @@ internal class UI_WanJia
             {
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].kongqipao = allkongqipao;
-                    if (Human.all[i].kongqipao)
+                    Human.all[i].GetExt().kongqipao = allkongqipao;
+                    if (Human.all[i].GetExt().kongqipao)
                     {
                         Chat.TiShi(Human.all[i].player.host, "长按 鼠标左键 向前方打出空气炮，被击中的物体会被击飞。");
                     }
@@ -1089,8 +1089,8 @@ internal class UI_WanJia
             }
             else// 单个玩家控制
             {
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.kongqipao ? "赋予" : "取消了")} {human.player.host.name} 空气炮能力");
-                if (human.kongqipao)
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().kongqipao ? "赋予" : "取消了")} {human.player.host.name} 空气炮能力");
+                if (human.GetExt().kongqipao)
                 {
                     Chat.TiShi(human.player.host, "长按 鼠标左键 向前方打出空气炮，被击中的物体会被击飞。");
                 }
@@ -1116,14 +1116,14 @@ internal class UI_WanJia
                 YxMod.SuperJumpEnabled = allchaojitiao; // 同步全局状态
                 for (int i = 0; i < Human.all.Count; i++)
                 {
-                    Human.all[i].chaojitiao = allchaojitiao;
+                    Human.all[i].GetExt().chaojitiao = allchaojitiao;
                     YxMod.chaojitiao(Human.all[i]); // 为每个玩家应用超级跳效果
                 }
                 Chat.TiShi($"所有玩家 都 {(allchaojitiao ? "学会了" : "忘记了")} 超级跳");
             }
             else // 单个玩家控制
             {
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.chaojitiao ? "赋予" : "取消了")} {human.player.host.name} 超级跳能力");
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().chaojitiao ? "赋予" : "取消了")} {human.player.host.name} 超级跳能力");
             }
         }
         else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))

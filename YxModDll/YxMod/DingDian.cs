@@ -90,15 +90,15 @@ public class DingDian
                     //Chat.TiShi(Human.all[0].player.host, $"定点系统已关闭");
                     return;
                 }
-                if (!Human.all[0].dingdian.kaiguan)//Human.all[0].dingdian.
+                if (!Human.all[0].GetExt().dingdian.kaiguan)//Human.all[0].GetExt().dingdian.
                 {
                     //Chat.TiShi(Human.all[0].player.host, $"你的个人定点已关闭");
                     return;
                 }
-                //if (Human.all[0].dingdian.DingDianFangShi == 0 || Human.all[0].dingdian.DingDianFangShi == 2)
-                if (Human.all[0].dingdian.q)
+                //if (human.all[0].dingdian.GetExt().DingDianFangShi == 0 || human.all[0].dingdian.GetExt().DingDianFangShi == 2)
+                if (Human.all[0].GetExt().dingdian.q)
                 {
-                    Human.all[0].dingdian.CunDian(Human.all[0], true);//Human.all[0].dingdian.
+                    Human.all[0].GetExt().dingdian.CunDian(Human.all[0], true);//human.all[0].GetExt().dingdian.
                 }
             }
             else if (NetGame.isClient)
@@ -115,51 +115,51 @@ public class DingDian
     public void DingDian_Fun(Human human)
     {
 
-        if (!UI_GongNeng.dingdian_KaiGuan || !human.dingdian.kaiguan)
+        if (!UI_GongNeng.dingdian_KaiGuan || !human.GetExt().dingdian.kaiguan)
         {
             return;//Chat.TiShi(human.player.host, $"定点系统已关闭");
         }
 
         ChuShiHuaUpdata();
 
-        if (human.controls.walkLocalDirection.x >= 0f && human.dingdian.A_anxia)
+        if (human.controls.walkLocalDirection.x >= 0f && human.GetExt().dingdian.A_anxia)
         {
-            human.dingdian.A_anxia = false;
+            human.GetExt().dingdian.A_anxia = false;
         }
-        if (human.controls.walkLocalDirection.x <= 0f && human.dingdian.D_anxia)
+        if (human.controls.walkLocalDirection.x <= 0f && human.GetExt().dingdian.D_anxia)
         {
-            human.dingdian.D_anxia = false;
+            human.GetExt().dingdian.D_anxia = false;
         }
-        if (!human.controls.shootingFirework && human.dingdian.E_anxia)
+        if (!human.controls.shootingFirework && human.GetExt().dingdian.E_anxia)
         {
-            human.dingdian.E_anxia = false;
+            human.GetExt().dingdian.E_anxia = false;
         }
 
         if (human.controls.shootingFirework)
         {
             //S+E
-            if (human.controls.walkLocalDirection.z < 0f && !human.dingdian.E_anxia)
+            if (human.controls.walkLocalDirection.z < 0f && !human.GetExt().dingdian.E_anxia)
             {
-                human.dingdian.E_anxia = true;
-                if (human.dingdian.se)
+                human.GetExt().dingdian.E_anxia = true;
+                if (human.GetExt().dingdian.se)
                 {
                     CunDian(human, true);
                 }
             }
             //A+E
-            else if (human.controls.walkLocalDirection.x < 0f && !human.dingdian.A_anxia && !human.dingdian.E_anxia)//&& !human_ShuXing.A_anxia
+            else if (human.controls.walkLocalDirection.x < 0f && !human.GetExt().dingdian.A_anxia && !human.GetExt().dingdian.E_anxia)//&& !human_ShuXing.A_anxia
             {
-                human.dingdian.A_anxia = true;
+                human.GetExt().dingdian.A_anxia = true;
                 CunDian(human, false, -1);
             }
             //D+E
-            else if (human.controls.walkLocalDirection.x > 0f && !human.dingdian.D_anxia && !human.dingdian.E_anxia)// && !human_ShuXing.D_anxia
+            else if (human.controls.walkLocalDirection.x > 0f && !human.GetExt().dingdian.D_anxia && !human.GetExt().dingdian.E_anxia)// && !human_ShuXing.D_anxia
             {
-                human.dingdian.D_anxia = true;
+                human.GetExt().dingdian.D_anxia = true;
                 CunDian(human, false, 1);
             }
             //取点
-            else if (!human.dingdian.E_anxia)
+            else if (!human.GetExt().dingdian.E_anxia)
             {
                 CunDian(human, false);
             }

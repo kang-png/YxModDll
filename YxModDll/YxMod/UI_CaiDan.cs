@@ -388,7 +388,7 @@ internal class UI_CaiDan
             SteamUGC.StopPlaytimeTrackingForAllItems();
             Game.instance.UnloadLevel();
             //EnterMenu();
-            MenuSystem.instance.ShowMainMenu();
+            MenuSystem.instance.ShowMainMenu<MainMenu>(true);
             return;
         }
         if (App.state == AppSate.PlayLevel || App.state == AppSate.ClientPlayLevel || App.state == AppSate.ServerPlayLevel || App.state == AppSate.ClientWaitServerLoad)
@@ -673,11 +673,11 @@ internal class UI_CaiDan
         {
             unlock();
         }
-        else
-        {
-            StatsAndAchievements.ResetAchievements();
-            Chat.TiShi(NetGame.instance.local, "成就已重置");
-        }
+        //else
+        //{
+        //    StatsAndAchievements.ResetAchievements();
+        //    Chat.TiShi(NetGame.instance.local, "成就已重置");
+        //}
     }
     public static void unlock()//解锁成就
     {
