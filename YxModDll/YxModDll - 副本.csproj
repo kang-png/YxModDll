@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.NET.ILLink.Tasks.9.0.5\build\Microsoft.NET.ILLink.Tasks.props" Condition="Exists('..\packages\Microsoft.NET.ILLink.Tasks.9.0.5\build\Microsoft.NET.ILLink.Tasks.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -58,7 +59,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Core" />
     <!-- Unity 相关dll引用 -->
     <Reference Include="ProBuilderCore-Unity5">
@@ -69,6 +69,7 @@
       <HintPath>libs\ProBuilderMeshOps-Unity5.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Numerics" />
     <Reference Include="UnityEngine.AnimationModule">
       <HintPath>libs\UnityEngine.AnimationModule.dll</HintPath>
       <Private>False</Private>
@@ -214,8 +215,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <!-- 拷贝合并后的 DLL 到游戏目录 -->
-  <Target Name="PostBuild" AfterTargets="ILRepack">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <!-- 复制到游戏目录 -->
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="C:\SteamLibrary\steamapps\common\Human Fall Flat" />
   </Target>
@@ -226,5 +226,6 @@
       <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.43\build\ILRepack.Lib.MSBuild.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILRepack.Lib.MSBuild.Task.2.0.43\build\ILRepack.Lib.MSBuild.Task.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.NET.ILLink.Tasks.9.0.5\build\Microsoft.NET.ILLink.Tasks.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NET.ILLink.Tasks.9.0.5\build\Microsoft.NET.ILLink.Tasks.props'))" />
   </Target>
 </Project>

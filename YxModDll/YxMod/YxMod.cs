@@ -254,14 +254,19 @@ namespace YxModDll.Mod
 
             var go = NetGame.instance.gameObject;
 
-            go.AddComponent<Patcher_MenuSystem>();
-            go.AddComponent<Patcher_NetChat>();
-            go.AddComponent<Patcher_NetTransportSteam>();
+            go.AddComponent<Patcher_App>();
             go.AddComponent<Patcher_LevelInformationBox>();
             go.AddComponent<Patcher_LevelRepository>();
-            go.AddComponent<Patcher_App>();
+            go.AddComponent<Patcher_MenuSystem>();
             go.AddComponent<Patcher_NameTag>();
+            go.AddComponent<Patcher_NetChat>();
+            go.AddComponent<Patcher_NetTransportSteam>();
             go.AddComponent<Patcher_PlayerManager>();
+
+            //go.AddComponent<Patcher_Human>();
+            //go.AddComponent<Patcher_NetGame>();
+            //go.AddComponent<Patcher_NetPlayer>();
+
             //StartCoroutine(JianChaGengXin());//检查更新
             //YanZheng_OK = true;
             NetGame.instance.gameObject.AddComponent<UI_Main>();

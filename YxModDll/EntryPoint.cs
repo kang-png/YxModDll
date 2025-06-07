@@ -9,26 +9,25 @@ namespace Doorstop
     {
         private void Awake()
         {
-            Debug.Log("[YxMod] ModEntry Awake - starting delayed injection");
-            StartCoroutine(InjectWhenReady());
+            Debug.Log("[YxMod] ModEntry Awake - starting delayed attachment");
+            StartCoroutine(AttachWhenReady());
         }
 
-        private static bool _injected = false;
+        private static bool _attached = false;
 
-        private IEnumerator InjectWhenReady()
+        private IEnumerator AttachWhenReady()
         {
-            if (_injected) yield break;
+            if (_attached) yield break;
 
             while (NetGame.instance == null || Human.all.Count == 0)
                 yield return null;
 
-            if (_injected) yield break; // 防止双重注入
-            _injected = true;
+            if (_attached) yield break; // 防止双重加载
+            _attached = true;
 
-            Debug.Log("[YxMod] Injecting YxMod.");
+            Debug.Log("[YxMod] Attaching YxMod.");
             NetGame.instance.gameObject.AddComponent<YxModDll.Mod.YxMod>();
         }
-
     }
 
     public static class Entrypoint
