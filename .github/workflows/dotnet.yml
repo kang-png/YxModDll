@@ -1,0 +1,32 @@
+name: Build YxModDll
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+      with:
+        vs-version: 'latest'
+
+    - name: Restore and Build project
+      run: >
+        msbuild "YxModDll/YxModDll.csproj" /t:Restore;Build /p:Configuration=Release
+      shell: cmd
+
+
+    - name: Upload artifact (YxModDll.dll)
+      uses: actions/upload-artifact@v4
+      with:
+        name: YxModDll
+        path: YxModDll/YxModDll/bin/Release/YxModDll.dll
