@@ -19,11 +19,8 @@ jobs:
       with:
         vs-version: 'latest'
 
-    - name: Restore NuGet packages
-      run: nuget restore YxModDll/YxModDll.csproj
-
     - name: Build project
-      run: msbuild YxModDll/YxModDll.csproj /p:Configuration=Release
+      run: msbuild YxModDll/YxModDll.csproj /t:Restore;Build /p:Configuration=Release
 
     - name: Upload artifact (YxModDll.dll)
       uses: actions/upload-artifact@v4
