@@ -20,9 +20,9 @@ jobs:
         vs-version: 'latest'
 
     - name: Restore and Build project
-    run: >
-      msbuild "YxModDll/YxModDll.csproj" /t:Restore;Build /p:Configuration=Release
-    shell: cmd
+      run: >
+        msbuild "YxModDll/YxModDll.csproj" /t:Restore;Build /p:Configuration=Release
+      shell: cmd
 
 
     - name: Upload artifact (YxModDll.dll)
