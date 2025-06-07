@@ -20,6 +20,9 @@ jobs:
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1
 
+    - name: Restore packages
+      run: nuget restore "YxModDll/YxModDll.csproj"
+
     - name: Build project
       run:  msbuild "YxModDll/YxModDll.csproj" /p:Configuration=Release
 
