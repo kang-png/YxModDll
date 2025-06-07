@@ -30,4 +30,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: YxModDll
-        path: YxModDll/bin/Release/YxModDll.dll
+        path: "C:\SteamLibrary\steamapps\common\Human Fall Flat\YxModDll.dll"
