@@ -263,7 +263,7 @@ namespace YxModDll.Mod
             go.AddComponent<Patcher_NetTransportSteam>();
             go.AddComponent<Patcher_PlayerManager>();
 
-            //go.AddComponent<Patcher_Human>();
+            go.AddComponent<Patcher_Human>();
             //go.AddComponent<Patcher_NetGame>();
             //go.AddComponent<Patcher_NetPlayer>();
 
