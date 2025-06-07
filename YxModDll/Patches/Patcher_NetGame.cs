@@ -11,23 +11,23 @@ namespace YxModDll.Patches
         {
             try
             {
-                Patcher2.MethodPatch(
-                    typeof(NetGame),
-                    "OnServerReceive",
-                    new[] { typeof(NetHost), typeof(NetStream) },
-                    typeof(NetGameHandler),
-                    nameof(NetGameHandler.OnServerReceive),
-                    new[] { typeof(NetGame), typeof(NetHost), typeof(NetStream) }
-                );
+                //Patcher2.MethodPatch(
+                //    typeof(NetGame),
+                //    "OnServerReceive",
+                //    new[] { typeof(NetHost), typeof(NetStream) },
+                //    typeof(NetGameHandler),
+                //    nameof(NetGameHandler.OnServerReceive),
+                //    new[] { typeof(NetGame), typeof(NetHost), typeof(NetStream) }
+                //);
 
-                Patcher2.MethodPatch(
-                    typeof(NetGame),
-                    "OnClientReceive",
-                    new[] { typeof(object), typeof(NetStream) },
-                    typeof(NetGameHandler),
-                    nameof(NetGameHandler.OnClientReceive),
-                    new[] { typeof(NetGame), typeof(object), typeof(NetStream) }
-                );
+                //Patcher2.MethodPatch(
+                //    typeof(NetGame),
+                //    "OnClientReceive",
+                //    new[] { typeof(object), typeof(NetStream) },
+                //    typeof(NetGameHandler),
+                //    nameof(NetGameHandler.OnClientReceive),
+                //    new[] { typeof(NetGame), typeof(object), typeof(NetStream) }
+                //);
 
                 Debug.Log("[YxMod] NetGame patched successfully.");
             }

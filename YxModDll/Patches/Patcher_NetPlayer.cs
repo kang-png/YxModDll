@@ -44,7 +44,7 @@ namespace YxModDll.Patches
 
 
             //Patcher2.MethodPatch(typeof(NetPlayer), "PreFixedUpdate", null, typeof(Patcher_NetPlayer), "NetPlayer_PreFixedUpdate", new Type[] { typeof(NetPlayer) });
-            Patcher2.MethodPatch(typeof(NetPlayer), "PreFixedUpdate", null, typeof(Patcher_NetPlayer), "NetPlayer_PreFixedUpdate", null);
+            //Patcher2.MethodPatch(typeof(NetPlayer), "PreFixedUpdate", null, typeof(Patcher_NetPlayer), "NetPlayer_PreFixedUpdate", null);
             //// 创建补丁实例
             //var patchInstance = new Patcher_NetPlayer();
             //Patcher2.MethodPatch(typeof(NetPlayer), "PreFixedUpdate", null, patchInstance, "NetPlayer_PreFixedUpdate", new Type[] { typeof(NetPlayer) });

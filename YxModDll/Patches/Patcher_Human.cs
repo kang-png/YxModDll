@@ -13,32 +13,32 @@ namespace YxModDll.Patches
             _humanHead = typeof(Human).GetField("humanHead", BindingFlags.Instance | BindingFlags.NonPublic);
             try
             {
-                Patcher2.MethodPatch(
-                    typeof(Human),
-                    "Initialize",
-                    new System.Type[] { },
-                    typeof(Patcher_Human),
-                    nameof(Patcher_Human.Initialize_Replace),
-                    new System.Type[] { typeof(Human) }
-                );
+                //Patcher2.MethodPatch(
+                //    typeof(Human),
+                //    "Initialize",
+                //    new System.Type[] { },
+                //    typeof(Patcher_Human),
+                //    nameof(Patcher_Human.Initialize_Replace),
+                //    new System.Type[] { typeof(Human) }
+                //);
 
-                Patcher2.MethodPatch(
-                    typeof(Human),
-                    "FixedUpdate",
-                    new System.Type[] { },
-                    typeof(Patcher_Human),
-                    nameof(Patcher_Human.FixedUpdate_Replace),
-                    new System.Type[] { typeof(Human) }
-                );
+                //Patcher2.MethodPatch(
+                //    typeof(Human),
+                //    "FixedUpdate",
+                //    new System.Type[] { },
+                //    typeof(Patcher_Human),
+                //    nameof(Patcher_Human.FixedUpdate_Replace),
+                //    new System.Type[] { typeof(Human) }
+                //);
 
-                Patcher2.MethodPatch(
-                    typeof(Human),
-                    "ProcessInput",
-                    new System.Type[] { },
-                    typeof(Patcher_Human),
-                    nameof(Patcher_Human.ProcessInput_Replace),
-                    new System.Type[] { typeof(Human) }
-                );
+                //Patcher2.MethodPatch(
+                //    typeof(Human),
+                //    "ProcessInput",
+                //    new System.Type[] { },
+                //    typeof(Patcher_Human),
+                //    nameof(Patcher_Human.ProcessInput_Replace),
+                //    new System.Type[] { typeof(Human) }
+                //);
 
                 Debug.Log("[YxMod] Human patch (full replace) success.");
             }

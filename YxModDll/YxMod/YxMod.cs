@@ -1484,15 +1484,15 @@ namespace YxModDll.Mod
                 //float walkRight = human.player.walkRight;
                 //bool jump = human.player.jump;
                 //bool shooting = human.player.shooting;
-                bool playDead = human.player.GetAccessor().playDead;
+                // playDead = human.player.GetAccessor().playDead;
                 if (human.controls.walkSpeed != 0f)
                 {
                     human.SetPosition(human.transform.position + human.player.controls.walkDirection * 0.3f + new Vector3(0f, 0.01f, 0f));
                 }
-                if (playDead)
-                {
-                    human.SetPosition(human.transform.position + new Vector3(0f, -0.15f, 0f));
-                }
+                //if (playDead)
+                //{
+                //    human.SetPosition(human.transform.position + new Vector3(0f, -0.15f, 0f));
+                //}
             }
         }
         public static void FeiTian_Fun(Human human)
