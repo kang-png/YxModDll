@@ -30,4 +30,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: YxModDll
-        path: YxModDll/YxModDll/bin/Release/YxModDll.dll
+        path: YxModDll/bin/Release/YxModDll.dll
