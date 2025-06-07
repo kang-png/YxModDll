@@ -24,10 +24,15 @@ jobs:
       run: nuget restore "YxModDll.sln"
 
     - name: Build project
-      run:  msbuild "YxModDll/YxModDll.csproj" /p:Configuration=Release
+      run: msbuild "YxModDll/YxModDll.csproj" /p:Configuration=Release
 
-    - name: Upload artifact (YxModDll.dll)
+    - name: Compress output as UTF-8 ZIP
+      run: |
+        mkdir zip_output
+        Compress-Archive -Path "YxModDll\bin\Release\YxModDll.dll" -DestinationPath "zip_output\YxModDll.zip"
+
+    - name: Upload artifact (YxModDll.zip)
       uses: actions/upload-artifact@v4
       with:
-        name: YxModDll
-        path: YxModDll\bin\Release\YxModDll.dll
+        name: YxModDll-ZIP
+        path: zip_output/YxModDll.zip
