@@ -117,6 +117,16 @@ namespace YxModDll.Mod
 
         public void DingDian_Fun(Human human)
         {
+            var ext = human.GetExt();
+
+            // 安全检查（防止 null）
+            if (ext == null || ext.dingdian == null)
+            {
+                Debug.LogWarning("[YxMod] ext 或 ext.dingdian 未初始化，自动初始化");
+                ext.human = human;
+                ext.YxModChuShiHua();
+                return; // 可选：跳过本帧执行，下一帧再跑
+            }
 
             if (!UI_GongNeng.dingdian_KaiGuan || !human.GetExt().dingdian.kaiguan)
             {

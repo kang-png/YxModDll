@@ -251,8 +251,17 @@ namespace YxModDll.Mod
         private void Awake()
         {
 
-            NetGame.instance.gameObject.AddComponent <Patcher_MenuSystem>();
-            NetGame.instance.gameObject.AddComponent <Patcher_NetChat>();
+
+            var go = NetGame.instance.gameObject;
+
+            go.AddComponent<Patcher_MenuSystem>();
+            go.AddComponent<Patcher_NetChat>();
+            go.AddComponent<Patcher_NetTransportSteam>();
+            go.AddComponent<Patcher_LevelInformationBox>();
+            go.AddComponent<Patcher_LevelRepository>();
+            go.AddComponent<Patcher_App>();
+            go.AddComponent<Patcher_NameTag>();
+            go.AddComponent<Patcher_PlayerManager>();
             //StartCoroutine(JianChaGengXin());//检查更新
             //YanZheng_OK = true;
             NetGame.instance.gameObject.AddComponent<UI_Main>();
