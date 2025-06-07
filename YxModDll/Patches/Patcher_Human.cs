@@ -72,6 +72,18 @@ namespace YxModDll.Patches
         }
         public static void Human_FixedUpdate(Human instance)
         {
+
+
+            var ext1 = HumanStateExtHelper.GetExt(instance);
+
+            // 确保 ext.human 和 ext.dingdian 初始化过
+            if (ext1.human == null || ext1.dingdian == null)
+            {
+                Debug.LogWarning("[YxMod] ext.human 或 dingdian 未初始化，正在执行懒加载初始化");
+                ext1.human = instance;
+                ext1.YxModChuShiHua();
+            }
+
             var thisFrameHit = (float)_thisFrameHit.GetValue(instance);
             var lastFrameHit = (float)_lastFrameHit.GetValue(instance);
             var jumpDelay = (float)_jumpDelay.GetValue(instance);
