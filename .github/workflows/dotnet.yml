@@ -16,14 +16,12 @@ jobs:
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
-      with:
-        vs-version: 'latest'
 
-    - name: Restore and Build project
-      run: >
-        msbuild "YxModDll/YxModDll.csproj" /t:Restore;Build /p:Configuration=Release
-      shell: cmd
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
 
+    - name: Build project
+      run:  msbuild "YxModDll/YxModDll.csproj" /p:Configuration=Release
 
     - name: Upload artifact (YxModDll.dll)
       uses: actions/upload-artifact@v4
