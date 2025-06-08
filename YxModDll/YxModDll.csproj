@@ -194,6 +194,7 @@
     <Compile Include="Patches\Patcher_NetTransportSteam.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="YxMod\Chat.cs" />
+    <Compile Include="YxMod\ColorfulSpeek.cs" />
     <Compile Include="YxMod\DingDian.cs" />
     <Compile Include="YxMod\FPSCounter.cs" />
     <Compile Include="YxMod\KeyDisplayUI.cs" />

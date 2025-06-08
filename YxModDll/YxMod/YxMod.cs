@@ -51,7 +51,7 @@ namespace YxModDll.Mod
 
         //public static bool KeYong;
 
-        public static float BanBenHao = 2.8f;//当前版本号,每次更新需要手动修改
+        public static float BanBenHao = 3.0f;//当前版本号,每次更新需要手动修改
 
         //public static float newBanBenHao;
         //public static bool QiangZhiGengXin;

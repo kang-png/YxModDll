@@ -345,9 +345,43 @@ namespace YxModDll.Patches
         {
             if (!NetGame.isClient && !ReplayRecorder.isPlaying)
             {
-                //if (instance.controls.unconscious)
+                if (instance.controls.unconscious)
+                {
+                    if (instance.GetExt().numY == 0)
+                    {
+                        instance.MakeUnconscious();
+                    }
+                    else if (instance.GetExt().numY == 1)//坐下
+                    {
+                        YxMod.ZuoXia(instance);
+                    }
+                    else if (instance.GetExt().numY == 2)//跪下
+                    {
+                        YxMod.ZuoXia(instance, true);
+                    }
+                    else if (instance.GetExt().numY == 3)//一字马
+                    {
+                        YxMod.YiZiMa(instance);
+                    }
+                    else if (instance.GetExt().numY == 4)//踢腿
+                    {
+                        YxMod.TiTui(instance);
+                    }
+                    else if (instance.GetExt().numY == 5)//拳王
+                    {
+                        instance.GetExt().quanji = true;
+                        YxMod.QuanJiAnimation(instance);
+                    }
+                }
+                else
+                {
+                    instance.GetExt().yititui = false;
+                    instance.GetExt().titui = false;
+                    instance.GetExt().quanji = false;
+                }
+                //if (controls.unconscious)
                 //{
-                //    instance. MakeUnconscious();
+                //	MakeUnconscious();
                 //}
                 if (instance.motionControl2.enabled)
                 {

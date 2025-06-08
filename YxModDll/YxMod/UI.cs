@@ -307,7 +307,7 @@ namespace YxModDll.Mod
 
         }
 
-    public static void CreatAnNiu(string name, bool chuizhijuzhong = true, Action callback = null)//一般按钮
+        public static void CreatAnNiu(string name, bool chuizhijuzhong = true, Action callback = null)//一般按钮
         {
             if (chuizhijuzhong)
             {
