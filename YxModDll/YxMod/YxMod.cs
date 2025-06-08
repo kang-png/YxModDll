@@ -355,7 +355,7 @@ namespace YxModDll.Mod
 
             var go = NetGame.instance.gameObject;
 
-            go.AddComponent<Patcher_App>();
+            //go.AddComponent<Patcher_App>();
             go.AddComponent<Patcher_LevelInformationBox>();
             go.AddComponent<Patcher_LevelRepository>();
             go.AddComponent<Patcher_MenuSystem>();
