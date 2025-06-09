@@ -20,7 +20,7 @@ namespace YxModDll.Mod
         private static Vector2 neirong_scrollPosition;
 
 
-        private static int xianglist_kuan = 120;
+        private static int xianglist_kuan = 128;
         public static int shezhiID = 0;
         public static string shezhiIdName = "定点设置";
 
@@ -149,10 +149,17 @@ namespace YxModDll.Mod
             GUILayout.BeginArea(xianglist);
             xiang_scrollPosition = GUILayout.BeginScrollView(xiang_scrollPosition, GUILayout.ExpandWidth(true)); //开始滚动视图区域
 
-            int i = GUILayout.SelectionGrid(shezhiID, shezhiNames, 1, UI.styleSelectionGrid());
+            // 添加：对 shezhiNames 做颜色处理
+            string[] colorfulNames = new string[shezhiNames.Length];
+            for (int j = 0; j < shezhiNames.Length; j++)
+            {
+                colorfulNames[j] = ColorfulSpeek.colorshows(shezhiNames[j]);
+            }
+
+            int i = GUILayout.SelectionGrid(shezhiID, colorfulNames, 1, UI.styleSelectionGrid());
             //if (shezhiID != i)
             //{
-                shezhiID = i;
+            shezhiID = i;
                 shezhiIdName = shezhiNames[shezhiID];
                 //Debug.Log(shezhiID + " " + shezhiIdName);
             //}
@@ -192,8 +199,20 @@ namespace YxModDll.Mod
                     GUILayout.Space(5);
                     UI.CreatFenGeXian();//分割线
                     GUILayout.Space(5);
+                    // 给 daxiaoNames 加颜色
+                    string[] daxiaoNamesColored = new string[daxiaoNames.Length];
+                    for (int i1 = 0; i1 < daxiaoNames.Length; i1++)
+                    {
+                        daxiaoNamesColored[i1] = ColorfulSpeek.colorshows(daxiaoNames[i1]);
+                    }
+                    // 给 yanseNames 加颜色
+                    string[] yanseNamesColored = new string[yanseNames.Length];
+                    for (int i2 = 0; i2 < yanseNames.Length; i2++)
+                    {
+                        yanseNamesColored[i2] = ColorfulSpeek.colorshows(yanseNames[i2]);
+                    }
 
-                    UI.CreatAnNiu_AnXia("<i><b>名字设置>></b></i>", ref MingZiSheZhi, false, SetMingZiSheZhi);
+                    UI.CreatAnNiu_AnXia("名字设置>>", ref MingZiSheZhi, false, SetMingZiSheZhi);
                     if (MingZiSheZhi)
                     {
                         UI.CreatAnNiu_AnXia("自定义代码", ref MingZiZiDingYi, false, SetMingZiZiDingYi);
@@ -216,9 +235,9 @@ namespace YxModDll.Mod
                             GUILayout.EndHorizontal();
 
                             GUILayout.BeginHorizontal();
-                            GUILayout.Label($"<size=16>大小设置：</size>");
+                            GUILayout.Label(ColorfulSpeek.colorshows("大小设置："));
 
-                            int daxiaoid = GUILayout.SelectionGrid(MingZiDaXiaoID, daxiaoNames, 4, UI.styleSelectionGrid());
+                            int daxiaoid = GUILayout.SelectionGrid(MingZiDaXiaoID, daxiaoNamesColored , 4, UI.styleSelectionGrid());
                             if (MingZiDaXiaoID != daxiaoid)
                             {
                                 MingZiDaXiaoID = daxiaoid;
@@ -254,9 +273,8 @@ namespace YxModDll.Mod
                             }
                             GUILayout.EndHorizontal();
                             GUILayout.BeginHorizontal();
-                            GUILayout.Label($"<size=16>颜色设置：</size>");
-
-                            int yanseid = GUILayout.SelectionGrid(MingZiYanSeID, yanseNames, 4, UI.styleSelectionGrid());
+                            GUILayout.Label(ColorfulSpeek.colorshows("颜色设置："));
+                            int yanseid = GUILayout.SelectionGrid(MingZiYanSeID, yanseNamesColored, 4, UI.styleSelectionGrid());
                             if (MingZiYanSeID != yanseid)
                             {
                                 MingZiYanSeID = yanseid;
@@ -292,7 +310,7 @@ namespace YxModDll.Mod
                     UI.CreatFenGeXian();//分割线
                     GUILayout.Space(5);
 
-                    UI.CreatAnNiu_AnXia("<i><b>发言设置>></b></i>", ref FaYanSheZhi, false, SetFaYanSheZhi);
+                    UI.CreatAnNiu_AnXia("发言设置>>", ref FaYanSheZhi, false, SetFaYanSheZhi);
                     if (FaYanSheZhi)
                     {
                         GUILayout.BeginHorizontal();
@@ -303,9 +321,9 @@ namespace YxModDll.Mod
 
 
                         GUILayout.BeginHorizontal();
-                        GUILayout.Label($"<size=16>大小设置：</size>");
+                        GUILayout.Label(ColorfulSpeek.colorshows("大小设置："));
 
-                        int daxiaoid = GUILayout.SelectionGrid(FaYanDaXiaoID, daxiaoNames, 4, UI.styleSelectionGrid());
+                        int daxiaoid = GUILayout.SelectionGrid(FaYanDaXiaoID, daxiaoNamesColored , 4, UI.styleSelectionGrid());
                         if (FaYanDaXiaoID != daxiaoid)
                         {
                             FaYanDaXiaoID = daxiaoid;
@@ -340,9 +358,9 @@ namespace YxModDll.Mod
                         }
                         GUILayout.EndHorizontal();
                         GUILayout.BeginHorizontal();
-                        GUILayout.Label($"<size=16>颜色设置：</size>");
+                        GUILayout.Label(ColorfulSpeek.colorshows("颜色设置："));
 
-                        int yanseid = GUILayout.SelectionGrid(FaYanYanSeID, yanseNames, 4, UI.styleSelectionGrid());
+                        int yanseid = GUILayout.SelectionGrid(FaYanYanSeID, yanseNamesColored, 4, UI.styleSelectionGrid());
                         if (FaYanYanSeID != yanseid)
                         {
                             FaYanYanSeID = yanseid;
@@ -412,9 +430,19 @@ namespace YxModDll.Mod
                     {
                         UI.CreatShuZhi("无动作进入挂机(分钟)", ref guajishijian, 1, 10, 1,SetGuaJiShiJian);
                         GUILayout.BeginHorizontal();
-                        GUILayout.Label($"<size=16>动作</size>");
+                        // 彩色处理后的文本，去掉原来的 <size=16>
+                        string coloredLabel = ColorfulSpeek.colorshows("动作");
+                        GUILayout.Label(coloredLabel);
 
-                        int dongzuoid = GUILayout.SelectionGrid(guajidongzuoID, guajidongzuoNames, 5, UI.styleSelectionGrid());
+                        // guajidongzuoNames 数组里每个元素也要做颜色处理，先生成新数组
+                        string[] colorfulDongzuoNames = new string[guajidongzuoNames.Length];
+                        for (int i1 = 0; i1 < guajidongzuoNames.Length; i1++)
+                        {
+                            colorfulDongzuoNames[i1] = ColorfulSpeek.colorshows(guajidongzuoNames[i1]);
+                        }
+
+                        int dongzuoid = GUILayout.SelectionGrid(guajidongzuoID, colorfulDongzuoNames, 5, UI.styleSelectionGrid());
+
                         if (guajidongzuoID != dongzuoid)
                         {
                             guajidongzuoID = dongzuoid;

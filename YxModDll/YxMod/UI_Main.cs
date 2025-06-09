@@ -46,7 +46,7 @@ namespace YxModDll.Mod
 
         public static bool ShowShuBiao;
 
-        private static int mainUI_kuan = 800;
+        private static int mainUI_kuan = 910;
         private static int mainUI_gao = 35;
         private static int mainUI_left = (Screen.width - mainUI_kuan) / 2;
         private static int mainUI_top = 0;
@@ -58,12 +58,12 @@ namespace YxModDll.Mod
         private static int zhuangtaiUI_juli = 20;//状态栏下方空白
         private static int chuangtiUI_juli = 5;//窗体之间缝隙
 
-        private static int caidanUI_kuan = 150;
+        private static int caidanUI_kuan = 180;
         private static int caidanUI_gao = Screen.height - mainUI_gao - zhuangtaiUI_gao - mainUI_juli - zhuangtaiUI_juli;//550
         private static int caidanUI_left = mainUI_left;
         private static int caidanUI_top = mainUI_top + mainUI_gao + mainUI_juli;
 
-        private static int gongnengUI_kuan = 200;//长度
+        private static int gongnengUI_kuan = 240;//长度
         private static int gongnengUI_gao = caidanUI_gao / 2 - chuangtiUI_juli;//400;//高度
         private static int gongnengUI_left = mainUI_left + mainUI_kuan - gongnengUI_kuan;//长度
         private static int gongnengUI_top = caidanUI_top;//400;//高度
@@ -83,7 +83,7 @@ namespace YxModDll.Mod
         public static int shezhiUI_left = wanjiaUI_left;
         public static int shezhiUI_top = wanjiaUI_top + wanjiaUI_gao + chuangtiUI_juli;
 
-        public static int chuansongUI_kuan = 200;
+        public static int chuansongUI_kuan = 230;
         public static int chuansongUI_gao =  caidanUI_gao / 2 - chuangtiUI_juli;//400
         public static int chuansongUI_left = caidanUI_left + caidanUI_kuan + chuangtiUI_juli;//caidanUI_left - chuansongUI_kuan - chuangtiUI_juli;
         public static int chuansongUI_top = caidanUI_top;
@@ -436,7 +436,7 @@ namespace YxModDll.Mod
         {
             GUILayout.BeginVertical();
             GUILayout.FlexibleSpace();
-            GUILayout.Label($"<b><size=16>YxMod <i><color=grey>{YxMod.BanBenHao:0.0}</color></i></size></b>");
+            GUILayout.Label($"<b><size=20>YxMod <i><color=grey>{YxMod.BanBenHao:0.0}</color></i></size></b>");
             GUILayout.FlexibleSpace();
             GUILayout.EndVertical();
             GUILayout.FlexibleSpace();
@@ -463,12 +463,12 @@ namespace YxModDll.Mod
             styleButton.normal.textColor = new Color32(220, 220, 220, 255);// Color.white;
             styleButton.hover.textColor = Color.white;
             styleButton.alignment = TextAnchor.MiddleCenter;
-            styleButton.fontSize = 16;
+            styleButton.fontSize = 20;
 
             GUILayout.FlexibleSpace();
             GUILayout.BeginVertical();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Home", styleButton, GUILayout.Width(55)))
+            if (GUILayout.Button("Home", styleButton, GUILayout.Width(64)))
             {
                 ShowCaiDanUI2 = ShowCaiDanUI; ShowCaiDanUI = false;
                 ShowGongNengUI2 = ShowGongNengUI; ShowGongNengUI = false;

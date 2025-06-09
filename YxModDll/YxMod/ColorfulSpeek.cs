@@ -378,6 +378,10 @@ namespace YxModDll.Mod
         {
             if (ColorfulSpeek.Gradual_Change)
             {
+                if (msg.Contains("<color="))
+                {
+                    return msg;
+                }
                 string[] list = ColorfulSpeek.WordSeed.list;
                 string text = "";
                 int num = ColorfulSpeek.Size_Words;

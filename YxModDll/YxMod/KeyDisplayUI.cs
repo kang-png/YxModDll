@@ -42,7 +42,7 @@ namespace YxModDll.Mod
             GUIStyle gUIStyle = new GUIStyle((GUI.skin).button);
             (gUIStyle).normal.background = MakeTex(2, 2, new Color(1f, 1f, 1f, 0.6f));
             gUIStyle.normal.textColor = Color.black;
-            gUIStyle.fontSize = 16;
+            gUIStyle.fontSize = 20;
             gUIStyle.border = new RectOffset(10, 10, 10, 10);
             GUI.Box(position, keyText, gUIStyle);
             GUI.DrawTexture(position, keyTexture, ScaleMode.ScaleToFit, alphaBlend: true);

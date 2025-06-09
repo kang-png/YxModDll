@@ -129,7 +129,7 @@ namespace YxModDll.Mod
         {
             GUILayout.BeginVertical();
             GUILayout.FlexibleSpace();
-            GUILayout.Label($"<b><size=16>{biaoti}</size></b>");
+            GUILayout.Label($"<b><size=20>{biaoti}</size></b>");
             GUILayout.FlexibleSpace();
             GUILayout.EndVertical();
         }
@@ -142,7 +142,7 @@ namespace YxModDll.Mod
             styleButton.normal.textColor = new Color32(220, 220, 220, 255);// Color.white;
             styleButton.hover.textColor = Color.white;
             styleButton.alignment = TextAnchor.MiddleCenter;
-            styleButton.fontSize = 16;
+            styleButton.fontSize = 20;
 
             GUILayout.BeginVertical();
             GUILayout.FlexibleSpace();

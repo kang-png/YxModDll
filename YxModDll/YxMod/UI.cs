@@ -47,7 +47,8 @@ namespace YxModDll.Mod
             styleButton.normal.textColor = new Color32(220, 220, 220, 255);// Color.white;
             styleButton.hover.textColor = Color.white;
             styleButton.alignment = TextAnchor.MiddleLeft;// MiddleCenter;
-            styleButton.fontSize = 16;
+            styleButton.fontSize = 20;
+            styleButton.richText = true; // ✅ 开启富文本支持（必须）
             return styleButton;
         }
         public static int CreatHumanList(int index,bool quanyuankongzhi=true)
@@ -63,7 +64,7 @@ namespace YxModDll.Mod
                 if (quanyuankongzhi)
                 {
                     string quanyuan = "全员控制";
-                    AddHumanListButton(quanyuan);
+                    AddHumanListButton(ColorfulSpeek.colorshows(quanyuan));
                 }
 
                 string fzname = $"1.{NetGame.instance.server.name}";
@@ -72,7 +73,7 @@ namespace YxModDll.Mod
                 //    fzname = $"★{fzname}";
                 //}
 
-                AddHumanListButton(fzname);
+                AddHumanListButton(ColorfulSpeek.colorshows(fzname));
             
                 //if(NetGame.isServer)
                 //{
@@ -89,7 +90,7 @@ namespace YxModDll.Mod
                     //{
                     //    name = $"☆{name}";
                     //}
-                    AddHumanListButton(name);
+                    AddHumanListButton(ColorfulSpeek.colorshows(name));
                     //if(NetGame.isClient && hosts[j].hostId == NetGame.instance.local.hostId)
                     //{
                     //    ZiJiId = j;
@@ -135,7 +136,7 @@ namespace YxModDll.Mod
             styleButton.normal.textColor = new Color32(220, 220, 220, 255);// Color.white;
             styleButton.hover.textColor = Color.white;
             styleButton.alignment = TextAnchor.MiddleCenter;
-            styleButton.fontSize = 16;
+            styleButton.fontSize = 20;
             return styleButton;
         }
 
@@ -148,7 +149,7 @@ namespace YxModDll.Mod
             styleButton.normal.textColor = Color.white;
             styleButton.hover.textColor = Color.black;
             styleButton.alignment = TextAnchor.MiddleCenter;
-            styleButton.fontSize = 16;
+            styleButton.fontSize = 20;
 
             return styleButton;
         }
@@ -167,7 +168,7 @@ namespace YxModDll.Mod
             //style.normal.background = MakeTex(500, 50, Color.white); // 创建一个纯白色的背景纹理
             styleTxt.normal.textColor = Color.white; // 设置字体颜色为黑色
             styleTxt.alignment = TextAnchor.MiddleLeft;
-            styleTxt.fontSize = 16;
+            styleTxt.fontSize = 20;
             return styleTxt;
         }
         public static GUIStyle SetLabelStyle_JuZhong()
@@ -176,16 +177,16 @@ namespace YxModDll.Mod
             GUIStyle style = new GUIStyle(GUI.skin.label);
             style.alignment = TextAnchor.MiddleCenter; // 设置文本居中对齐
             style.normal.textColor = Color.gray;
-            style.fontSize = 16;
+            style.fontSize = 20;
             return style;
         }
         public static void CreatShuZhi(string name, ref float zhi, float min, float max, float add, Action callback = null)//创建加减数值的按钮
         {
             GUILayout.BeginHorizontal();
             ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
-            GUILayout.Label($"<size=16>{name}：</size>");
+            GUILayout.Label(ColorfulSpeek.colorshows(name));
             //GUILayout.Space(5);
-            if (GUILayout.Button("-", UI.styleButton()))
+            if (GUILayout.Button(ColorfulSpeek.colorshows("-"), UI.styleButton()))
             {
                 zhi -= add;
                 zhi = float.Parse(zhi.ToString("0.0"));
@@ -199,9 +200,9 @@ namespace YxModDll.Mod
                 }
             }
 
-            GUILayout.Label($"{zhi:0.0}", SetLabelStyle_JuZhong(), GUILayout.Width(30));
+            GUILayout.Label(ColorfulSpeek.colorshows(zhi.ToString("0.0")), SetLabelStyle_JuZhong(), GUILayout.Width(30));
 
-            if (GUILayout.Button("+", UI.styleButton()))
+            if (GUILayout.Button(ColorfulSpeek.colorshows("+"), UI.styleButton()))
             {
                 zhi += add;
                 zhi = float.Parse(zhi.ToString("0.0"));
@@ -220,11 +221,12 @@ namespace YxModDll.Mod
         }
         public static void CreatShuZhi(string name, ref int zhi, int min, int max, int add, Action callback = null)//创建加减数值的按钮
         {
+            name = ColorfulSpeek.colorshows(name); // 处理颜色显示
             GUILayout.BeginHorizontal();
             ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
-            GUILayout.Label($"<size=16>{name}：</size>");
+            GUILayout.Label(name);
             //GUILayout.Space(5);
-            if (GUILayout.Button("-", UI.styleButton()))
+            if (GUILayout.Button(ColorfulSpeek.colorshows("-"), UI.styleButton()))
             {
                 zhi -= add;
                 //zhi = float.Parse(zhi.ToString("0.0"));
@@ -238,9 +240,9 @@ namespace YxModDll.Mod
                 }
             }
 
-            GUILayout.Label($"{zhi}", SetLabelStyle_JuZhong(), GUILayout.Width(30));
+            GUILayout.Label(ColorfulSpeek.colorshows($"{zhi}"), SetLabelStyle_JuZhong(), GUILayout.Width(30));
 
-            if (GUILayout.Button("+", UI.styleButton()))
+            if (GUILayout.Button(ColorfulSpeek.colorshows("+"), UI.styleButton()))
             {
                 zhi += add;
                 //zhi = float.Parse(zhi.ToString("0.0"));
@@ -263,7 +265,8 @@ namespace YxModDll.Mod
             ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
             if (name != null)
             {
-                GUILayout.Label($"<size=16>{name}：</size>");
+                name = ColorfulSpeek.colorshows(name); // 处理颜色显示
+                GUILayout.Label(name);
             }
       
             string str1 = GUILayout.TextField(str, SetTxtStyle(), GUILayout.Width(KuanDuan));
@@ -288,7 +291,7 @@ namespace YxModDll.Mod
             ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
             if (name != null)
             {
-                GUILayout.Label($"<size=16>{name}：</size>");
+                GUILayout.Label(ColorfulSpeek.colorshows(name));
             }
 
             UI.CreatAnNiu($"<color={strYanSe}>{strYanSe}</color>", false, callback);
@@ -309,6 +312,7 @@ namespace YxModDll.Mod
 
         public static void CreatAnNiu(string name, bool chuizhijuzhong = true, Action callback = null)//一般按钮
         {
+            name = ColorfulSpeek.colorshows(name); // 处理颜色显示
             if (chuizhijuzhong)
             {
                 GUILayout.BeginVertical();
@@ -332,6 +336,7 @@ namespace YxModDll.Mod
 
         public static void CreatAnNiu_AnXia(string name, ref bool tab, bool chuizhijuzhong = true, Action callback = null)//Tab按钮
         {
+            name = ColorfulSpeek.colorshows(name); // 处理颜色显示
             if (chuizhijuzhong)
             {
                 GUILayout.BeginVertical();

@@ -40,7 +40,7 @@ namespace YxModDll.Mod
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             UI.CreatAnNiu_AnXia("定点系统", ref dingdian_KaiGuan, false, DingDian);
-            UI.CreatAnNiu_AnXia("Y击飞系统", ref jifeixitong_KaiGuan, false, JiFeiXiTong);
+            UI.CreatAnNiu_AnXia("击飞系统", ref jifeixitong_KaiGuan, false, JiFeiXiTong);
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             UI.CreatAnNiu_AnXia("UP", ref up_KaiGuan, false, Up);

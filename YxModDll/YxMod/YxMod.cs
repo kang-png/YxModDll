@@ -197,158 +197,6 @@ namespace YxModDll.Mod
             }
         }
 
-        //IEnumerator JianChaGengXin()
-        //{
-
-        //    //string url = "http://yxmod.ysepan.com";
-        //    string url = "https://vip.123pan.cn/1812996731/YxMod/yxmod2.txt";
-        //    UnityWebRequest www = UnityWebRequest.Get(url);
-        //    yield return www.SendWebRequest();
-
-        //    if (www.isNetworkError || www.isHttpError)
-        //    {
-        //        Debug.Log("网络失败" + www.error);
-
-        //    }
-        //    else
-        //    {
-        //        Debug.Log("网络成功");
-        //        // 请求成功，处理文本内容
-        //        string fileContent = www.downloadHandler.text;
-        //        //UnityEngine. Debug.Log(fileContent);
-        //        string yanzhengstr = SubstringBetween(fileContent, "<!--yxmod", "yxmod-->");
-        //        //Debug.Log(yanzhengstr);
-        //        string[] array = yanzhengstr.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-        //        foreach (string array2 in array)
-        //        {
-
-        //            string[] array3 = array2.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-        //            if (array3[0] == "可用")
-        //            {
-        //                int num = 0;
-        //                if (int.TryParse(array3[1], out num))
-        //                {
-        //                    KeYong = num > 0;
-        //                    //Debug.Log($"可用 {num}");
-        //                }
-        //            }
-        //            else if (array3[0] == "版本号")
-        //            {
-
-        //                float num = 0;
-        //                if (float.TryParse(array3[1], out num))
-        //                {
-        //                    newBanBenHao = num;
-        //                    //Debug.Log($"版本号 {newBanBenHao}");
-        //                }
-        //            }
-        //            else if (array3[0] == "强制更新")
-        //            {
-        //                int num = 0;
-        //                if (int.TryParse(array3[1], out num))
-        //                {
-        //                    QiangZhiGengXin = num > 0;
-        //                    //Debug.Log($"强制更新 {num}");
-        //                }
-        //            }
-        //            else if (array3[0] == "FileSize")
-        //            {
-        //                long num = 0;
-        //                if (long.TryParse(array3[1], out num))
-        //                {
-        //                    dllSize = num;
-        //                    //Debug.Log($"FileSize {num}");
-        //                }
-        //            }
-        //            else if (array3[0] == "url")
-        //            {
-        //                dllurl = array3[1];
-        //                //Debug.Log($"dllurl {dllurl}");
-        //                //Debug.Log($"newBanBenHao {newBanBenHao}   BanBenHao {BanBenHao}");
-        //                if (newBanBenHao != BanBenHao)
-        //                {
-        //                    //下载DLL
-        //                    Debug.Log("update dll");
-        //                    // 先获取文件大小
-        //                    //StartCoroutine(GetExpectedFileSize(dllurl));
-        //                    StartCoroutine(DownDll());//访问网络
-
-        //                }
-        //                else
-        //                {
-
-        //                    string filePath = Application.dataPath + "/Managed/Assembly-CSharp.dll";
-        //                    FileInfo fileInfo = new FileInfo(filePath);
-
-        //                    //Debug.Log($"fileInfo.Length {fileInfo.Length}  dllSize {dllSize}");
-        //                    if (fileInfo.Length == dllSize)
-        //                    {
-        //                        dllSizeOK = true;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-        //IEnumerator DownDll()
-        //{
-        //    //while (true)
-        //    //{
-        //    using (UnityWebRequest www = UnityWebRequest.Get(dllurl))
-        //    {
-        //        yield return www.SendWebRequest();
-
-        //        if (www.isNetworkError || www.isHttpError)
-        //        {
-        //            downNO = true;
-        //            Debug.Log("DownDll:错误");
-        //        }
-        //        else
-        //        {
-        //            string filePath = Application.dataPath + "/Managed/Assembly-CSharp2.dll";
-
-        //            // 创建或覆盖文件，并写入下载的二进制数据
-        //            File.WriteAllBytes(filePath, www.downloadHandler.data);
-
-        //            FileInfo fileInfo = new FileInfo(filePath);
-
-        //            if (fileInfo.Length == dllSize)
-        //            {
-        //                downOK = true;
-
-        //                // 删除旧的Assembly-CSharp.dll（如果存在）
-        //                string originalFilePath = Application.dataPath + "/Managed/Assembly-CSharp.dll";
-        //                if (File.Exists(originalFilePath))
-        //                {
-        //                    File.Delete(originalFilePath);
-        //                    //Debug.Log($"已删除旧的Assembly-CSharp.dll");
-        //                }
-
-        //                // 将新的文件重命名为Assembly-CSharp.dll
-        //                string newFilePath = Application.dataPath + "/Managed/Assembly-CSharp.dll";
-        //                File.Move(filePath, newFilePath);
-        //                // Debug.Log($"已将Assembly-CSharp2.dll重命名为Assembly-CSharp.dll，新路径：{newFilePath}");
-
-        //                Debug.Log($"更新成功");
-        //            }
-        //            else
-        //            {
-        //                downNO = true;
-        //                //Debug.Log($"dll文件下载完成但大小不正确，实际大小：{fileInfo.Length} bytes，期望大小：{dllSize} bytes");
-        //                if (File.Exists(filePath))
-        //                {
-        //                    File.Delete(filePath);
-        //                    //Debug.Log($"已删除大小不正确的Assembly-CSharp2.dll");
-        //                }
-        //                Debug.Log($"更新失败,fileInfo.Length {fileInfo.Length}  dllSize {dllSize}");
-
-        //            }
-
-        //        }
-        //    }
-        //    //}
-        //}
         private void Awake()
         {
 
@@ -373,8 +221,10 @@ namespace YxModDll.Mod
             NetGame.instance.gameObject.AddComponent<UI_Main>();
             NetGame.instance.gameObject.AddComponent<KeyDisplayUI>();//键盘UI
             NetGame.instance.gameObject.AddComponent<MiniMap>();//小地图
+            NetGame.instance.gameObject.AddComponent<ColorfulSpeek>();//颜色发言
             NetGame.instance.gameObject.AddComponent<FPSCounter>();//FPS
             StartCoroutine(DelayPatchAll());
+
         }
         private IEnumerator DelayPatchAll()
         {
