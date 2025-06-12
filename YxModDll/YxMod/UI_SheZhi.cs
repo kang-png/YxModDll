@@ -379,6 +379,7 @@ namespace YxModDll.Mod
                             case "渐变":
                                 UI.CreatYanSeKuang("开始", FaYanJianBianYanSe1, SetFaYanJianBianYanSe1);
                                 UI.CreatYanSeKuang("结束", FaYanJianBianYanSe2, SetFaYanJianBianYanSe2);
+                                //UI.CreatWenBenKuang("渐变预设", ref FaYanJianBian, 100, 197, XiuGaiFangMing);
                                 break;
                             case "随机":
                                 UI.CreatShuZhi("最低亮度", ref FaYanSuiJiYanSeLiangDu, 0, 95, 5, SetFaYanSuiJiYanSeLiangDu);
@@ -820,6 +821,7 @@ namespace YxModDll.Mod
             SteamMatchmaking.SetLobbyData(component.lobbyID, "name", $"★{UI_SheZhi.fangming}");///修改房名
             PlayerPrefs.SetString("fangming", fangming);
         }
+
         public static void XiuGaiDaTingMing()
         {
             NetTransportSteam component = NetGame.instance.GetComponent<NetTransportSteam>();
