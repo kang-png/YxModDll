@@ -221,10 +221,9 @@ namespace YxModDll.Mod
         }
         public static void CreatShuZhi(string name, ref int zhi, int min, int max, int add, Action callback = null)//创建加减数值的按钮
         {
-            name = ColorfulSpeek.colorshows(name); // 处理颜色显示
             GUILayout.BeginHorizontal();
             ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
-            GUILayout.Label(name);
+            GUILayout.Label(ColorfulSpeek.colorshows(name));
             //GUILayout.Space(5);
             if (GUILayout.Button(ColorfulSpeek.colorshows("-"), UI.styleButton()))
             {
@@ -265,8 +264,7 @@ namespace YxModDll.Mod
             ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
             if (name != null)
             {
-                name = ColorfulSpeek.colorshows(name); // 处理颜色显示
-                GUILayout.Label(name);
+                GUILayout.Label(ColorfulSpeek.colorshows(name));
             }
       
             string str1 = GUILayout.TextField(str, SetTxtStyle(), GUILayout.Width(KuanDuan));
@@ -312,14 +310,13 @@ namespace YxModDll.Mod
 
         public static void CreatAnNiu(string name, bool chuizhijuzhong = true, Action callback = null)//一般按钮
         {
-            name = ColorfulSpeek.colorshows(name); // 处理颜色显示
             if (chuizhijuzhong)
             {
                 GUILayout.BeginVertical();
                 GUILayout.FlexibleSpace();
             }
 
-            if (GUILayout.Button(name, styleButton()))
+            if (GUILayout.Button(ColorfulSpeek.colorshows(name), styleButton()))
             {
                 callback?.Invoke(); // 如果callback不为null，则调用它
             }
@@ -330,20 +327,19 @@ namespace YxModDll.Mod
                 GUILayout.FlexibleSpace();
                 GUILayout.EndVertical();
             }
-            buttonHeight = GetButtonHeight(styleButton(), name)+6;
+            buttonHeight = GetButtonHeight(styleButton(), ColorfulSpeek.colorshows(name))+6;
             //Debug.Log(buttonHeight);
         }
 
         public static void CreatAnNiu_AnXia(string name, ref bool tab, bool chuizhijuzhong = true, Action callback = null)//Tab按钮
         {
-            name = ColorfulSpeek.colorshows(name); // 处理颜色显示
             if (chuizhijuzhong)
             {
                 GUILayout.BeginVertical();
                 GUILayout.FlexibleSpace();
             }
 
-            if (GUILayout.Button(name, styleButton_Tab(tab)))
+            if (GUILayout.Button(ColorfulSpeek.colorshows(name), styleButton_Tab(tab)))
             {
                 tab = !tab;
                 callback?.Invoke(); // 如果callback不为null，则调用它
@@ -353,7 +349,7 @@ namespace YxModDll.Mod
                 GUILayout.FlexibleSpace();
                 GUILayout.EndVertical();
             }
-            buttonHeight = GetButtonHeight(styleButton(), name)+6;
+            buttonHeight = GetButtonHeight(styleButton(), ColorfulSpeek.colorshows(name)) +6;
         }
 
 

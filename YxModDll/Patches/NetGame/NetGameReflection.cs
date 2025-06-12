@@ -2,9 +2,10 @@
 using Multiplayer;
 using System;
 using System.Reflection;
+using UnityEngine;
 
 
-    namespace YxModDll.Patches
+namespace YxModDll.Patches
 {
     public static class NetGameReflection
     {
@@ -57,7 +58,20 @@ using System.Reflection;
             => InvokePrivateMethod(instance, "OnRequestSkinServer", client, stream);
 
         public static void OnReceiveSkin(NetGame instance, NetStream stream)
-            => InvokePrivateMethod(instance, "OnReceiveSkin", stream);
+        {
+            try
+            {
+                InvokePrivateMethod(instance, "OnReceiveSkin", stream);
+            }
+            catch (OverflowException ex)
+            {
+                Debug.LogError($"[YxMod] 捕获 OverflowException：皮肤数据非法或被篡改，已拦截。\n{ex}");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[YxMod] OnReceiveSkin 反射调用异常：{ex}");
+            }
+        }
     }
 }
 

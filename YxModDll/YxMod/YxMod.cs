@@ -364,7 +364,7 @@ namespace YxModDll.Mod
             {
                 return;
             }
-            if (Game.GetKeyDown(KeyCode.Mouse3) || Game.GetKeyDown(KeyCode.U))
+            if (Game.GetKeyDown(KeyCode.Mouse3) || Game.GetKeyDown(KeyCode.Mouse2) || Game.GetKeyDown(KeyCode.U))
             {
                 if (NetGame.isServer)
                 {

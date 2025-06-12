@@ -93,7 +93,7 @@ namespace YxModDll.Mod
                 if (currentWorkshopMetadata != null && Game.instance != null && Game.currentLevel != null && Game.currentLevel.checkpoints != null)
                 {
                     int totalCheckpoints = Game.currentLevel.checkpoints.Length;
-                    int currentCheckpoint = Mathf.Clamp(Game.instance.currentCheckpointNumber, 0, totalCheckpoints - 1);
+                    int currentCheckpoint = 1 + Mathf.Clamp(Game.instance.currentCheckpointNumber, 0, totalCheckpoints -1);
 
                     // 标题和关卡进度
                     string combinedText = $"{currentWorkshopMetadata.title} ：{currentCheckpoint}/{totalCheckpoints}";

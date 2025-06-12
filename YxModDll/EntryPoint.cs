@@ -19,7 +19,7 @@ namespace Doorstop
         {
             if (_attached) yield break;
 
-            while (NetGame.instance == null || Human.all.Count == 0)
+            while (NetGame.instance == null)
                 yield return null;
 
             if (_attached) yield break; // 防止双重加载

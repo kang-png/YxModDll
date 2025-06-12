@@ -281,6 +281,7 @@ namespace YxModDll.Mod
             {
                 ColorfulSpeek.Words_ColorType = num;
                 ColorfulSpeek.Func_03("Gradual_Num", num);
+                ColorfulSpeek.WordSeed = this.GetSeedByIndex(num, 0f, 1f);
                 NetChat.Print(ColorfulSpeek.Func_10("渐变种类变为{0}", num));
                 return;
             }
@@ -421,7 +422,7 @@ namespace YxModDll.Mod
                 }
                 return text;
             }
-            return msg;
+            return $"<size=20>{msg}</size>";
         }
 
         // Token: 0x060051D1 RID: 20945 RVA: 0x0013F91C File Offset: 0x0013DB1C

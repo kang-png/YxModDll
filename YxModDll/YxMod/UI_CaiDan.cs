@@ -578,6 +578,16 @@ namespace YxModDll.Mod
                     //" 渲染真碰撞真图层非碰撞图层=", 渲染真碰撞真图层非碰撞图层.Count
                     //}));
                 }
+
+                // 给 碰撞真渲染假 列表里的物体添加线框
+                foreach (GameObject obj in 渲染真碰撞假)
+                {
+                    ModWireframeRenderer.DrawWireframe(obj);
+                }
+                foreach (GameObject obj in 渲染真碰撞无)
+                {
+                    ModWireframeRenderer.DrawWireframe(obj);
+                }
                 Chat.TiShi(NetGame.instance.local, "真假剔除已打开");
                 return;
             }

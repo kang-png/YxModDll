@@ -403,8 +403,6 @@ namespace YxModDll.Mod
                 }
             }
 
-
-
         }
 
         private void mainUi()//创建主界面
