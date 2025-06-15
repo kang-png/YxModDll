@@ -18,6 +18,9 @@ namespace YxModDll.Mod
         public static Texture2D anniuTexture2 = new Texture2D(1, 1);//选中按下时
         public static Texture2D anniuTexture3 = new Texture2D(1, 1);//移动至按钮时
 
+        // 建议放在类静态字段处，全局只维护一个缓存字典
+        private static Dictionary<string, string> intInputCache = new Dictionary<string, string>();
+        private static Dictionary<string, string> floatInputCache = new Dictionary<string, string>();
         private static string[] humanNames = new string[0]; // 初始为空的按钮名称数组
         public static int ZiJiId;
         public static float buttonHeight;
@@ -180,12 +183,12 @@ namespace YxModDll.Mod
             style.fontSize = 20;
             return style;
         }
-        public static void CreatShuZhi(string name, ref float zhi, float min, float max, float add, Action callback = null)//创建加减数值的按钮
+        public static void CreatShuZhi(string name, ref float zhi, float min, float max, float add, Action callback = null)
         {
             GUILayout.BeginHorizontal();
-            ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
+
             GUILayout.Label(ColorfulSpeek.colorshows(name));
-            //GUILayout.Space(5);
+
             if (GUILayout.Button(ColorfulSpeek.colorshows("-"), UI.styleButton()))
             {
                 zhi -= add;
@@ -196,11 +199,27 @@ namespace YxModDll.Mod
                 }
                 else
                 {
-                    callback?.Invoke(); // 如果callback不为null，则调用它
+                    callback?.Invoke();
                 }
+                // ✅ 数值变动时重置缓存
+                floatInputCache[name] = zhi.ToString("0.0");
             }
 
-            GUILayout.Label(ColorfulSpeek.colorshows(zhi.ToString("0.0")), SetLabelStyle_JuZhong(), GUILayout.Width(30));
+            // ✅ 缓存机制避免输入被打断
+            if (!floatInputCache.ContainsKey(name))
+                floatInputCache[name] = zhi.ToString("0.0");
+
+            floatInputCache[name] = GUILayout.TextField(floatInputCache[name], SetLabelStyle_JuZhong(), GUILayout.Width(40));
+
+            if (float.TryParse(floatInputCache[name], out float inputValue))
+            {
+                inputValue = Mathf.Clamp(inputValue, min, max);
+                if (Math.Abs(zhi - inputValue) > 0.001f)
+                {
+                    zhi = float.Parse(inputValue.ToString("0.0")); // 保留 1 位小数
+                    callback?.Invoke();
+                }
+            }
 
             if (GUILayout.Button(ColorfulSpeek.colorshows("+"), UI.styleButton()))
             {
@@ -212,52 +231,65 @@ namespace YxModDll.Mod
                 }
                 else
                 {
-                    callback?.Invoke(); // 如果callback不为null，则调用它
+                    callback?.Invoke();
                 }
+                // ✅ 同样更新缓存
+                floatInputCache[name] = zhi.ToString("0.0");
             }
+
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-
         }
-        public static void CreatShuZhi(string name, ref int zhi, int min, int max, int add, Action callback = null)//创建加减数值的按钮
+
+
+        public static void CreatShuZhi(string name, ref int zhi, int min, int max, int add, Action callback = null)
         {
             GUILayout.BeginHorizontal();
-            ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
+
             GUILayout.Label(ColorfulSpeek.colorshows(name));
-            //GUILayout.Space(5);
+
             if (GUILayout.Button(ColorfulSpeek.colorshows("-"), UI.styleButton()))
             {
                 zhi -= add;
-                //zhi = float.Parse(zhi.ToString("0.0"));
-                if (zhi < min)
-                {
-                    zhi = min;
-                }
-                else
-                {
-                    callback?.Invoke(); // 如果callback不为null，则调用它
-                }
+                if (zhi < min) zhi = min;
+                else callback?.Invoke();
+
+                // ✅ 更新缓存显示字符串
+                intInputCache[name] = zhi.ToString();
             }
 
-            GUILayout.Label(ColorfulSpeek.colorshows($"{zhi}"), SetLabelStyle_JuZhong(), GUILayout.Width(30));
+            // ✅ 初始化缓存（只做一次）
+            if (!intInputCache.ContainsKey(name))
+                intInputCache[name] = zhi.ToString();
+
+            // ✅ 使用缓存字符串作为 TextField 内容，防止被重置
+            intInputCache[name] = GUILayout.TextField(intInputCache[name], SetLabelStyle_JuZhong(), GUILayout.Width(40));
+
+            // ✅ 尝试解析用户输入
+            if (int.TryParse(intInputCache[name], out int parsedValue))
+            {
+                parsedValue = Mathf.Clamp(parsedValue, min, max);
+                if (parsedValue != zhi)
+                {
+                    zhi = parsedValue;
+                    callback?.Invoke();
+                }
+            }
 
             if (GUILayout.Button(ColorfulSpeek.colorshows("+"), UI.styleButton()))
             {
                 zhi += add;
-                //zhi = float.Parse(zhi.ToString("0.0"));
-                if (zhi > max)
-                {
-                    zhi = max;
-                }
-                else
-                {
-                    callback?.Invoke(); // 如果callback不为null，则调用它
-                }
+                if (zhi > max) zhi = max;
+                else callback?.Invoke();
+
+                // ✅ 更新缓存显示字符串
+                intInputCache[name] = zhi.ToString();
             }
+
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-
         }
+
         public static void CreatWenBenKuang(string name, ref string str, int maxChang, int KuanDuan,Action callback = null)//创建文本框
         {
             GUILayout.BeginHorizontal();

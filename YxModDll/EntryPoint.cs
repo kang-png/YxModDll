@@ -9,8 +9,8 @@ namespace Doorstop
     {
         private void Awake()
         {
-            Debug.Log("[YxMod] ModEntry Awake - starting delayed attachment");
             StartCoroutine(AttachWhenReady());
+            Debug.Log("[YxMod] ModEntry Awake - starting delayed attachment");
         }
 
         private static bool _attached = false;
@@ -20,13 +20,16 @@ namespace Doorstop
             if (_attached) yield break;
 
             while (NetGame.instance == null)
+            {
+                Debug.Log("[YxMod] Waiting for NetGame.instance...");
                 yield return null;
+            }
 
             if (_attached) yield break; // 防止双重加载
+            var mod = NetGame.instance.gameObject.AddComponent<YxModDll.Mod.YxMod>();
             _attached = true;
 
-            Debug.Log("[YxMod] Attaching YxMod.");
-            NetGame.instance.gameObject.AddComponent<YxModDll.Mod.YxMod>();
+            Debug.Log($"[YxMod] Attaching YxMod: {(mod != null ? "Success" : "Failed")}");
         }
     }
 

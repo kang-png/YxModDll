@@ -3057,7 +3057,7 @@ namespace YxModDll.Mod
             return sb.ToString();
         }
 
-        private static string SetDaXiaoYanSe(string str, int daxiaoID,int yanseID,bool mingzi=true)
+        internal static string SetDaXiaoYanSe(string str, int daxiaoID,int yanseID,bool mingzi=true)
         {
             //int size0 =-1 ;
             int size1=-1;
@@ -3185,7 +3185,15 @@ namespace YxModDll.Mod
                             string currentColor="#FFFFFF";
                             if (yanseID == 1)
                             {
-                                 currentColor = InterpolateColor(yanse1, yanse2, i, colorStep);
+                                float t = i / (float)(Length - 1); // 从 0 到 1 的比例
+                                Color color = Color.white; 
+                                if (mingzi)
+                                {
+                                    color = UI_SheZhi.MingZiSeed.gradient.Evaluate(t);
+                                }else{
+                                    color = UI_SheZhi.FaYanSeed.gradient.Evaluate(t);
+                                }
+                                currentColor = $"#{ColorUtility.ToHtmlStringRGB(color)}";
                             }
                             else if (yanseID == 2)
                             {
@@ -3250,7 +3258,17 @@ namespace YxModDll.Mod
                             string currentColor = "#FFFFFF";
                             if (yanseID == 1)
                             {
-                                currentColor = InterpolateColor(yanse1, yanse2, i, colorStep);
+                                float t = i / (float)(Length - 1); // 从 0 到 1 的比例
+                                Color color = Color.white;
+                                if (mingzi)
+                                {
+                                    color = UI_SheZhi.MingZiSeed.gradient.Evaluate(t);
+                                }
+                                else
+                                {
+                                    color = UI_SheZhi.FaYanSeed.gradient.Evaluate(t);
+                                }
+                                currentColor = $"#{ColorUtility.ToHtmlStringRGB(color)}";
                             }
                             else if (yanseID == 2)
                             {

@@ -264,7 +264,7 @@ namespace YxModDll.Mod
         }
 
         // Token: 0x060051CC RID: 20940 RVA: 0x0013F424 File Offset: 0x0013D624
-        private void Change_Gradual_Num(string txt)
+        internal void Change_Gradual_Num(string txt)
         {
             if (ColorfulSpeek.Func__(txt))
             {
@@ -285,7 +285,7 @@ namespace YxModDll.Mod
                 NetChat.Print(ColorfulSpeek.Func_10("渐变种类变为{0}", num));
                 return;
             }
-            NetChat.Print("渐变字体范围在0-16");
+            NetChat.Print("渐变字体范围在0-363");
         }
 
         // Token: 0x060051CD RID: 20941 RVA: 0x0013F4B0 File Offset: 0x0013D6B0

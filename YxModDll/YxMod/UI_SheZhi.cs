@@ -94,6 +94,13 @@ namespace YxModDll.Mod
         public static string FaYanTiaoYueYanSe1;
         public static string FaYanTiaoYueYanSe2;
 
+        public static int FaYanColorType;
+        public static ColorfulSpeek.GradientSeed FaYanSeed = default(ColorfulSpeek.GradientSeed);
+        public static int MingZiColorType;
+        public static ColorfulSpeek.GradientSeed MingZiSeed = default(ColorfulSpeek.GradientSeed);
+
+        public static int CaiDanColorType;
+
         ///////开放设置
         private static string[] guajidongzuoNames = { "跌落", "睡觉", "气球", "坐下", "挂件" };
         public static string fangming;
@@ -235,7 +242,7 @@ namespace YxModDll.Mod
                             GUILayout.EndHorizontal();
 
                             GUILayout.BeginHorizontal();
-                            GUILayout.Label(ColorfulSpeek.colorshows("大小设置："));
+                            GUILayout.Label(ColorfulSpeek.colorshows("大小设置"));
 
                             int daxiaoid = GUILayout.SelectionGrid(MingZiDaXiaoID, daxiaoNamesColored , 4, UI.styleSelectionGrid());
                             if (MingZiDaXiaoID != daxiaoid)
@@ -273,7 +280,7 @@ namespace YxModDll.Mod
                             }
                             GUILayout.EndHorizontal();
                             GUILayout.BeginHorizontal();
-                            GUILayout.Label(ColorfulSpeek.colorshows("颜色设置："));
+                            GUILayout.Label(ColorfulSpeek.colorshows("颜色设置"));
                             int yanseid = GUILayout.SelectionGrid(MingZiYanSeID, yanseNamesColored, 4, UI.styleSelectionGrid());
                             if (MingZiYanSeID != yanseid)
                             {
@@ -291,8 +298,9 @@ namespace YxModDll.Mod
                                     UI.CreatYanSeKuang("色值", MingZiYanSe, SetMingZiYanSe);
                                     break;
                                 case "渐变":
-                                    UI.CreatYanSeKuang("开始", MingZiJianBianYanSe1, SetMingZiJianBianYanSe1);
-                                    UI.CreatYanSeKuang("结束", MingZiJianBianYanSe2, SetMingZiJianBianYanSe2);
+                                    //UI.CreatYanSeKuang("开始", MingZiJianBianYanSe1, SetMingZiJianBianYanSe1);
+                                    //UI.CreatYanSeKuang("结束", MingZiJianBianYanSe2, SetMingZiJianBianYanSe2);
+                                    UI.CreatShuZhi("名字渐变", ref MingZiColorType, 1, 363, 1, SetMingZiColorType);
                                     break;
                                 case "随机":
                                     UI.CreatShuZhi("最低亮度", ref MingZiSuiJiYanSeLiangDu, 0, 95, 5, SetMingZiSuiJiYanSeLiangDu);
@@ -303,13 +311,12 @@ namespace YxModDll.Mod
                                     break;
                             }
                             GUILayout.EndHorizontal();
+                            GUILayout.Label(Chat.SetDaXiaoYanSe(MingZiStr, MingZiDaXiaoID, MingZiYanSeID, true), UI.SetLabelStyle_JuZhong());
                         }
                     }
-
                     GUILayout.Space(5);
                     UI.CreatFenGeXian();//分割线
                     GUILayout.Space(5);
-
                     UI.CreatAnNiu_AnXia("发言设置>>", ref FaYanSheZhi, false, SetFaYanSheZhi);
                     if (FaYanSheZhi)
                     {
@@ -321,7 +328,7 @@ namespace YxModDll.Mod
 
 
                         GUILayout.BeginHorizontal();
-                        GUILayout.Label(ColorfulSpeek.colorshows("大小设置："));
+                        GUILayout.Label(ColorfulSpeek.colorshows("大小设置"));
 
                         int daxiaoid = GUILayout.SelectionGrid(FaYanDaXiaoID, daxiaoNamesColored , 4, UI.styleSelectionGrid());
                         if (FaYanDaXiaoID != daxiaoid)
@@ -358,7 +365,7 @@ namespace YxModDll.Mod
                         }
                         GUILayout.EndHorizontal();
                         GUILayout.BeginHorizontal();
-                        GUILayout.Label(ColorfulSpeek.colorshows("颜色设置："));
+                        GUILayout.Label(ColorfulSpeek.colorshows("颜色设置"));
 
                         int yanseid = GUILayout.SelectionGrid(FaYanYanSeID, yanseNamesColored, 4, UI.styleSelectionGrid());
                         if (FaYanYanSeID != yanseid)
@@ -377,9 +384,9 @@ namespace YxModDll.Mod
                                 UI.CreatYanSeKuang("色值", FaYanYanSe, SetFaYanYanSe);
                                 break;
                             case "渐变":
-                                UI.CreatYanSeKuang("开始", FaYanJianBianYanSe1, SetFaYanJianBianYanSe1);
-                                UI.CreatYanSeKuang("结束", FaYanJianBianYanSe2, SetFaYanJianBianYanSe2);
-                                //UI.CreatWenBenKuang("渐变预设", ref FaYanJianBian, 100, 197, XiuGaiFangMing);
+                                //UI.CreatYanSeKuang("开始", FaYanJianBianYanSe1, SetFaYanJianBianYanSe1);
+                                //UI.CreatYanSeKuang("结束", FaYanJianBianYanSe2, SetFaYanJianBianYanSe2);
+                                UI.CreatShuZhi("发言渐变", ref FaYanColorType, 1, 363, 1, SetFaYanColorType);
                                 break;
                             case "随机":
                                 UI.CreatShuZhi("最低亮度", ref FaYanSuiJiYanSeLiangDu, 0, 95, 5, SetFaYanSuiJiYanSeLiangDu);
@@ -390,6 +397,7 @@ namespace YxModDll.Mod
                                 break;
                         }
                         GUILayout.EndHorizontal();
+                        GUILayout.Label(Chat.SetDaXiaoYanSe("jumps over the lazy dog.", FaYanDaXiaoID, FaYanYanSeID, false), UI.SetLabelStyle_JuZhong());
                     }
                     GUILayout.Space(5);
                     UI.CreatFenGeXian();//分割线
@@ -400,6 +408,9 @@ namespace YxModDll.Mod
                     //屏蔽炸房//防踢
                     UI.CreatWenBenKuang("房间名称", ref fangming, 100, 197,XiuGaiFangMing);
                     UI.CreatWenBenKuang("大厅名称", ref datingming, 1000, 197, XiuGaiDaTingMing);
+                    GUILayout.Space(5);
+                    UI.CreatFenGeXian();
+                    GUILayout.Space(5);
                     GUILayout.BeginHorizontal();
                     UI.CreatShuZhi("玩家上限", ref zuidarenshu, 0, 99, 1,SetWanJiaShangXian);
                     UI.CreatAnNiu_AnXia("仅限邀请", ref yaoqing, false, SetJinXianYaoQing);
@@ -474,6 +485,11 @@ namespace YxModDll.Mod
 
                     //UI.CreatAnNiu_AnXia("显示玩家信息", ref wanjia, false);
                     //UI.CreatAnNiu_AnXia("显示玩家速度", ref sudu, false);
+                    UI.CreatAnNiu_AnXia("菜单颜色>>", ref ColorfulSpeek.Gradual_Change, false, SetCaiDanYanShe);
+                    if (ColorfulSpeek.Gradual_Change)
+                    {
+                        UI.CreatShuZhi("菜单渐变", ref CaiDanColorType, 0, 363, 1, SetCaiDanColorType);
+                    }
                     break;
                 case "游戏设置":
                     //去除启动画面
@@ -598,6 +614,15 @@ namespace YxModDll.Mod
             MingZiSuiJiYanSeLiangDu = PlayerPrefs.GetInt("MingZiSuiJiYanSeLiangDu", 70);
             MingZiTiaoYueYanSe1 = PlayerPrefs.GetString("MingZiTiaoYueYanSe1", "#FF0000");
             MingZiTiaoYueYanSe2 = PlayerPrefs.GetString("MingZiTiaoYueYanSe2", "#0000FF");
+
+
+            MingZiColorType = PlayerPrefs.GetInt("MingZiColorType", 43);
+            FaYanColorType = PlayerPrefs.GetInt("FaYanColorType", 43);
+            CaiDanColorType = PlayerPrefs.GetInt("Gradual_Num", 43);
+            FaYanSeed = ColorfulSpeek.ins.GetSeedByIndex(FaYanColorType, 0f, 1f);
+            MingZiSeed = ColorfulSpeek.ins.GetSeedByIndex(MingZiColorType, 0f, 1f);
+            ColorfulSpeek.WordSeed = ColorfulSpeek.ins.GetSeedByIndex(CaiDanColorType, 0f, 1f);
+
 
             FaYanSheZhi = PlayerPrefs.GetInt("FaYanSheZhi", 1) > 0;
             FaYanCuTi = PlayerPrefs.GetInt("FaYanCuTi", 0) > 0;
@@ -1345,6 +1370,25 @@ namespace YxModDll.Mod
         { 
             YanSe.GetYanSeWindow(ref FaYanJianBianYanSe2);
             PlayerPrefs.SetString("FaYanJianBianYanSe2", FaYanJianBianYanSe2);
+        }
+        public static void SetFaYanColorType()
+        {
+            FaYanSeed = ColorfulSpeek.ins.GetSeedByIndex(FaYanColorType, 0f, 1f);
+            PlayerPrefs.SetInt("FaYanColorType", FaYanColorType);
+        }
+        public static void SetMingZiColorType()
+        {
+            MingZiSeed = ColorfulSpeek.ins.GetSeedByIndex(MingZiColorType, 0f, 1f);
+            PlayerPrefs.SetInt("MingZiColorType", MingZiColorType);
+        }
+        public static void SetCaiDanYanShe()
+        {
+            PlayerPrefs.SetInt("Gradual_Change", ColorfulSpeek.Gradual_Change ? 1 : 0);
+        }
+
+        public static void SetCaiDanColorType()
+        {
+            ColorfulSpeek.ins.Change_Gradual_Num(CaiDanColorType.ToString());
         }
         public static void SetFaYanSuiJiYanSeLiangDu()
         {
