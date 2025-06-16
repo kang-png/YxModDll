@@ -24,15 +24,6 @@ namespace YxModDll.Patches
 
         }
 
-        //private void OnGUI()
-        //{
-        //    if (GUILayout.Button("开关"))
-        //    {
-        //        guanbidatingxiazai = !guanbidatingxiazai;
-        //        Debug.Log(guanbidatingxiazai);
-        //    }
-        //}
-
         public static IEnumerator GetNewLevel(LevelInformationBox instance, ulong levelID)
         {
 

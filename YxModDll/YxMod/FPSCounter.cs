@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using Multiplayer;
 using HumanAPI;
-using System;  // 引入 System 命名空间用于时间处理
+using System;
 using YxModDll.Patches;
 
 namespace YxModDll.Mod
@@ -15,93 +14,69 @@ namespace YxModDll.Mod
         private float latency;
         private ulong lastLevelId = 0;
 
-        private WorkshopLevelMetadata currentWorkshopMetadata;  // 缓存元数据
+        private WorkshopLevelMetadata currentWorkshopMetadata;
+        private bool hasWorkshopMetadata = false;
 
         public static bool showFPS;
 
-        void Start()
-        {
-            LoadWorkshopMetadata();
-        }
-
-        void LoadWorkshopMetadata()
-        {
-            if (WorkshopRepository.instance != null && WorkshopRepository.instance.levelRepo != null && NetGame.instance != null)
-            {
-                WorkshopRepository.instance.levelRepo.GetLevel(
-                    NetGame.instance.currentLevel,
-                    NetGame.instance.currentLevelType,
-                    (metadata) =>
-                    {
-                        Debug.Log("Workshop metadata loaded: " + (metadata != null));
-                        if (metadata != null)
-                        {
-                            currentWorkshopMetadata = metadata;
-                        }
-                    });
-            }
-        }
-
-
         void Update()
         {
-            if (showFPS)
+            if (!showFPS) return;
+
+            elapsedTime += Time.deltaTime;
+            frameCount++;
+
+            if (elapsedTime >= 0.5f)
             {
-                elapsedTime += Time.deltaTime;
-                frameCount++;
+                fps = Mathf.RoundToInt(frameCount / elapsedTime);
+                elapsedTime = 0f;
+                frameCount = 0;
 
-                if (elapsedTime >= 0.5f)
+                latency = NetGame.instance?.clientLatency?.latency ?? 0;
+            }
+
+            // 核心改动：持续检测 currentLevel 是否变化且有效
+            var net = NetGame.instance;
+            ulong levelId = net?.currentLevel ?? 0;
+            if (levelId != 0 && levelId != lastLevelId)
+            {
+                lastLevelId = levelId;
+                hasWorkshopMetadata = false;
+                currentWorkshopMetadata = null;
+
+                var repo = WorkshopRepository.instance?.levelRepo;
+                repo?.GetLevel(levelId, net.currentLevelType, (metadata) =>
                 {
-                    fps = Mathf.RoundToInt(frameCount / elapsedTime);
-                    elapsedTime = 0f;
-                    frameCount = 0;
-
-                    if (NetGame.instance != null && NetGame.instance.clientLatency != null)
-                    {
-                        latency = NetGame.instance.clientLatency.latency;
-                    }
-                }
-                // 监控关卡变化
-                if (NetGame.instance != null)
-                {
-                    ulong currentLevelId = NetGame.instance.currentLevel; 
-
-                    if (currentLevelId != lastLevelId)
-                    {
-                        lastLevelId = currentLevelId;
-                        LoadWorkshopMetadata();
-                    }
-                }
+                    currentWorkshopMetadata = metadata;
+                    hasWorkshopMetadata = metadata != null;
+                });
             }
         }
 
         private void OnGUI()
         {
-            if (showFPS)
+            if (!showFPS) return;
+
+            GUIStyle style = new GUIStyle
             {
-                GUIStyle style = new GUIStyle();
-                style.fontSize = 22;
-                style.normal.textColor = Color.white;
+                fontSize = 22,
+                normal = { textColor = Color.white }
+            };
 
-                Rect areaRect = new Rect(10, 10, 400, 100); // 高度减小，只留标题和文字
-                GUILayout.BeginArea(areaRect);
+            GUILayout.BeginArea(new Rect(10, 10, 500, 120));
+            GUILayout.Label($"帧数: {fps} FPS", style);
+            GUILayout.Label($"延迟: {latency:F0} ms", style);
+            GUILayout.Label($"时间: {DateTime.Now:HH:mm:ss}", style);
 
-                GUILayout.Label("帧数: " + fps + " FPS", style);
-                GUILayout.Label("延迟: " + latency.ToString("F0") + " ms", style);
-                GUILayout.Label("时间: " + DateTime.Now.ToString("HH:mm:ss"), style);
-
-                if (currentWorkshopMetadata != null && Game.instance != null && Game.currentLevel != null && Game.currentLevel.checkpoints != null)
-                {
-                    int totalCheckpoints = Game.currentLevel.checkpoints.Length;
-                    int currentCheckpoint = 1 + Mathf.Clamp(Game.instance.currentCheckpointNumber, 0, totalCheckpoints -1);
-
-                    // 标题和关卡进度
-                    string combinedText = $"{currentWorkshopMetadata.title} ：{currentCheckpoint}/{totalCheckpoints}";
-                    GUILayout.Label(combinedText, style);
-                }
-
-                GUILayout.EndArea();
+            // 显示标题和进度
+            if (hasWorkshopMetadata && Game.currentLevel?.checkpoints != null)
+            {
+                var cps = Game.currentLevel.checkpoints;
+                int cur = Mathf.Clamp(Game.instance.currentCheckpointNumber, 0, cps.Length - 1);
+                GUILayout.Label($"{currentWorkshopMetadata.title} ：{cur + 1}/{cps.Length}", style);
             }
+
+            GUILayout.EndArea();
         }
     }
 }
