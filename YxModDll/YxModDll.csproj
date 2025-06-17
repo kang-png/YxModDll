@@ -194,7 +194,6 @@
     <Compile Include="Patches\Patcher_NetTransportSteam.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="YxMod\Chat.cs" />
-    <Compile Include="YxMod\ModWireframeRenderer.cs" />
     <Compile Include="YxMod\ColorfulSpeek.cs" />
     <Compile Include="YxMod\DingDian.cs" />
     <Compile Include="YxMod\FPSCounter.cs" />
@@ -220,8 +219,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <!-- 拷贝合并后的 DLL 到游戏目录 -->
-  <Target Name="PostBuild" AfterTargets="ILRepack"
-          Condition="Exists('E:\SteamLibrary\steamapps\common\Human Fall Flat')">
+  <Target Name="PostBuild" AfterTargets="ILRepack" Condition="Exists('E:\SteamLibrary\steamapps\common\Human Fall Flat')">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="E:\SteamLibrary\steamapps\common\Human Fall Flat" />
     <Copy SourceFiles="$(TargetPath)" DestinationFiles="E:\SteamLibrary\steamapps\common\Human Fall Flat\YxModDll_A.dll" />
     <Copy SourceFiles="$(TargetPath)" DestinationFiles="E:\SteamLibrary\steamapps\common\Human Fall Flat\YxModDll_B.dll" />

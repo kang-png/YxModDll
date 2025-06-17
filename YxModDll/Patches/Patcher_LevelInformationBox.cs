@@ -26,19 +26,11 @@ namespace YxModDll.Patches
 
         public static IEnumerator GetNewLevel(LevelInformationBox instance, ulong levelID)
         {
-
-            if (UI_SheZhi.guanbidatingxiazai)
-            {
-                Debug.Log("不下载");
-                yield break;
-            }
-
-            //LevelInformationBox instance = FindObjectOfType<LevelInformationBox>();
             var prevDispInfo = (NetTransport.LobbyDisplayInfo)_prevDispInfoField.GetValue(instance);
-
             bool loaded = false;
-            WorkshopLevelMetadata levelData;
-            WorkshopRepository.instance.levelRepo.LoadLevel(levelID, delegate (WorkshopLevelMetadata l)
+            WorkshopLevelMetadata levelData = null;
+
+            System.Action<WorkshopLevelMetadata> action = (WorkshopLevelMetadata l) =>
             {
                 levelData = l;
                 loaded = true;
@@ -48,12 +40,23 @@ namespace YxModDll.Patches
                     instance.LevelImage.texture = levelData.thumbnailTexture;
                     instance.LevelImage.enabled = instance.LevelImage.texture != null;
                 }
-            });
+            };
+
+            if (UI_SheZhi.guanbidatingxiazai)
+            {
+                WorkshopRepository.instance.levelRepo.GetLevel(levelID, prevDispInfo.LevelType, action);
+            }
+            else
+            {
+                WorkshopRepository.instance.levelRepo.LoadLevel(levelID, action);
+            }
+
             while (!loaded)
             {
                 yield return null;
             }
         }
+
     }
 }
 

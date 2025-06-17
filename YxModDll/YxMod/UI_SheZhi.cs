@@ -663,7 +663,7 @@ namespace YxModDll.Mod
             fayanjiange = PlayerPrefs.GetFloat("fayanjiange", 0.5f);
 
             guajitixing = PlayerPrefs.GetInt("guajitixing", 1) > 0;
-            guajishijian = PlayerPrefs.GetInt("guajishijian", 1);
+            guajishijian = PlayerPrefs.GetInt("guajishijian", 5);
             guajidongzuoID = PlayerPrefs.GetInt("guajidongzuoID", 1);
 
 

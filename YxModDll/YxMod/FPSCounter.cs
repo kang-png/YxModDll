@@ -2,7 +2,7 @@
 using Multiplayer;
 using HumanAPI;
 using System;
-using YxModDll.Patches;
+using UnityEngine.UI;
 
 namespace YxModDll.Mod
 {
@@ -12,16 +12,31 @@ namespace YxModDll.Mod
         private int frameCount;
         private int fps;
         private float latency;
-        private ulong lastLevelId = 0;
-
-        private WorkshopLevelMetadata currentWorkshopMetadata;
-        private bool hasWorkshopMetadata = false;
 
         public static bool showFPS;
+
+        private string levelTitle = "加载中...";
+        private Text LevelTextRef;
 
         void Update()
         {
             if (!showFPS) return;
+
+            // 每帧尝试绑定一次 LevelText，如果还没找到
+            if (LevelTextRef == null)
+            {
+                var infoBox = GameObject.FindObjectOfType<LevelInformationBox>();
+                if (infoBox != null)
+                {
+                    LevelTextRef = infoBox.LevelText;
+                }
+            }
+
+            // 读取标题
+            if (LevelTextRef != null)
+            {
+                levelTitle = LevelTextRef.text;
+            }
 
             elapsedTime += Time.deltaTime;
             frameCount++;
@@ -33,23 +48,6 @@ namespace YxModDll.Mod
                 frameCount = 0;
 
                 latency = NetGame.instance?.clientLatency?.latency ?? 0;
-            }
-
-            // 核心改动：持续检测 currentLevel 是否变化且有效
-            var net = NetGame.instance;
-            ulong levelId = net?.currentLevel ?? 0;
-            if (levelId != 0 && levelId != lastLevelId)
-            {
-                lastLevelId = levelId;
-                hasWorkshopMetadata = false;
-                currentWorkshopMetadata = null;
-
-                var repo = WorkshopRepository.instance?.levelRepo;
-                repo?.GetLevel(levelId, net.currentLevelType, (metadata) =>
-                {
-                    currentWorkshopMetadata = metadata;
-                    hasWorkshopMetadata = metadata != null;
-                });
             }
         }
 
@@ -63,17 +61,18 @@ namespace YxModDll.Mod
                 normal = { textColor = Color.white }
             };
 
-            GUILayout.BeginArea(new Rect(10, 10, 500, 120));
+            GUILayout.BeginArea(new Rect(10, 10, 500, 200));
+
             GUILayout.Label($"帧数: {fps} FPS", style);
             GUILayout.Label($"延迟: {latency:F0} ms", style);
             GUILayout.Label($"时间: {DateTime.Now:HH:mm:ss}", style);
+            GUILayout.Label($"图名: {levelTitle}", style);
 
-            // 显示标题和进度
-            if (hasWorkshopMetadata && Game.currentLevel?.checkpoints != null)
+            if (Game.instance != null && Game.currentLevel != null && Game.currentLevel.checkpoints != null)
             {
-                var cps = Game.currentLevel.checkpoints;
-                int cur = Mathf.Clamp(Game.instance.currentCheckpointNumber, 0, cps.Length - 1);
-                GUILayout.Label($"{currentWorkshopMetadata.title} ：{cur + 1}/{cps.Length}", style);
+                int total = Game.currentLevel.checkpoints.Length;
+                int cur = Mathf.Clamp(Game.instance.currentCheckpointNumber, 0, total - 1);
+                GUILayout.Label($"进度: {cur + 1}/{total}", style);
             }
 
             GUILayout.EndArea();

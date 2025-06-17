@@ -30,6 +30,7 @@ namespace YxModDll.Mod
         public static int chuansongzhiTop;
         public static int xuanfuyuTop;
         public static int qianshouTop;
+        public static bool ChuFaQiXianShi;
 
 
         public static List<GameObject> 碰撞真渲染无 = new List<GameObject>();
@@ -38,6 +39,7 @@ namespace YxModDll.Mod
         public static List<GameObject> 渲染真碰撞假 = new List<GameObject>();
         public static List<GameObject> 渲染真碰撞真触发真 = new List<GameObject>();
         public static List<GameObject> 渲染真碰撞真图层非碰撞图层 = new List<GameObject>();
+        public static List<GameObject> 解密模式已修改 = new List<GameObject>();
         public static GameObject boxGameObject;
         public static GameObject sphereGameObject;
 
@@ -123,7 +125,9 @@ namespace YxModDll.Mod
                 GUILayout.EndHorizontal();
                 UI.CreatAnNiu_AnXia("真假剔除",ref ZhenJiaTiChu, false, ZhenJiaTiChu_Mod);  //////public void TrueandFalseModels()
                 gaodu += UI.buttonHeight;
-                //UI.CreatAnNiu_AnXia("解密模式", ref JieMiMoShi, false);
+                //UI.CreatAnNiu_AnXia("触发器显示", ref ChuFaQiXianShi, false, ChuFaQiXianShi_Mod);
+                gaodu += UI.buttonHeight;
+                UI.CreatAnNiu_AnXia("解密模式", ref JieMiMoShi, false, JieMiMoShi_Mod);
                 //UI.CreatAnNiu_AnXia("找不同模式", ref ZhaoBuTongMoShi, false);
                 UI.CreatAnNiu_AnXia("解锁Steam成就", ref JieSuoChengJiu, false, JieSuoChengJiu_CaiDan);
                 gaodu += UI.buttonHeight;
@@ -154,6 +158,16 @@ namespace YxModDll.Mod
 
             //GUILayout.FlexibleSpace();
 
+        }
+
+        private static void ChuFaQiXianShi_Mod()
+        {
+            if (ChuFaQiXianShi)
+            {
+            }
+            else
+            {
+            }
         }
 
         private static void CaiDan_DingDianSheZhi()
@@ -661,6 +675,85 @@ namespace YxModDll.Mod
             //    "碰撞真渲染假=", 碰撞真渲染假.Count, " 碰撞真渲染无=", 碰撞真渲染无.Count, " 渲染真碰撞假=", 渲染真碰撞假.Count, " 渲染真碰撞无=", 渲染真碰撞无.Count, " 渲染真碰撞真触发真=", 渲染真碰撞真触发真.Count,
             //    " 渲染真碰撞真图层非碰撞图层=", 渲染真碰撞真图层非碰撞图层.Count
             //}));
+        }
+        public static void JieMiMoShi_Mod()
+        {
+            if (JieMiMoShi)
+            {
+                if (解密模式已修改.Count == 0)
+                {
+                    // 找到场景里的 Level 对象
+                    GameObject levelObject = GameObject.Find("Level");
+                    if (levelObject == null)
+                    {
+                        Chat.TiShi(NetGame.instance.local, "未找到 Level 对象");
+                        return;
+                    }
+
+                    // 获取所有 TriggerVolume 组件
+                    TriggerVolume[] allTriggers = levelObject.GetComponentsInChildren<TriggerVolume>();
+                    if (allTriggers == null || allTriggers.Length == 0)
+                    {
+                        Chat.TiShi(NetGame.instance.local, "未找到任何触发器");
+                        return;
+                    }
+
+                    // 获取玩家当前坐标
+                    var player = NetGame.instance.local?.players?[0]?.human;
+                    if (player == null)
+                    {
+                        Chat.TiShi(NetGame.instance.local, "未找到玩家");
+                        return;
+                    }
+
+                    Vector3 playerPosition = player.transform.position;
+
+                    foreach (TriggerVolume trigger in allTriggers)
+                    {
+                        float distance = Vector3.Distance(playerPosition, trigger.transform.position);
+                        if (Camera.main != null)
+                        {
+                            Vector3 toTarget = (trigger.transform.position - Camera.main.transform.position).normalized;
+                            Vector3 forward = Camera.main.transform.forward;
+                            Vector3 viewportPos = Camera.main.WorldToViewportPoint(trigger.transform.position);
+
+                            bool inFront = Vector3.Dot(forward, toTarget) > 0f;
+                            bool inViewport = viewportPos.x >= 0f && viewportPos.x <= 1f && viewportPos.y >= 0f && viewportPos.y <= 1f;
+
+                            if (inFront && inViewport && distance < 150f)
+                            {
+                                string color = (trigger.output != null && trigger.output.value != 0f) ? "#00EC00" : "#FF0000";
+                                Vector3 screenPos = Camera.main.WorldToScreenPoint(trigger.transform.position);
+                                GUI.Label(
+                                    new Rect(screenPos.x - 50f, Screen.height - screenPos.y, 200f, 35f),
+                                    $"<size=10><color={color}><{trigger.colliderToCheckFor?.name ?? "Trigger"}> 距离:{Convert.ToInt32(Math.Round(distance, 2))}m</color></size>"
+                                );
+                            }
+                        }
+                    }
+
+                    Chat.TiShi(NetGame.instance.local, $"解密模式开启，处理了 {解密模式已修改.Count} 个触发器");
+                }
+                else
+                {
+                    Chat.TiShi(NetGame.instance.local, "解密模式已重复开启，无需再次处理");
+                }
+            }
+            else
+            {
+                // 关闭逻辑：恢复所有之前修改过的
+                foreach (GameObject go in 解密模式已修改)
+                {
+                    try
+                    {
+                        if (go != null)
+                            go.SetActive(true);
+                    }
+                    catch { }
+                }
+                解密模式已修改.Clear();
+                Chat.TiShi(NetGame.instance.local, "解密模式已关闭，已还原所有修改");
+            }
         }
         public static bool GameObjectLayerTest(GameObject gameObject)
         {
