@@ -127,7 +127,7 @@ namespace YxModDll.Mod
                 gaodu += UI.buttonHeight;
                 //UI.CreatAnNiu_AnXia("触发器显示", ref ChuFaQiXianShi, false, ChuFaQiXianShi_Mod);
                 gaodu += UI.buttonHeight;
-                UI.CreatAnNiu_AnXia("解密模式", ref JieMiMoShi, false, JieMiMoShi_Mod);
+                //UI.CreatAnNiu_AnXia("解密模式", ref JieMiMoShi, false, JieMiMoShi_Mod);
                 //UI.CreatAnNiu_AnXia("找不同模式", ref ZhaoBuTongMoShi, false);
                 UI.CreatAnNiu_AnXia("解锁Steam成就", ref JieSuoChengJiu, false, JieSuoChengJiu_CaiDan);
                 gaodu += UI.buttonHeight;
