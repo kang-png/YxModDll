@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+﻿//using HarmonyLib;
 using Multiplayer;
 using System;
 using System.Reflection;
@@ -14,19 +14,20 @@ namespace YxModDll.Patches
         // 1. 获取 private static object stateLock
         public static object GetStateLock()
         {
-            return AccessTools.Field(NetGameType, "stateLock").GetValue(null);
+            //return AccessTools.Field(NetGameType, "stateLock").GetValue(null);
+            return null;
         }
 
         // 2. 封装反射调用器
         private static void InvokePrivateMethod(NetGame instance, string methodName, params object[] args)
         {
-            var method = AccessTools.Method(NetGameType, methodName);
-            if (method == null)
-            {
-                UnityEngine.Debug.LogError($"[YxMod] 未找到方法: {methodName}");
-                return;
-            }
-            method.Invoke(instance, args);
+            //var method = AccessTools.Method(NetGameType, methodName);
+            //if (method == null)
+            //{
+            //    UnityEngine.Debug.LogError($"[YxMod] 未找到方法: {methodName}");
+            //    return;
+            //}
+            //method.Invoke(instance, args);
         }
 
         // 单独封装每个调用（你也可以选择只用上面那种通用调用）

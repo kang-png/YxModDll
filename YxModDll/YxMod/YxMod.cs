@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+﻿//using HarmonyLib;
 using HumanAPI;
 using Multiplayer;
 using System;
@@ -202,9 +202,36 @@ namespace YxModDll.Mod
         {
 
 
+
+            //StartCoroutine(JianChaGengXin());//检查更新
+            //YanZheng_OK = true;
+            NetGame.instance.gameObject.AddComponent<UI_Main>();
+            NetGame.instance.gameObject.AddComponent<KeyDisplayUI>();//键盘UI
+            NetGame.instance.gameObject.AddComponent<MiniMap>();//小地图
+            NetGame.instance.gameObject.AddComponent<ColorfulSpeek>();//颜色发言
+            NetGame.instance.gameObject.AddComponent<FPSCounter>();//FPS
+            //StartCoroutine(DelayPatchAll());
+
+        }
+        //private IEnumerator DelayPatchAll()
+        //{
+        //    // 等待直到 Human 类加载且至少有一个实例
+        //    while (Human.all.Count == 0)
+        //    {
+        //        yield return null;
+        //    }
+
+        //    Debug.Log("[YxMod] Patching...");
+        //    new Harmony("com.yxmod.patch").PatchAll();
+        //    Debug.Log("[YxMod] PatchAll done.");
+        //}
+        private void Start()
+        {
+            // 注册编码支持（只需调用一次）
+            // System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             var go = NetGame.instance.gameObject;
 
-            //go.AddComponent<Patcher_App>();
+            go.AddComponent<Patcher_App>();
             go.AddComponent<Patcher_LevelInformationBox>();
             go.AddComponent<Patcher_LevelRepository>();
             go.AddComponent<Patcher_MenuSystem>();
@@ -214,35 +241,8 @@ namespace YxModDll.Mod
             go.AddComponent<Patcher_PlayerManager>();
 
             go.AddComponent<Patcher_Human>();
-            //go.AddComponent<Patcher_NetGame>();
-            //go.AddComponent<Patcher_NetPlayer>();
-
-            //StartCoroutine(JianChaGengXin());//检查更新
-            //YanZheng_OK = true;
-            NetGame.instance.gameObject.AddComponent<UI_Main>();
-            NetGame.instance.gameObject.AddComponent<KeyDisplayUI>();//键盘UI
-            NetGame.instance.gameObject.AddComponent<MiniMap>();//小地图
-            NetGame.instance.gameObject.AddComponent<ColorfulSpeek>();//颜色发言
-            NetGame.instance.gameObject.AddComponent<FPSCounter>();//FPS
-            StartCoroutine(DelayPatchAll());
-
-        }
-        private IEnumerator DelayPatchAll()
-        {
-            // 等待直到 Human 类加载且至少有一个实例
-            while (Human.all.Count == 0)
-            {
-                yield return null;
-            }
-
-            Debug.Log("[YxMod] Patching...");
-            new Harmony("com.yxmod.patch").PatchAll();
-            Debug.Log("[YxMod] PatchAll done.");
-        }
-        private void Start()
-        {
-            // 注册编码支持（只需调用一次）
-            // System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            go.AddComponent<Patcher_NetGame>();
+            go.AddComponent<Patcher_NetPlayer>();
 
             // 启动协程下载并解压
             StartCoroutine(JianChaGengXin());

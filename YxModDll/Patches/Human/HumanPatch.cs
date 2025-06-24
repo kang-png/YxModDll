@@ -1,20 +1,20 @@
-﻿using HarmonyLib;
+﻿//using HarmonyLib;
 using UnityEngine;
 
 namespace YxModDll.Patches
 {
-    [HarmonyPatch(typeof(Human))]
+    //[HarmonyPatch(typeof(Human))]
     public static class HumanPatch
     {
         // Patch Human.Initialize
-        [HarmonyPostfix]
-        [HarmonyPatch(nameof(Human.Initialize))]
-        public static void Initialize_Postfix(Human __instance)
-        {
-            var ext = HumanStateExtHelper.GetExt(__instance);
-            ext.human = __instance; // ✅ 必须设置 human 引用！
-            ext.YxModChuShiHua(); // 可选：调用你的初始化逻辑
-        }
+        //[HarmonyPostfix]
+        //[HarmonyPatch(nameof(Human.Initialize))]
+        //public static void Initialize_Postfix(Human __instance)
+        //{
+        //    var ext = HumanStateExtHelper.GetExt(__instance);
+        //    ext.human = __instance; // ✅ 必须设置 human 引用！
+        //    ext.YxModChuShiHua(); // 可选：调用你的初始化逻辑
+        //}
 
         //// 完全替换 FixedUpdate
         //[HarmonyPrefix]

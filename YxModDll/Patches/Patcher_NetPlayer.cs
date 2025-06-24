@@ -8,7 +8,7 @@ using YxModDll.Mod;
 namespace YxModDll.Patches
 {
 
-    public class Patcher_NetPlayer : NetPlayer// NetScope//MonoBehaviour
+    public class Patcher_NetPlayer : MonoBehaviour//NetPlayer// NetScope//MonoBehaviour
     {
         private static FieldInfo _moveLock;
 
@@ -43,7 +43,7 @@ namespace YxModDll.Patches
             _moveFrames = typeof(NetPlayer).GetField("moveFrames", BindingFlags.NonPublic | BindingFlags.Instance);
 
 
-            //Patcher2.MethodPatch(typeof(NetPlayer), "PreFixedUpdate", null, typeof(Patcher_NetPlayer), "NetPlayer_PreFixedUpdate", new Type[] { typeof(NetPlayer) });
+            Patcher2.MethodPatch(typeof(NetPlayer), "PreFixedUpdate", null, typeof(Patcher_NetPlayer), "NetPlayer_PreFixedUpdate", new Type[] { typeof(NetPlayer) });
             //Patcher2.MethodPatch(typeof(NetPlayer), "PreFixedUpdate", null, typeof(Patcher_NetPlayer), "NetPlayer_PreFixedUpdate", null);
             //// 创建补丁实例
             //var patchInstance = new Patcher_NetPlayer();
@@ -52,10 +52,9 @@ namespace YxModDll.Patches
         }
 
 
-        public void NetPlayer_PreFixedUpdate()
+        public static void NetPlayer_PreFixedUpdate(NetPlayer instance)
         {
-            NetPlayer instance = this;
-
+            //NetPlayer instance = this;
             var moveLock = (object)_moveLock.GetValue(instance);
             var walkForward = (float)_walkForward.GetValue(instance);
             var walkRight = (float)_walkRight.GetValue(instance);
@@ -79,6 +78,9 @@ namespace YxModDll.Patches
             {
                 return;
             }
+
+            //var baseMethod = typeof(NetPlayer).BaseType.GetMethod("PreFixedUpdate", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            //baseMethod.Invoke(instance, null);
 
             lock (moveLock)
             {
@@ -141,34 +143,6 @@ namespace YxModDll.Patches
             }
         }
     }
-    // ✅ 放在 namespace 中，保持 public static
-    //public static class NetPlayerExtHelper
-    //{
-    //    private static readonly ConditionalWeakTable<NetPlayer, NetPlayerReflectionAccessor> _ext
-    //        = new ConditionalWeakTable<NetPlayer, NetPlayerReflectionAccessor>();
-
-    //    public static NetPlayerReflectionAccessor GetAccessor(this NetPlayer player)
-    //        => _ext.GetOrCreateValue(player);
-    //}
-
-    //public class NetPlayerReflectionAccessor
-    //{
-    //    private readonly NetPlayer player;
-
-    //    private static readonly FieldInfo playDeadField =
-    //        typeof(NetPlayer).GetField("playDead", BindingFlags.Instance | BindingFlags.NonPublic);
-
-    //    public NetPlayerReflectionAccessor(NetPlayer player)
-    //    {
-    //        this.player = player ?? throw new ArgumentNullException(nameof(player));
-    //    }
-
-    //    public bool playDead
-    //    {
-    //        get => (bool)playDeadField.GetValue(player);
-    //        set => playDeadField.SetValue(player, value);
-    //    }
-    //}
 }
 
 
