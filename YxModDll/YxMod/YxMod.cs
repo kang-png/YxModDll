@@ -89,84 +89,6 @@ namespace YxModDll.Mod
             return source.Substring(startIndex, endIndex - startIndex);
         }
 
-        IEnumerator JianChaGengXin()
-        {
-            Debug.Log("开始下载更新包...");
-
-            string tempZipPath = Path.Combine(Application.temporaryCachePath, "YxModDll.zip");
-
-            UnityWebRequest www = UnityWebRequest.Get(updateUrl);
-            yield return www.SendWebRequest();
-
-            if (www.isNetworkError || www.isHttpError)
-            {
-                Debug.LogError("下载失败: " + www.error);
-                yield break;
-            }
-
-            File.WriteAllBytes(tempZipPath, www.downloadHandler.data);
-            Debug.Log("下载完成，开始解压...");
-
-            string extractPath = Path.Combine(Application.temporaryCachePath, "YxModExtract");
-            if (Directory.Exists(extractPath)) Directory.Delete(extractPath, true);
-            ExtractZipFile(tempZipPath, extractPath);
-            Debug.Log("解压完成");
-
-            // 找出 DLL 文件
-            string newDllPath = Path.Combine(extractPath, "YxModDll.dll");
-            if (!File.Exists(newDllPath))
-            {
-                Debug.LogError("解压目录中找不到 YxModDll.dll");
-                yield break;
-            }
-
-            // 获取当前槽位
-            string configPath = Path.Combine(Application.dataPath, "../doorstop_config.ini");
-            if (!File.Exists(configPath))
-            {
-                Debug.LogError("找不到 doorstop_config.ini");
-                yield break;
-            }
-
-            string[] lines = File.ReadAllLines(configPath);
-            string currentDll = null;
-            for (int i = 0; i < lines.Length; i++)
-            {
-                if (lines[i].StartsWith("target_assembly="))
-                {
-                    currentDll = lines[i].Substring("target_assembly=".Length).Trim();
-                    break;
-                }
-            }
-
-            if (string.IsNullOrEmpty(currentDll))
-            {
-                Debug.LogError("doorstop_config.ini 中未指定 target_assembly");
-                yield break;
-            }
-
-            // 计算目标 DLL 文件名（A <-> B 轮换）
-            string nextDll = currentDll.Contains("_A") ? "YxModDll_B.dll" : "YxModDll_A.dll";
-            string targetDllPath = Path.Combine(Application.dataPath, "..", nextDll);
-
-            // 覆盖 DLL
-            File.Copy(newDllPath, targetDllPath, true);
-            Debug.Log($"DLL 已写入: {targetDllPath}");
-
-            // 更新 config 文件
-            for (int i = 0; i < lines.Length; i++)
-            {
-                if (lines[i].StartsWith("target_assembly="))
-                {
-                    lines[i] = $"target_assembly={nextDll}";
-                }
-            }
-            File.WriteAllLines(configPath, lines);
-            Debug.Log("已更新 doorstop_config.ini，准备下次启动使用新 DLL");
-
-            Debug.Log("更新完成，请重启游戏！");
-
-        }
 
         public static void ExtractZipFile(string zipPath, string extractPath)
         {
@@ -244,8 +166,6 @@ namespace YxModDll.Mod
             go.AddComponent<Patcher_NetGame>();
             go.AddComponent<Patcher_NetPlayer>();
 
-            // 启动协程下载并解压
-            StartCoroutine(JianChaGengXin());
         }
         //public void OnGUI()
         //{
