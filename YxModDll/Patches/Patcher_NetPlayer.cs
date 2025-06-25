@@ -62,12 +62,14 @@ namespace YxModDll.Patches
                 !IsValidPart(preset.lowerBody, "lowerBody"))
             {
                 Debug.LogWarning($"[YxMod] ApplySkin skipped: invalid skin data");
-                return; 
+                __instance.skin = null;
+                return;
             }
 
             __instance.skin = preset;
             __instance.skin.SaveNetSkin(__instance.localCoopIndex, __instance.skinUserId);
         }
+
 
         private static bool IsValidPart(RagdollPresetPartMetadata part, string name)
         {
