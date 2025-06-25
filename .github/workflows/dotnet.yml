@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ master ]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -42,13 +45,13 @@ jobs:
         copy YxModDll\libs\读我.txt package\
         powershell Compress-Archive -Path package\* -DestinationPath YxModRelease.zip
 
-    - name: Upload DLL to GitHub Release
-      if: github.ref == 'refs/heads/master'
+    - name: Upload DLL and ZIP to GitHub Release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: softprops/action-gh-release@v1
       with:
         tag_name: 1.0.0
         files: |
-          YxModDll\bin\Release\YxModDll.dll
+          YxModDll/bin/Release/YxModDll.dll
           YxModRelease.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
