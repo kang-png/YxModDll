@@ -39,10 +39,8 @@ jobs:
       run: |
         mkdir package
         copy YxModDll\bin\Release\YxModDll.dll package\
-        copy YxModDll\libs\doorstop_config.ini package\
         copy YxModDll\libs\winhttp.dll package\
         copy YxModDll\libs\安装图示.png package\
-        copy YxModDll\libs\读我.txt package\
         powershell Compress-Archive -Path package\* -DestinationPath YxModRelease.zip
 
     - name: Upload DLL and ZIP to GitHub Release
