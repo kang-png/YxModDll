@@ -66,6 +66,7 @@ namespace YxModDll.Patches
             string text = msg.ReadString();
             if (num == VersionDisplay.netCode)
             {
+                client.name = msg.ReadString();
                 if (NetGame.instance.transport.IsRelayed(client))
                 {
                     App.instance.OnRelayConnection(client);
