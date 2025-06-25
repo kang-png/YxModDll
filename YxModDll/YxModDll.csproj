@@ -196,10 +196,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <!-- 拷贝合并后的 DLL 到游戏目录 -->
-  <Target Name="PostBuild" AfterTargets="Build" Condition="Exists('E:\SteamLibrary\steamapps\common\Human Fall Flat')">
+  <Target Name="PostBuild" AfterTargets="ILRepack" Condition="Exists('E:\SteamLibrary\steamapps\common\Human Fall Flat')">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="E:\SteamLibrary\steamapps\common\Human Fall Flat" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFiles="E:\SteamLibrary\steamapps\common\Human Fall Flat\YxModDll_A.dll" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFiles="E:\SteamLibrary\steamapps\common\Human Fall Flat\YxModDll_B.dll" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\ILRepack.Lib.MSBuild.Task.2.0.43\build\ILRepack.Lib.MSBuild.Task.targets" Condition="Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.43\build\ILRepack.Lib.MSBuild.Task.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.43\build\ILRepack.Lib.MSBuild.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILRepack.Lib.MSBuild.Task.2.0.43\build\ILRepack.Lib.MSBuild.Task.targets'))" />
+  </Target>
 </Project>
