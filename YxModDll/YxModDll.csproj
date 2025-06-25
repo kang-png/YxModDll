@@ -194,9 +194,6 @@
     <Compile Include="YxMod\YanSe.cs" />
     <Compile Include="YxMod\YxMod.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
   <!-- 拷贝合并后的 DLL 到游戏目录 -->
   <Target Name="PostBuild" AfterTargets="Build" Condition="Exists('E:\SteamLibrary\steamapps\common\Human Fall Flat')">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="E:\SteamLibrary\steamapps\common\Human Fall Flat" />
