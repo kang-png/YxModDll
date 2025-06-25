@@ -1,4 +1,5 @@
-﻿using Multiplayer;
+﻿using HumanAPI;
+using Multiplayer;
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -42,13 +43,51 @@ namespace YxModDll.Patches
             _holding = typeof(NetPlayer).GetField("holding", BindingFlags.NonPublic | BindingFlags.Instance);
             _moveFrames = typeof(NetPlayer).GetField("moveFrames", BindingFlags.NonPublic | BindingFlags.Instance);
 
-
+            Patcher2.MethodPatch(typeof(NetPlayer), "ApplySkin", new[] { typeof(byte[]) }, typeof(Patcher_NetPlayer), "NetPlayer_ApplySkin", new[] { typeof(NetPlayer), typeof(byte[]) });
             Patcher2.MethodPatch(typeof(NetPlayer), "PreFixedUpdate", null, typeof(Patcher_NetPlayer), "NetPlayer_PreFixedUpdate", new Type[] { typeof(NetPlayer) });
             //Patcher2.MethodPatch(typeof(NetPlayer), "PreFixedUpdate", null, typeof(Patcher_NetPlayer), "NetPlayer_PreFixedUpdate", null);
             //// 创建补丁实例
             //var patchInstance = new Patcher_NetPlayer();
             //Patcher2.MethodPatch(typeof(NetPlayer), "PreFixedUpdate", null, patchInstance, "NetPlayer_PreFixedUpdate", new Type[] { typeof(NetPlayer) });
 
+        }
+        public static void NetPlayer_ApplySkin(NetPlayer __instance, byte[] bytes)
+        {
+            RagdollPresetMetadata preset = RagdollPresetMetadata.Deserialize(bytes);
+
+            if (preset == null ||
+                !IsValidPart(preset.main, "main") ||
+                !IsValidPart(preset.head, "head") ||
+                !IsValidPart(preset.upperBody, "upperBody") ||
+                !IsValidPart(preset.lowerBody, "lowerBody"))
+            {
+                Debug.LogWarning($"[YxMod] ApplySkin skipped: invalid skin data");
+                return; 
+            }
+
+            __instance.skin = preset;
+            __instance.skin.SaveNetSkin(__instance.localCoopIndex, __instance.skinUserId);
+        }
+
+        private static bool IsValidPart(RagdollPresetPartMetadata part, string name)
+        {
+            if (part == null)
+            {
+                Debug.LogWarning($"[YxMod] Skin part missing: {name}");
+                return false;
+            }
+            if (part.bytes == null || part.bytes.Length < 8)
+            {
+                Debug.LogWarning($"[YxMod] Texture bytes missing or too small in: {name}");
+                return false;
+            }
+            // PNG文件头判断（可选）
+            if (!(part.bytes[0] == 0x89 && part.bytes[1] == 0x50))
+            {
+                Debug.LogWarning($"[YxMod] Texture in {name} is not PNG format.");
+                return false;
+            }
+            return true;
         }
 
 
