@@ -31,6 +31,7 @@ namespace YxModDll.Mod
         public static int xuanfuyuTop;
         public static int qianshouTop;
         public static bool ChuFaQiXianShi;
+        public static bool ZiDongShenShou;
 
 
         public static List<GameObject> 碰撞真渲染无 = new List<GameObject>();
@@ -42,8 +43,6 @@ namespace YxModDll.Mod
         public static List<GameObject> 解密模式已修改 = new List<GameObject>();
         public static GameObject boxGameObject;
         public static GameObject sphereGameObject;
-
-
 
         public static void CreatUI()//创建菜单功能区
         {
@@ -123,6 +122,7 @@ namespace YxModDll.Mod
                 UI.CreatAnNiu_AnXia("全局灯", ref QuanJuDeng, false, OnQuanJuDeng_CaiDan);
                 gaodu += UI.buttonHeight;
                 GUILayout.EndHorizontal();
+                //UI.CreatAnNiu_AnXia("自动伸手", ref ZiDongShenShou, false);
                 UI.CreatAnNiu_AnXia("真假剔除",ref ZhenJiaTiChu, false, ZhenJiaTiChu_Mod);  //////public void TrueandFalseModels()
                 gaodu += UI.buttonHeight;
                 //UI.CreatAnNiu_AnXia("触发器显示", ref ChuFaQiXianShi, false, ChuFaQiXianShi_Mod);

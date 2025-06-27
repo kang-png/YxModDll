@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Policy;
@@ -44,7 +43,7 @@ namespace YxModDll.Mod
         public static int fenshen_cam;//分身相机
         public static bool SuperJumpEnabled = false; // 超级跳是否启用
 
-        private string updateUrl = "https://nightly.link/kang-png/YxModDll/workflows/dotnet/master/YxModDll.zip";
+        private string updateUrl = "https://goppx.com/https://github.com/kang-png/YxModDll/releases/download/1.0.0/YxModDll.dll";
 
         //public static bool YanZheng_OK;
         //public static string YanZheng_Str = "";
@@ -90,35 +89,69 @@ namespace YxModDll.Mod
         }
 
 
-        public static void ExtractZipFile(string zipPath, string extractPath)
+        IEnumerator JianChaGengXin()
         {
-            // 自动创建目标目录
-            Directory.CreateDirectory(extractPath);
+            Debug.Log("准备检查 doorstop_config.ini...");
 
-            using (FileStream zipStream = new FileStream(zipPath, FileMode.Open))
-            using (ZipArchive archive = new ZipArchive(zipStream, ZipArchiveMode.Read))
+            string configPath = Path.Combine(Application.dataPath, "../doorstop_config.ini");
+            if (!File.Exists(configPath))
             {
-                foreach (ZipArchiveEntry entry in archive.Entries)
+                Debug.LogError("找不到 doorstop_config.ini，取消更新操作");
+                yield break;
+            }
+
+            // 读取当前 DLL 路径
+            string[] lines = File.ReadAllLines(configPath);
+            string currentDll = null;
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (lines[i].StartsWith("target_assembly="))
                 {
-                    string filePath = Path.Combine(extractPath, entry.FullName);
-
-                    // 确保目标目录存在
-                    string dir = Path.GetDirectoryName(filePath);
-                    if (!string.IsNullOrEmpty(dir))
-                        Directory.CreateDirectory(dir);
-
-                    // 忽略目录项（Name为空）
-                    if (!string.IsNullOrEmpty(entry.Name))
-                    {
-                        using (var entryStream = entry.Open())
-                        using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-                        {
-                            entryStream.CopyTo(fileStream);
-                        }
-                    }
+                    currentDll = lines[i].Substring("target_assembly=".Length).Trim();
+                    break;
                 }
             }
+
+            if (string.IsNullOrEmpty(currentDll))
+            {
+                Debug.LogError("doorstop_config.ini 中未指定 target_assembly");
+                yield break;
+            }
+
+            Debug.Log("开始下载更新 DLL...");
+
+            UnityWebRequest www = UnityWebRequest.Get(updateUrl);
+            yield return www.SendWebRequest();
+
+            if (www.isNetworkError || www.isHttpError)
+            {
+                Debug.LogError("下载失败: " + www.error);
+                yield break;
+            }
+
+            // 计算目标 DLL 文件路径（A <-> B 轮换）
+            string nextDll = currentDll.Contains("_A") ? "YxModDll_B.dll" : "YxModDll_A.dll";
+            string targetDllPath = Path.Combine(Application.dataPath, "..", nextDll);
+
+            File.WriteAllBytes(targetDllPath, www.downloadHandler.data);
+            Debug.Log($"DLL 已写入: {targetDllPath}");
+
+            // 更新 config 文件
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (lines[i].StartsWith("target_assembly="))
+                {
+                    lines[i] = $"target_assembly={nextDll}";
+                }
+            }
+            File.WriteAllLines(configPath, lines);
+            Debug.Log("已更新 doorstop_config.ini，准备下次启动使用新 DLL");
+
+            Debug.Log("更新完成，请重启游戏！");
         }
+
+
+
 
         private void Awake()
         {
@@ -165,6 +198,9 @@ namespace YxModDll.Mod
             go.AddComponent<Patcher_Human>();
             go.AddComponent<Patcher_NetGame>();
             go.AddComponent<Patcher_NetPlayer>();
+
+            // 启动协程下载并解压
+            StartCoroutine(JianChaGengXin());
 
         }
         //public void OnGUI()

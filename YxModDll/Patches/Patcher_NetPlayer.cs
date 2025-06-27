@@ -24,6 +24,7 @@ namespace YxModDll.Patches
         private static FieldInfo _shooting;
         private static FieldInfo _holding;
         private static FieldInfo _moveFrames;
+        private static MethodInfo _applyPresetMethod;
 
         public static bool renwubudong;
 
@@ -42,9 +43,17 @@ namespace YxModDll.Patches
             _shooting = typeof(NetPlayer).GetField("shooting", BindingFlags.NonPublic | BindingFlags.Instance);
             _holding = typeof(NetPlayer).GetField("holding", BindingFlags.NonPublic | BindingFlags.Instance);
             _moveFrames = typeof(NetPlayer).GetField("moveFrames", BindingFlags.NonPublic | BindingFlags.Instance);
+            _applyPresetMethod = typeof(RagdollCustomization).GetMethod("ApplyPreset", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            Patcher2.MethodPatch(typeof(NetPlayer), "ApplySkin", new[] { typeof(byte[]) }, typeof(Patcher_NetPlayer), "NetPlayer_ApplySkin", new[] { typeof(NetPlayer), typeof(byte[]) });
+            if (_applyPresetMethod == null)
+            {
+                Debug.LogError("[YxMod] Failed to locate RagdollCustomization.ApplyPreset via reflection");
+            }
+
+            //Patcher2.MethodPatch(typeof(NetPlayer), "ApplySkin", new[] { typeof(byte[]) }, typeof(Patcher_NetPlayer), "NetPlayer_ApplySkin", new[] { typeof(NetPlayer), typeof(byte[]) });
             Patcher2.MethodPatch(typeof(NetPlayer), "PreFixedUpdate", null, typeof(Patcher_NetPlayer), "NetPlayer_PreFixedUpdate", new Type[] { typeof(NetPlayer) });
+            //Patcher2.MethodPatch(typeof(NetPlayer), "ApplyPreset", new[] { typeof(RagdollPresetMetadata), typeof(bool), typeof(bool) }, typeof(Patcher_NetPlayer), "NetPlayer_ApplyPreset", new[] { typeof(NetPlayer), typeof(RagdollPresetMetadata), typeof(bool), typeof(bool) });
+
             //Patcher2.MethodPatch(typeof(NetPlayer), "PreFixedUpdate", null, typeof(Patcher_NetPlayer), "NetPlayer_PreFixedUpdate", null);
             //// 创建补丁实例
             //var patchInstance = new Patcher_NetPlayer();
@@ -62,7 +71,7 @@ namespace YxModDll.Patches
                 !IsValidPart(preset.lowerBody, "lowerBody"))
             {
                 Debug.LogWarning($"[YxMod] ApplySkin skipped: invalid skin data");
-                __instance.skin = null;
+                __instance.skin = PresetRepository.CreateDefaultSkin();
                 return;
             }
 
@@ -90,6 +99,53 @@ namespace YxModDll.Patches
                 return false;
             }
             return true;
+        }
+
+        public static void NetPlayer_ApplyPreset(NetPlayer __instance, RagdollPresetMetadata preset, bool bake, bool useBaseTexture)
+        {
+            if (preset == null)
+            {
+                Debug.LogWarning("[YxMod] ApplyPreset skipped: preset is null");
+                return;
+            }
+
+            bool IsValidPart(RagdollPresetPartMetadata part, string name)
+            {
+                if (part != null && part.bytes != null && part.bytes.Length >= 16)
+                    return true;
+
+                Debug.LogWarning($"[YxMod] Texture bytes missing or too small in: {name}");
+                return false;
+            }
+
+            if (!IsValidPart(preset.main, "main") ||
+                !IsValidPart(preset.head, "head") ||
+                !IsValidPart(preset.upperBody, "upperBody") ||
+                !IsValidPart(preset.lowerBody, "lowerBody"))
+            {
+                Debug.LogWarning("[YxMod] ApplyPreset skipped: invalid skin data");
+                __instance.skin = PresetRepository.CreateDefaultSkin(); // ✅ 加上这一句
+                return;
+            }
+
+
+            if (__instance.customization == null)
+            {
+                __instance.customization = __instance.human.ragdoll.gameObject.AddComponent<RagdollCustomization>();
+            }
+
+            if (Patcher_NetPlayer._applyPresetMethod != null)
+            {
+                Patcher_NetPlayer._applyPresetMethod.Invoke(__instance.customization, new object[] { preset, true, useBaseTexture });
+            }
+            else
+            {
+                Debug.LogError("[YxMod] ApplyPreset reflection method is null!");
+                return;
+            }
+
+            __instance.customization.RebindColors(bake, compress: true);
+            __instance.customization.ClearOutCachedClipVolumes();
         }
 
 
