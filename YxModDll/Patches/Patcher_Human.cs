@@ -33,7 +33,9 @@ namespace YxModDll.Patches
 
         private static FieldInfo _slideTimer;
         private static FieldInfo _fallTimer;
-
+        private static FieldInfo velocitiesField;
+        private static FieldInfo _humanHead;
+        private static MethodInfo _initializeBodiesMethod;
 
         private void Awake()
         {
@@ -57,8 +59,13 @@ namespace YxModDll.Patches
 
             _slideTimer = typeof(Human).GetField("slideTimer", BindingFlags.NonPublic | BindingFlags.Instance);
             _fallTimer = typeof(Human).GetField("fallTimer", BindingFlags.NonPublic | BindingFlags.Instance);
+            velocitiesField = typeof(Human).GetField("velocities", BindingFlags.NonPublic | BindingFlags.Instance);
+            _humanHead = typeof(Human).GetField("humanHead", BindingFlags.NonPublic | BindingFlags.Instance);
+            _initializeBodiesMethod = typeof(Human).GetMethod("InitializeBodies", BindingFlags.NonPublic | BindingFlags.Instance);
 
 
+            //Patcher2.MethodPatch(typeof(Human), "Initialize", null, typeof(Patcher_Human), "Initialize", new Type[] { typeof(Human) });
+            //Patcher2.MethodPatch(typeof(Human), "InitializeBodies", null, typeof(Patcher_Human), "InitializeBodies", new Type[] { typeof(Human) });
             Patcher2.MethodPatch(typeof(Human), "FixedUpdate", null, typeof(Patcher_Human), "Human_FixedUpdate", new Type[] { typeof(Human) });
 
         }
@@ -70,19 +77,60 @@ namespace YxModDll.Patches
 
             //}
         }
+        public static void Initialize(Human __instance)
+        {
+            __instance.ragdoll = __instance.GetComponentInChildren<Ragdoll>();
+            __instance.motionControl2.Initialize();
+
+            var servo = __instance.GetComponentInChildren<ServoSound>();
+            var headGO = __instance.ragdoll.partHead.transform.gameObject;
+
+            var humanHead = headGO.AddComponent<HumanHead>();
+            humanHead.sounds = servo;
+            humanHead.humanAudio = __instance.GetComponentInChildren<HumanAudio>();
+            servo.transform.SetParent(humanHead.transform, false);
+
+            // 使用反射设置 __instance.humanHead
+            _humanHead.SetValue(__instance, humanHead);
+
+
+            //InitializeBodies(__instance);
+            _initializeBodiesMethod?.Invoke(__instance, null);
+        }
+
+        public static void InitializeBodies(Human __instance)
+        {
+            __instance.rigidbodies = __instance.GetComponentsInChildren<Rigidbody>();
+            velocitiesField.SetValue(__instance, new Vector3[__instance.rigidbodies.Length]);
+            __instance.mass = 0f;
+
+            foreach (var rb in __instance.rigidbodies)
+            {
+                if (rb != null)
+                {
+                    rb.maxAngularVelocity = 10f;
+                    __instance.mass += rb.mass;
+                }
+            }
+
+            __instance.weight = __instance.mass * 9.81f;
+            var ext = HumanStateExtHelper.GetExt(__instance);
+            ext.human = __instance; // 确保 human 引用被正确设置
+            ext.YxModChuShiHua(); // 调用你的初始化逻辑
+        }
         public static void Human_FixedUpdate(Human instance)
         {
 
 
-            var ext1 = HumanStateExtHelper.GetExt(instance);
+            //var ext1 = HumanStateExtHelper.GetExt(instance);
 
-            // 确保 ext.human 和 ext.dingdian 初始化过
-            if (ext1.human == null || ext1.dingdian == null)
-            {
-                Debug.LogWarning("[YxMod] ext.human 或 dingdian 未初始化，正在执行懒加载初始化");
-                ext1.human = instance;
-                ext1.YxModChuShiHua();
-            }
+            //// 确保 ext.human 和 ext.dingdian 初始化过
+            //if (ext1.human == null || ext1.dingdian == null)
+            //{
+            //    Debug.LogWarning("[YxMod] ext.human 或 dingdian 未初始化，正在执行懒加载初始化");
+            //    ext1.human = instance;
+            //    ext1.YxModChuShiHua();
+            //}
 
             var thisFrameHit = (float)_thisFrameHit.GetValue(instance);
             var lastFrameHit = (float)_lastFrameHit.GetValue(instance);

@@ -497,11 +497,21 @@ namespace YxModDll.Patches
                 return null;
             }
 
-            return table.GetValue(human, h => {
+            var ext = table.GetValue(human, h => {
                 Debug.Log("[YxMod] 创建 HumanStateExt 实例: " + h.name);
                 return new HumanStateExt(h);
             });
+
+            if (ext.human == null || ext.dingdian == null)
+            {
+                Debug.LogWarning("[YxMod] ext.human 或 dingdian 未初始化，在 GetExt 内懒加载初始化");
+                ext.human = human;
+                ext.YxModChuShiHua();
+            }
+
+            return ext;
         }
+
     }
 
 }

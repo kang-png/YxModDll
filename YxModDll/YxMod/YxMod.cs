@@ -160,11 +160,12 @@ namespace YxModDll.Mod
 
             //StartCoroutine(JianChaGengXin());//检查更新
             //YanZheng_OK = true;
-            NetGame.instance.gameObject.AddComponent<UI_Main>();
-            NetGame.instance.gameObject.AddComponent<KeyDisplayUI>();//键盘UI
-            NetGame.instance.gameObject.AddComponent<MiniMap>();//小地图
-            NetGame.instance.gameObject.AddComponent<ColorfulSpeek>();//颜色发言
-            NetGame.instance.gameObject.AddComponent<FPSCounter>();//FPS
+            gameObject.AddComponent<UI_Main>();
+            gameObject.AddComponent<KeyDisplayUI>();//键盘UI
+            gameObject.AddComponent<MiniMap>();//小地图
+            gameObject.AddComponent<ColorfulSpeek>();//颜色发言
+            gameObject.AddComponent<FPSCounter>();//FPS
+
             //StartCoroutine(DelayPatchAll());
 
         }
@@ -184,20 +185,20 @@ namespace YxModDll.Mod
         {
             // 注册编码支持（只需调用一次）
             // System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-            var go = NetGame.instance.gameObject;
+            //var go = NetGame.instance.gameObject;
 
-            go.AddComponent<Patcher_App>();
-            go.AddComponent<Patcher_LevelInformationBox>();
-            go.AddComponent<Patcher_LevelRepository>();
-            go.AddComponent<Patcher_MenuSystem>();
-            go.AddComponent<Patcher_NameTag>();
-            go.AddComponent<Patcher_NetChat>();
-            go.AddComponent<Patcher_NetTransportSteam>();
-            go.AddComponent<Patcher_PlayerManager>();
+            gameObject.AddComponent<Patcher_App>();
+            gameObject.AddComponent<Patcher_LevelInformationBox>();
+            gameObject.AddComponent<Patcher_LevelRepository>();
+            gameObject.AddComponent<Patcher_MenuSystem>();
+            gameObject.AddComponent<Patcher_NameTag>();
+            gameObject.AddComponent<Patcher_NetChat>();
+            gameObject.AddComponent<Patcher_NetTransportSteam>();
+            gameObject.AddComponent<Patcher_PlayerManager>();
 
-            go.AddComponent<Patcher_Human>();
-            go.AddComponent<Patcher_NetGame>();
-            go.AddComponent<Patcher_NetPlayer>();
+            gameObject.AddComponent<Patcher_Human>();
+            gameObject.AddComponent<Patcher_NetGame>();
+            gameObject.AddComponent<Patcher_NetPlayer>();
 
             // 启动协程下载并解压
             StartCoroutine(JianChaGengXin());
