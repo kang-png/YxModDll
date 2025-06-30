@@ -53,3 +53,53 @@ jobs:
           YxModRelease.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Mirror build to Gitee
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      env:
+        GITEE_USERNAME: ${{ secrets.GITEE_USERNAME }}
+        GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+      run: |
+        Remove-Item -Recurse -Force mirror_repo_gitee -ErrorAction Ignore
+
+        $url = "https://$env:GITEE_USERNAME`:$env:GITEE_TOKEN@gitee.com/$env:GITEE_USERNAME/YxModDll-mirror.git"
+        git config --global user.name "dk"
+        git config --global user.email "7528088+$($env:GITEE_USERNAME)@user.noreply.gitee.com"
+
+        git clone $url mirror_repo_gitee
+        Set-Location mirror_repo_gitee
+
+        Copy-Item ../YxModDll/bin/Release/YxModDll.dll ./YxModDll.dll -Force
+        Copy-Item ../YxModRelease.zip ./YxModRelease.zip -Force
+
+        git add YxModDll.dll YxModRelease.zip
+        git commit -m "Update YxModDll.dll and YxModRelease.zip from GitHub Actions build" -a || Write-Host "No changes to commit."
+        git push origin master
+      shell: pwsh
+
+    - name: Mirror build to GitHub Static Repo
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      env:
+        GH_USERNAME: ${{ github.repository_owner }}
+        GH_TOKEN: ${{ secrets.GH_STATIC_PUSH_TOKEN }}
+      run: |
+        Remove-Item -Recurse -Force mirror_repo_github -ErrorAction Ignore
+
+        $url = "https://$env:GH_USERNAME`:$env:GH_TOKEN@github.com/$env:GH_USERNAME/YxModDll-Static.git"
+
+        git config --global user.name "$env:GH_USERNAME"
+        git config --global user.email "$env:GH_USERNAME@users.noreply.github.com"
+
+        git clone $url mirror_repo_github
+        Set-Location mirror_repo_github
+        
+        git checkout main 2>$null || git checkout -b main
+        
+        Copy-Item ../YxModDll/bin/Release/YxModDll.dll ./YxModDll.dll -Force
+        Copy-Item ../YxModRelease.zip ./YxModRelease.zip -Force
+
+        git add YxModDll.dll YxModRelease.zip
+        git commit -m "Update YxModDll.dll and YxModRelease.zip from GitHub Actions build" -a || Write-Host "No changes to commit."
+        git push origin main
+      shell: pwsh
+
