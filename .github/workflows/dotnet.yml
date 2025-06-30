@@ -61,8 +61,8 @@ jobs:
         GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
       run: |
         $url = "https://$env:GITEE_USERNAME`:$env:GITEE_TOKEN@gitee.com/$env:GITEE_USERNAME/YxModDll-mirror.git"
-        git config --global user.name "dk"
-        git config --global user.email "7528088+$($env:GITEE_USERNAME)@user.noreply.gitee.com"
+        git config --global user.name "$env:GH_USERNAME"
+        git config --global user.email "$env:GH_USERNAME@users.noreply.github.com"
 
         git clone $url mirror_repo
         Set-Location mirror_repo
