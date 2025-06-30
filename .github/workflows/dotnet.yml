@@ -92,12 +92,14 @@ jobs:
 
         git clone $url mirror_repo_github
         Set-Location mirror_repo_github
-
+        
+        git checkout main 2>$null || git checkout -b main
+        
         Copy-Item ../YxModDll/bin/Release/YxModDll.dll ./YxModDll.dll -Force
         Copy-Item ../YxModRelease.zip ./YxModRelease.zip -Force
 
         git add YxModDll.dll YxModRelease.zip
         git commit -m "Update YxModDll.dll and YxModRelease.zip from GitHub Actions build" -a || Write-Host "No changes to commit."
-        git push origin master
+        git push origin main
       shell: pwsh
 
