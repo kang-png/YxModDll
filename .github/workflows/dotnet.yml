@@ -60,14 +60,18 @@ jobs:
         GITEE_USERNAME: ${{ secrets.GITEE_USERNAME }}
         GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
       run: |
+        $url = "https://$env:GITEE_USERNAME`:$env:GITEE_TOKEN@gitee.com/$env:GITEE_USERNAME/YxModDll-mirror.git"
         git config --global user.name "dk"
         git config --global user.email "7528088+feiyuuy2019@user.noreply.gitee.com"
 
-        git clone https://%GITEE_USERNAME%:%GITEE_TOKEN%@gitee.com/%GITEE_USERNAME%/YxModDll-mirror.git mirror_repo
-        cd mirror_repo
+        git clone $url mirror_repo
+        Set-Location mirror_repo
 
-        copy ..\YxModDll\bin\Release\YxModDll.dll .\YxModDll.dll
+        Copy-Item ../YxModDll/bin/Release/YxModDll.dll ./YxModDll.dll -Force
+        Copy-Item ../YxModRelease.zip ./YxModRelease.zip -Force
 
-        git add YxModDll.dll
-        git commit -m "Update YxModDll.dll from GitHub Actions build"
+        git add YxModDll.dll YxModRelease.zip
+        git commit -m "Update YxModDll.dll and YxModRelease.zip from GitHub Actions build" -a
         git push origin master
+
+      shell: pwsh
