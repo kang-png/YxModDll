@@ -61,6 +61,29 @@ jobs:
         GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
       run: |
         $url = "https://$env:GITEE_USERNAME`:$env:GITEE_TOKEN@gitee.com/$env:GITEE_USERNAME/YxModDll-mirror.git"
+        git config --global user.name "dk"
+        git config --global user.email "7528088+$($env:GITEE_USERNAME)@user.noreply.gitee.com"
+
+        git clone $url mirror_repo
+        Set-Location mirror_repo
+
+        Copy-Item ../YxModDll/bin/Release/YxModDll.dll ./YxModDll.dll -Force
+        Copy-Item ../YxModRelease.zip ./YxModRelease.zip -Force
+
+        git add YxModDll.dll YxModRelease.zip
+        git commit -m "Update YxModDll.dll and YxModRelease.zip from GitHub Actions build" -a
+        git push origin master
+
+      shell: pwsh
+      
+    - name: Mirror build to GitHub Static Repo
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      env:
+        GH_USERNAME: ${{ github.repository_owner }}
+        GH_TOKEN: ${{ secrets.GH_STATIC_PUSH_TOKEN }}
+      run: |
+        $url = "https://$env:GH_USERNAME`:$env:GH_TOKEN@github.com/$env:GH_USERNAME/YxModDll-Static.git"
+
         git config --global user.name "$env:GH_USERNAME"
         git config --global user.email "$env:GH_USERNAME@users.noreply.github.com"
 
@@ -73,5 +96,4 @@ jobs:
         git add YxModDll.dll YxModRelease.zip
         git commit -m "Update YxModDll.dll and YxModRelease.zip from GitHub Actions build" -a
         git push origin master
-
       shell: pwsh
