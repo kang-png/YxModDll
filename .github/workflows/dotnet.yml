@@ -53,3 +53,21 @@ jobs:
           YxModRelease.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Mirror build to Gitee
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      env:
+        GITEE_USERNAME: ${{ secrets.GITEE_USERNAME }}
+        GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+      run: |
+        git config --global user.name "dk"
+        git config --global user.email "7528088+feiyuuy2019@user.noreply.gitee.com"
+
+        git clone https://%GITEE_USERNAME%:%GITEE_TOKEN%@gitee.com/%GITEE_USERNAME%/YxModDll-mirror.git mirror_repo
+        cd mirror_repo
+
+        copy ..\YxModDll\bin\Release\YxModDll.dll .\YxModDll.dll
+
+        git add YxModDll.dll
+        git commit -m "Update YxModDll.dll from GitHub Actions build"
+        git push origin master
