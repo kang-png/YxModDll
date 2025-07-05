@@ -1,24 +1,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace YxModDll.Mod.Features;
-
-public class HumanAttribute
+namespace YxModDll.Mod.Features
 {
-	public bool fly;
+    public class HumanAttribute
+    {
+    	public bool fly;
 
-	public Vector3 point;
+    	public Vector3 point;
 
-	public int eState;
+    	public int eState;
 
-	public float eTime;
+    	public float eTime;
 
-	public bool infected;
+    	public bool infected;
 
 
-	public float cd;
+    	public float cd;
 
-	public float scale = 1f;
+    	public float scale = 1f;
 
-	public Vector3? hook;
+    	public Vector3? hook;
+    }
 }
