@@ -203,7 +203,8 @@ namespace YxModDll.Mod
                     now_rigi_inertiaTensors[cundianId][i] = human.rigidbodies[i].inertiaTensor;
 
                 }
-                Chat.TiShi(human.player.host, $"{cundianId}:{tishiStr}", TiShiMsgId.GeRenTiShi);
+                string msg = (geshu == 1) ? tishiStr : $"{cundianId}:{tishiStr}";
+                Chat.TiShi(human.player.host, msg, TiShiMsgId.GeRenTiShi);
                 return;
             }
 

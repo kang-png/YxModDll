@@ -165,6 +165,7 @@ namespace YxModDll.Mod
             gameObject.AddComponent<MiniMap>();//小地图
             gameObject.AddComponent<ColorfulSpeek>();//颜色发言
             gameObject.AddComponent<FPSCounter>();//FPS
+            gameObject.AddComponent<YxModDll.Mod.Features.FeatureManager>();
 
             //StartCoroutine(DelayPatchAll());
 

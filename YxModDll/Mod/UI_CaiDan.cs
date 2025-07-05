@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using YxModDll.Mod.Features;
 using static SteelSeriesHFF;
 
 
@@ -46,10 +47,11 @@ namespace YxModDll.Mod
 
         public static void CreatUI()//创建菜单功能区
         {
-            gaodu= 0;
+            gaodu = 0;
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.ExpandWidth(true)); //开始滚动视图区域
             UI.CreatAnNiu("继续", false, JiXu);
             gaodu += UI.buttonHeight;
+
             if (NetGame.isServer || (NetGame.isClient))
             {
                 UI.CreatAnNiu("载点(Ctrl+F)", false, ZaiRuCunDangDian_CaiDan);
@@ -72,16 +74,19 @@ namespace YxModDll.Mod
 
             if (NetGame.isServer || (NetGame.isClient && YxMod.YxModServer))
             {
-                UI.CreatAnNiu("传送至(C)",  false,ChuanSongZhi);
+                UI.CreatAnNiu("传送至(C)", false, ChuanSongZhi);
+                gaodu += UI.buttonHeight;
                 chuansongzhiTop = (int)gaodu;
-                gaodu += UI.buttonHeight;
+
                 UI.CreatAnNiu("悬浮于(X)", false, XuanFuYu);
+                gaodu += UI.buttonHeight;
                 xuanfuyuTop = (int)gaodu;
-                gaodu += UI.buttonHeight;
+
                 UI.CreatAnNiu("牵手(Z)", false, QianShou);
-                qianshouTop = (int)gaodu;
                 gaodu += UI.buttonHeight;
+                qianshouTop = (int)gaodu;
             }
+
             if (NetGame.isServer || (NetGame.isClient))
             {
                 UI.CreatAnNiu("邀请好友", false, YaoQingHaoYou);
@@ -94,7 +99,7 @@ namespace YxModDll.Mod
             //}
             if (NetGame.isServer && App.state == AppSate.ServerPlayLevel)
             {
-                UI.CreatAnNiu("返回大厅", false,FanHuiDaTing);
+                UI.CreatAnNiu("返回大厅", false, FanHuiDaTing);
                 gaodu += UI.buttonHeight;
             }
             else if ((NetGame.isServer && App.state == AppSate.ServerLobby) || NetGame.isClient)//在大厅
@@ -105,33 +110,46 @@ namespace YxModDll.Mod
 
             GUILayout.Space(10);
             gaodu += 10;
+
             if (NetGame.isServer || (NetGame.isClient))
             {
                 GUILayout.BeginHorizontal();
                 UI.CreatAnNiu("分身+1", false, AddFenShen);
                 UI.CreatAnNiu("分身-1", false, JianFenShen);
-                gaodu += UI.buttonHeight;
                 GUILayout.EndHorizontal();
+                gaodu += UI.buttonHeight;
+
                 GUILayout.BeginHorizontal();
                 UI.CreatAnNiu("平滑+1", false, AddSmooth);
                 UI.CreatAnNiu("平滑-1", false, JianSmooth);
-                gaodu += UI.buttonHeight;
                 GUILayout.EndHorizontal();
+                gaodu += UI.buttonHeight;
+
+                UI.CreatAnNiu_AnXia("自动伸手", ref FeatureManager.autoReach, false, null, "下落状态自动伸手");
+                gaodu += UI.buttonHeight;
+
+                UI.CreatAnNiu_AnXia("自动海豚跳", ref FeatureManager.autoBhop, false, null, "速度大于3时，判断转向，自动转最佳角度");
+                gaodu += UI.buttonHeight;
+
                 GUILayout.BeginHorizontal();
                 UI.CreatAnNiu_AnXia("头灯", ref TouDeng, false, OnTouDeng_CaiDan);
                 UI.CreatAnNiu_AnXia("全局灯", ref QuanJuDeng, false, OnQuanJuDeng_CaiDan);
-                gaodu += UI.buttonHeight;
                 GUILayout.EndHorizontal();
-                //UI.CreatAnNiu_AnXia("自动伸手", ref ZiDongShenShou, false);
-                UI.CreatAnNiu_AnXia("真假剔除",ref ZhenJiaTiChu, false, ZhenJiaTiChu_Mod);  //////public void TrueandFalseModels()
                 gaodu += UI.buttonHeight;
-                //UI.CreatAnNiu_AnXia("触发器显示", ref ChuFaQiXianShi, false, ChuFaQiXianShi_Mod);
+
+                UI.CreatAnNiu_AnXia("真假剔除", ref ZhenJiaTiChu, false, ZhenJiaTiChu_Mod);
                 gaodu += UI.buttonHeight;
-                //UI.CreatAnNiu_AnXia("解密模式", ref JieMiMoShi, false, JieMiMoShi_Mod);
-                //UI.CreatAnNiu_AnXia("找不同模式", ref ZhaoBuTongMoShi, false);
+
+                UI.CreatAnNiu_AnXia("触发器显示", ref FeatureManager.showAirWall, false, FeatureManager.instance.RenderAirWalls);
+                gaodu += UI.buttonHeight;
+
+                UI.CreatAnNiu_AnXia("存档点显示", ref FeatureManager.showZoneVisuals, false, FeatureManager.instance.RenderZoneVisuals, "包括检查点、过关点、死亡点");
+                gaodu += UI.buttonHeight;
+
                 UI.CreatAnNiu_AnXia("解锁Steam成就", ref JieSuoChengJiu, false, JieSuoChengJiu_CaiDan);
                 gaodu += UI.buttonHeight;
             }
+
             if (NetGame.isServer || (NetGame.isClient && YxMod.YxModServer && YxMod.KeJiQuanXian))
             {
                 UI.CreatAnNiu_AnXia("滑冰图", ref HuaBing, false, HuaBingTu);
@@ -141,8 +159,7 @@ namespace YxModDll.Mod
                 gaodu += 10;
             }
 
-
-            UI.CreatAnNiu("定点设置>>", false,CaiDan_DingDianSheZhi);
+            UI.CreatAnNiu("定点设置>>", false, CaiDan_DingDianSheZhi);
             gaodu += UI.buttonHeight;
             UI.CreatAnNiu("开房设置>>", false, CaiDan_KaiFangSheZhi);
             gaodu += UI.buttonHeight;
@@ -150,25 +167,15 @@ namespace YxModDll.Mod
             gaodu += UI.buttonHeight;
             UI.CreatAnNiu("UI显示设置>>", false, CaiDan_UISheZhi);
             gaodu += UI.buttonHeight;
-            UI.CreatAnNiu("游戏设置>>", false,CaiDan_YouXiSheZhi);
+            UI.CreatAnNiu("游戏设置>>", false, CaiDan_YouXiSheZhi);
             gaodu += UI.buttonHeight;
-            UI.CreatAnNiu("YxMod设置>>", false,CaiDan_YxModSheZhi);
+            UI.CreatAnNiu("YxMod设置>>", false, CaiDan_YxModSheZhi);
             gaodu += UI.buttonHeight;
+
             GUILayout.EndScrollView();
-
             //GUILayout.FlexibleSpace();
-
         }
 
-        private static void ChuFaQiXianShi_Mod()
-        {
-            if (ChuFaQiXianShi)
-            {
-            }
-            else
-            {
-            }
-        }
 
         private static void CaiDan_DingDianSheZhi()
         {

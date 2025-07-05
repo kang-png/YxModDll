@@ -20,7 +20,7 @@ namespace YxModDll.Patches
         {
             //instance = FindObjectOfType<LevelInformationBox>();
             _prevDispInfoField = typeof(LevelInformationBox).GetField("prevDispInfo", BindingFlags.NonPublic | BindingFlags.Instance);
-            Patcher2.MethodPatch(typeof(LevelInformationBox), "GetNewLevel", new[] { typeof(ulong) }, typeof(Patcher_LevelInformationBox), "GetNewLevel", new[] { typeof(LevelInformationBox), typeof(ulong) });
+            //Patcher2.MethodPatch(typeof(LevelInformationBox), "GetNewLevel", new[] { typeof(ulong) }, typeof(Patcher_LevelInformationBox), "GetNewLevel", new[] { typeof(LevelInformationBox), typeof(ulong) });
 
         }
 

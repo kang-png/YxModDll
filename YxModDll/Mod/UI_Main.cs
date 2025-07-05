@@ -348,9 +348,11 @@ namespace YxModDll.Mod
             }
             if (ShowCaiDanUI)
             {
+                UI.currentTooltip = null;
                 ShowUI = true; ShowShuBiao = true;
                 //UI_Windows.biaotiUiweith = caidanUI_kuan;
                 caidan.CreatWindowsUi(UiState.CaiDan);
+                UI.DrawTooltip();
             }
 
             if (ShowChuanSongUI || ShowXuanFuUI || ShowQianShouUI)

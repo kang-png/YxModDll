@@ -21,6 +21,8 @@ namespace YxModDll.Mod
         private static string[] humanNames = new string[0]; // 初始为空的按钮名称数组
         public static int ZiJiId;
         public static float buttonHeight;
+        public static string currentTooltip = null;
+        public static Vector2 currentTooltipPos;
 
         public static void UI_ChuShiHua()
         {
@@ -359,18 +361,27 @@ namespace YxModDll.Mod
             //Debug.Log(buttonHeight);
         }
 
-        public static void CreatAnNiu_AnXia(string name, ref bool tab, bool chuizhijuzhong = true, Action callback = null)//Tab按钮
+        public static void CreatAnNiu_AnXia(string name, ref bool tab, bool chuizhijuzhong = true, Action callback = null, string tooltip = null)//Tab按钮
         {
             if (chuizhijuzhong)
             {
                 GUILayout.BeginVertical();
                 GUILayout.FlexibleSpace();
             }
-
-            if (GUILayout.Button(ColorfulSpeek.colorshows(name), styleButton_Tab(tab)))
+            //if (GUILayout.Button(ColorfulSpeek.colorshows(name), styleButton_Tab(tab)))
+            //{
+            //    tab = !tab;
+            //    callback?.Invoke(); // 如果callback不为null，则调用它
+            //}
+            Rect buttonRect = GUILayoutUtility.GetRect(new GUIContent(ColorfulSpeek.colorshows(name)), styleButton_Tab(tab));
+            if (GUI.Button(buttonRect, ColorfulSpeek.colorshows(name), styleButton_Tab(tab)))
             {
                 tab = !tab;
-                callback?.Invoke(); // 如果callback不为null，则调用它
+                callback?.Invoke();
+            }
+            if (!string.IsNullOrEmpty(tooltip) && buttonRect.Contains(Event.current.mousePosition))
+            {
+                currentTooltip = tooltip;
             }
             if (chuizhijuzhong)
             {
@@ -389,5 +400,29 @@ namespace YxModDll.Mod
             };
             GUI.Box(rect, GUIContent.none, myGuiStyle);//GUIContent.none      "<b><size=16>菜 单</size></b>"
         }
+        public static void DrawTooltip()
+        {
+            if (!string.IsNullOrEmpty(currentTooltip))
+            {
+                // 获取屏幕坐标（左下为原点）
+                Vector2 mousePos = Input.mousePosition;
+                mousePos.y = Screen.height - mousePos.y; // 转为IMGUI左上原点
+
+                GUIStyle tooltipStyle = new GUIStyle(GUI.skin.box);
+                tooltipStyle.wordWrap = true;
+                tooltipStyle.alignment = TextAnchor.UpperLeft;
+                tooltipStyle.padding = new RectOffset(8, 8, 6, 6);
+
+                float maxWidth = 300;
+                string coloredText = ColorfulSpeek.colorshows(currentTooltip);
+                Vector2 contentSize = tooltipStyle.CalcSize(new GUIContent(coloredText));
+                float width = Mathf.Min(contentSize.x + 16, maxWidth);
+                float height = tooltipStyle.CalcHeight(new GUIContent(coloredText), width);
+
+                Rect rect = new Rect(mousePos.x + 15, mousePos.y + 15, width, height + 12);
+                GUI.Box(rect, coloredText, tooltipStyle);
+            }
+        }
+
     }
 }

@@ -36,6 +36,27 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HarmonyX.2.9.0\lib\net45\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.RuntimeDetour, Version=22.1.29.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoMod.RuntimeDetour.22.1.29.1\lib\net452\MonoMod.RuntimeDetour.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.Utils, Version=22.1.29.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoMod.Utils.22.1.29.1\lib\net452\MonoMod.Utils.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
@@ -150,6 +171,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntryPoint.cs" />
+    <Compile Include="Mod\Features\ChildrenEnumerable.cs" />
+    <Compile Include="Mod\Features\AI.cs" />
+    <Compile Include="Mod\Features\HumanAttribute.cs" />
+    <Compile Include="Mod\Features\INodeDisplay.cs" />
+    <Compile Include="Mod\Features\FeatureManager.cs" />
+    <Compile Include="Mod\Features\NodeDisplay.cs" />
+    <Compile Include="Mod\Features\NodeGraphDisplay.cs" />
+    <Compile Include="Mod\Features\NodeGraphViewer.cs" />
+    <Compile Include="Mod\Features\ReadOnlyArray.cs" />
+    <Compile Include="Mod\Features\ReadOnlyList.cs" />
+    <Compile Include="Mod\Features\Side.cs" />
+    <Compile Include="Mod\Features\Utils.cs" />
     <Compile Include="Patches\Patcher_Human.cs" />
     <Compile Include="Patches\Patcher_NetGame.cs" />
     <Compile Include="Patches\Patcher_NetPlayer.cs" />
@@ -173,30 +206,45 @@
     <Compile Include="Patches\Patcher_NetTransportSteam.cs" />
     <Compile Include="Patches\SafePatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="YxMod\Chat.cs" />
-    <Compile Include="YxMod\ColorfulSpeek.cs" />
-    <Compile Include="YxMod\DingDian.cs" />
-    <Compile Include="YxMod\FPSCounter.cs" />
-    <Compile Include="YxMod\KeyDisplayUI.cs" />
-    <Compile Include="YxMod\MiniMap.cs" />
-    <Compile Include="YxMod\state.cs" />
-    <Compile Include="YxMod\UI.cs" />
-    <Compile Include="YxMod\UI_CaiDan.cs" />
-    <Compile Include="YxMod\UI_ChuanSong.cs" />
-    <Compile Include="YxMod\UI_GongNeng.cs" />
-    <Compile Include="YxMod\UI_Main.cs" />
-    <Compile Include="YxMod\UI_QianShou.cs" />
-    <Compile Include="YxMod\UI_SheZhi.cs" />
-    <Compile Include="YxMod\UI_WanJia.cs" />
-    <Compile Include="YxMod\UI_Windows.cs" />
-    <Compile Include="YxMod\UI_WuTi.cs" />
-    <Compile Include="YxMod\UI_XuanFu.cs" />
-    <Compile Include="YxMod\YanSe.cs" />
-    <Compile Include="YxMod\YxMod.cs" />
+    <Compile Include="Mod\Chat.cs" />
+    <Compile Include="Mod\ColorfulSpeek.cs" />
+    <Compile Include="Mod\DingDian.cs" />
+    <Compile Include="Mod\FPSCounter.cs" />
+    <Compile Include="Mod\KeyDisplayUI.cs" />
+    <Compile Include="Mod\MiniMap.cs" />
+    <Compile Include="Mod\state.cs" />
+    <Compile Include="Mod\UI.cs" />
+    <Compile Include="Mod\UI_CaiDan.cs" />
+    <Compile Include="Mod\UI_ChuanSong.cs" />
+    <Compile Include="Mod\UI_GongNeng.cs" />
+    <Compile Include="Mod\UI_Main.cs" />
+    <Compile Include="Mod\UI_QianShou.cs" />
+    <Compile Include="Mod\UI_SheZhi.cs" />
+    <Compile Include="Mod\UI_WanJia.cs" />
+    <Compile Include="Mod\UI_Windows.cs" />
+    <Compile Include="Mod\UI_WuTi.cs" />
+    <Compile Include="Mod\UI_XuanFu.cs" />
+    <Compile Include="Mod\YanSe.cs" />
+    <Compile Include="Mod\YxMod.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mod\Features\Movement\" />
   </ItemGroup>
   <!-- 拷贝合并后的 DLL 到游戏目录 -->
-  <Target Name="PostBuild" AfterTargets="Build" Condition="Exists('E:\SteamLibrary\steamapps\common\Human Fall Flat')">
+  <!-- <Target Name="PostBuild" AfterTargets="Build" Condition="Exists('E:\SteamLibrary\steamapps\common\Human Fall Flat')"> -->
+  <Target Name="PostBuild" AfterTargets="ILRepack" Condition="Exists('E:\SteamLibrary\steamapps\common\Human Fall Flat')">
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="E:\SteamLibrary\steamapps\common\Human Fall Flat" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\ILRepack.Lib.MSBuild.Task.2.0.43\build\ILRepack.Lib.MSBuild.Task.targets" Condition="Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.43\build\ILRepack.Lib.MSBuild.Task.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.43\build\ILRepack.Lib.MSBuild.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILRepack.Lib.MSBuild.Task.2.0.43\build\ILRepack.Lib.MSBuild.Task.targets'))" />
+  </Target>
 </Project>

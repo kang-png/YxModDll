@@ -51,7 +51,7 @@ namespace YxModDll.Patches
             }
 
             //Patcher2.MethodPatch(typeof(NetPlayer), "ApplySkin", new[] { typeof(byte[]) }, typeof(Patcher_NetPlayer), "NetPlayer_ApplySkin", new[] { typeof(NetPlayer), typeof(byte[]) });
-            Patcher2.MethodPatch(typeof(NetPlayer), "PreFixedUpdate", null, typeof(Patcher_NetPlayer), "NetPlayer_PreFixedUpdate", new Type[] { typeof(NetPlayer) });
+            //Patcher2.MethodPatch(typeof(NetPlayer), "PreFixedUpdate", null, typeof(Patcher_NetPlayer), "NetPlayer_PreFixedUpdate", new Type[] { typeof(NetPlayer) });
             //Patcher2.MethodPatch(typeof(NetPlayer), "ApplyPreset", new[] { typeof(RagdollPresetMetadata), typeof(bool), typeof(bool) }, typeof(Patcher_NetPlayer), "NetPlayer_ApplyPreset", new[] { typeof(NetPlayer), typeof(RagdollPresetMetadata), typeof(bool), typeof(bool) });
 
             //Patcher2.MethodPatch(typeof(NetPlayer), "PreFixedUpdate", null, typeof(Patcher_NetPlayer), "NetPlayer_PreFixedUpdate", null);
