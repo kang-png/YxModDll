@@ -137,10 +137,10 @@ namespace YxModDll.Mod
                 GUILayout.EndHorizontal();
                 gaodu += UI.buttonHeight;
 
-                UI.CreatAnNiu_AnXia("真假剔除", ref ZhenJiaTiChu, false, ZhenJiaTiChu_Mod);
+                UI.CreatAnNiu_AnXia("真假剔除", ref ZhenJiaTiChu, false, ZhenJiaTiChu_Mod, "不要和触发器显示一起开");
                 gaodu += UI.buttonHeight;
 
-                UI.CreatAnNiu_AnXia("触发器显示", ref FeatureManager.showAirWall, false, FeatureManager.instance.RenderAirWalls);
+                UI.CreatAnNiu_AnXia("触发器显示", ref FeatureManager.showAirWall, false, FeatureManager.instance.RenderAirWalls, "显示检测区域、按钮、拉杆等可以交互的物体");
                 gaodu += UI.buttonHeight;
 
                 UI.CreatAnNiu_AnXia("存档点显示", ref FeatureManager.showZoneVisuals, false, FeatureManager.instance.RenderZoneVisuals, "包括检查点、过关点、死亡点");

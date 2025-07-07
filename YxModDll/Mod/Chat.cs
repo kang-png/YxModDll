@@ -1503,9 +1503,8 @@ namespace YxModDll.Mod
                 }
                 else
                 {
-                    string text = QuDiaoDaiMa(nick, netHost.name);
                     string text2 = QuDiaoDaiMa(msg, "");
-                    isZhaFang = PanDuanZhaFang(text + text2, human);
+                    isZhaFang = PanDuanZhaFang(text2, human); // 只对 msg 做完整判定
                 }
             }
             if (isZhaFang)
@@ -1592,61 +1591,61 @@ namespace YxModDll.Mod
         }
 
 
-        private static bool PanDuanZhaFang( string text,Human human)
+        private static bool PanDuanZhaFang(string text, Human human)
         {
-            bool isZhaFang = false;
+            string lowerText = text.Trim().ToLower();
+
+            //白名单词提前放行，直接退出函数
+            if (lowerText == "q" || lowerText == "up" || lowerText == "ifg")
+            {
+                return false;
+            }
+
             string[] pingbicis = UI_SheZhi.pingbici.Split('|');
             foreach (string ci in pingbicis)
             {
                 if (text.Contains(ci))
                 {
                     Debug.Log($"玩家 {human.player.host.name} 发送屏蔽词:{ci}");
-                    isZhaFang= true;
-                    return isZhaFang;
+                    return true;
                 }
             }
 
-            if (text.Length > UI_SheZhi.pingbizishu && UI_SheZhi.pingbizishu !=0)
+            if (text.Length > UI_SheZhi.pingbizishu && UI_SheZhi.pingbizishu != 0)
             {
                 Debug.Log($"玩家 {human.player.host.name} 发言字数:{text.Length},限制字数:{UI_SheZhi.pingbizishu}");
-                isZhaFang = true;
-                return isZhaFang;
+                return true;
             }
             //Debug.Log($"{human.player.host.name} 发言内容:{text} 上一次发言内容:{human.GetExt().lastFaYanStr}");
             if (text != human.GetExt().lastFaYanStr)
             {
                 human.GetExt().lastFaYanCount = 1;
                 human.GetExt().lastFaYanStr = text;
-                //Debug.Log("不相同,清空计数");
             }
             else
             {
-                if (text != "q" && text != "Q" && text != "up" && text != "UP" && text != "ifg" && text != "IFG")///不拦截q
+                human.GetExt().lastFaYanCount++;
+                if (human.GetExt().lastFaYanCount > UI_SheZhi.pingbicishu && UI_SheZhi.pingbicishu != 0)
                 {
-                    human.GetExt().lastFaYanCount += 1;
-                    if (human.GetExt().lastFaYanCount > UI_SheZhi.pingbicishu && UI_SheZhi.pingbicishu != 0)
-                    {
-                        Debug.Log($"玩家 {human.player.host.name} 重复发言次数:{human.GetExt().lastFaYanCount},重复发言限制次数:{UI_SheZhi.pingbicishu}");
-                        isZhaFang = true;
-                        return isZhaFang;
-                    }
+                    Debug.Log($"玩家 {human.player.host.name} 重复发言次数:{human.GetExt().lastFaYanCount},限制次数:{UI_SheZhi.pingbicishu}");
+                    return true;
                 }
             }
-            float jiange = Time.time - human.GetExt().lastFaYanTimer;
-        
-            if (jiange < UI_SheZhi.fayanjiange && UI_SheZhi.fayanjiange !=0)
-            {
-                if (text != "q" && text != "Q" && text != "up" && text != "UP" && text != "ifg" && text != "IFG")///不拦截q
-                {
-                    Debug.Log($"玩家 {human.player.host.name} 发言间隔时间太短:{jiange}");
-                    isZhaFang = true;
-                    return isZhaFang;
-                }
 
+            float jiange = Time.time - human.GetExt().lastFaYanTimer;
+
+            if (human.GetExt().lastFaYanTimer != 0 &&
+                jiange < UI_SheZhi.fayanjiange &&
+                UI_SheZhi.fayanjiange != 0)
+            {
+                Debug.Log($"玩家 {human.player.host.name} 发言间隔时间太短:{jiange}");
+                return true;
             }
-            human.GetExt().lastFaYanTimer=Time.time;
-            return isZhaFang;
+
+            human.GetExt().lastFaYanTimer = Time.time;
+            return false;
         }
+
 
         private static string QuDiaoDaiMa(string daimaStr,string name)
         {

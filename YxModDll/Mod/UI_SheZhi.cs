@@ -145,6 +145,7 @@ namespace YxModDll.Mod
         //public static bool danyepaixu;
         public static bool haoyoufangjian;
         public static bool dangqianrenshupaixu;
+        public static bool skinCheckEnabled;
 
         public static void CreatUI()//创建菜单功能区
         {
@@ -425,7 +426,7 @@ namespace YxModDll.Mod
                     GUILayout.Space(5);
                     UI.CreatFenGeXian();
                     GUILayout.Space(5);
-                    UI.CreatAnNiu_AnXia("屏蔽炸房", ref pingbizhafang, false,SetPingBiZhaFang);
+                    UI.CreatAnNiu_AnXia("发言限制", ref pingbizhafang, false,SetPingBiZhaFang);
                     if(pingbizhafang)
                     {
                         UI.CreatWenBenKuang("屏蔽固定词", ref pingbici, 100, 180,SetPingBiCi);
@@ -509,6 +510,7 @@ namespace YxModDll.Mod
                         UI.CreatAnNiu_AnXia("好友房间(用 @ 标识)", ref haoyoufangjian, false,HaoYouFangJian);
                         //UI.CreatAnNiu_AnXia("按照“YxMod - 好友 - 公开 - 私密”排序", ref danyepaixu, false);
                     }
+                    UI.CreatAnNiu_AnXia("拦截异常皮肤加载", ref skinCheckEnabled, false, SaveSkinCheckSetting, "拦截超过10MB的皮肤加载");
                     break;
                 case "YxMod设置":
                     //呼出YxMod界面时人物不动
@@ -675,6 +677,7 @@ namespace YxModDll.Mod
             dangqianrenshupaixu = PlayerPrefs.GetInt("dangqianrenshupaixu", 1) > 0;
             danyexianshi = PlayerPrefs.GetInt("danyexianshi", 1) > 0;
             haoyoufangjian = PlayerPrefs.GetInt("haoyoufangjian", 1) > 0;
+            skinCheckEnabled = PlayerPrefs.GetInt("skinCheckEnabled", 1) > 0;
 
             //显示设置
             KeyDisplayUI.showKeys = PlayerPrefs.GetInt("showKeys", 0) > 0;
@@ -779,6 +782,12 @@ namespace YxModDll.Mod
         {
             PlayerPrefs.SetInt("haoyoufangjian", haoyoufangjian ? 1 : 0);
         }
+
+        public static void SaveSkinCheckSetting()
+        {
+            PlayerPrefs.SetInt("skinCheckEnabled", skinCheckEnabled ? 1 : 0);
+        }
+
         public static void Skip_Start()
         {
             if (App.state == AppSate.Startup)

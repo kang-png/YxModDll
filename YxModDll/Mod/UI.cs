@@ -133,8 +133,8 @@ namespace YxModDll.Mod
         {
             GUIStyle styleButton = new GUIStyle(GUI.skin.button);
             styleButton.normal.background = !tab ? anniuTexture : anniuTexture2; // 按钮的背景纹理
-            //styleButton.active.background = anniuTexture2; 
-            styleButton.hover.background = styleButton.normal.background;
+            styleButton.active.background = anniuTexture2; 
+            styleButton.hover.background = tab ? anniuTexture : anniuTexture2;
             styleButton.normal.textColor = new Color32(220, 220, 220, 255);// Color.white;
             styleButton.hover.textColor = Color.white;
             styleButton.alignment = TextAnchor.MiddleCenter;

@@ -1,3 +1,8 @@
+using HarmonyLib;
+using HarmonyLib.Tools;
+using HumanAPI;
+using Multiplayer;
+using Steamworks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,11 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using HarmonyLib;
-using HarmonyLib.Tools;
-using HumanAPI;
-using Multiplayer;
-using Steamworks;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -2136,23 +2136,52 @@ namespace YxModDll.Mod.Features
     		return false;
     	}
 
-        [HarmonyPatch(typeof(NetPlayer), "ApplyPreset")]
-        public static class Patch_ApplyPreset
+        [HarmonyPatch(typeof(FileTools), nameof(FileTools.TextureFromBytes))]
+        [HarmonyPrefix]
+        public static bool TextureFromBytes_Prefix(string name, byte[] bytes, ref Texture2D __result)
         {
-            // 这个是正常前置，返回 true 继续原函数
-            public static bool Prefix() => true;
-
-            // Finalizer：无论原函数是否异常，这里都能捕获异常
-            public static void Finalizer(Exception __exception, NetPlayer __instance, RagdollPresetMetadata preset)
+            if (bytes == null)
             {
-                if (__exception != null)
+                __result = null;
+                return false;
+            }
+
+            try
+            {
+                if (bytes.Length > 10 * 1024 * 1024) // 判断压缩文件大小
                 {
-                    Shell.Print($"ApplyPreset 异常：{__exception.Message}");
-                    // 设置小白皮的逻辑
-                    __instance.ApplyPreset(PresetRepository.CreateDefaultSkin(), bake: false, useBaseTexture: false);
+                    string msg = $"[贴图拦截] {name} 压缩贴图超过10MB（{bytes.Length / 1024}KB），已替换为白皮";
+                    UnityEngine.Debug.LogWarning(msg);
+                    if (NetGame.instance?.local != null)
+                        Chat.TiShi(NetGame.instance.local, $"<color=yellow>{msg}</color>");
+
+                    var part = PresetRepository.CreateDefaultSkin().main;
+                    __result = part?.bytes != null ? FileTools.TextureFromBytes("DefaultMain", part.bytes) : null;
+                    return false;
                 }
+
+                Texture2D tex = FileTools.NativeTextureDecode(bytes, true);
+                if (tex == null)
+                {
+                    tex = new Texture2D(1, 1);
+                    tex.name = name;
+                    tex.LoadImage(bytes);
+                }
+
+                tex.name = name;
+                __result = tex;
+                return false;
+            }
+            catch (Exception ex)
+            {
+                UnityEngine.Debug.LogException(ex);
+                __result = null;
+                return false;
             }
         }
+
+
+
 
 
         [HarmonyPatch(typeof(SafeForces), "SafeAddForce")]

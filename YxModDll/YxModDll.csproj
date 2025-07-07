@@ -11,7 +11,7 @@
     <RootNamespace>YxModDll</RootNamespace>
     <AssemblyName>YxModDll</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-	<LangVersion>12.0</LangVersion>
+    <LangVersion>12.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <NoWarn>0649,0169,0414</NoWarn>
@@ -172,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntryPoint.cs" />
+    <Compile Include="Mod\Features\AutomaticHand.cs" />
     <Compile Include="Mod\Features\ChildrenEnumerable.cs" />
     <Compile Include="Mod\Features\AI.cs" />
     <Compile Include="Mod\Features\HumanAttribute.cs" />

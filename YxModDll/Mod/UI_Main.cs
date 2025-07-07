@@ -337,7 +337,8 @@ namespace YxModDll.Mod
 
         void OnGUI()
         {
-            if(!UI_SheZhi.shift_xianshishubiao)
+            UI.currentTooltip = null;
+            if (!UI_SheZhi.shift_xianshishubiao)
             {
                 ShowShuBiao = false;
             }
@@ -348,11 +349,9 @@ namespace YxModDll.Mod
             }
             if (ShowCaiDanUI)
             {
-                UI.currentTooltip = null;
                 ShowUI = true; ShowShuBiao = true;
                 //UI_Windows.biaotiUiweith = caidanUI_kuan;
                 caidan.CreatWindowsUi(UiState.CaiDan);
-                UI.DrawTooltip();
             }
 
             if (ShowChuanSongUI || ShowXuanFuUI || ShowQianShouUI)
@@ -404,11 +403,26 @@ namespace YxModDll.Mod
                     shezhi.CreatWindowsUi(UiState.SheZhi);
                 }
             }
+            UI.DrawTooltip();
 
         }
 
         private void mainUi()//创建主界面
         {
+            // 判断是否有任意子菜单打开
+            bool hasAnySubMenuOpen = ShowCaiDanUI || ShowWanJiaUI || ShowGongNengUI || ShowWuTiUI || ShowSheZhiUI || ShowChuanSongUI || ShowXuanFuUI || ShowQianShouUI;
+
+            // 判断鼠标是否在主界面区域内
+            Vector2 mousePos = Event.current.mousePosition;
+            bool isMouseInside = mainUiRect.Contains(mousePos);
+
+            // 满足条件才透明（没有子菜单，鼠标也不在界面内）
+            float alpha = (!hasAnySubMenuOpen && !isMouseInside) ? 0.3f : 1.0f;
+
+            // 设置 GUI 颜色
+            Color oldColor = GUI.color;
+            GUI.color = new Color(1f, 1f, 1f, alpha);
+
             UI.CreatUiBox(mainUiRect, mainUiBoxTexture);
             //mainUiBox();
             GUILayout.BeginArea(mainUiRect);

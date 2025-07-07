@@ -47,7 +47,7 @@ namespace YxModDll.Mod
         }
         private void DuQuSheZhi()
         {
-
+            tishiStr = UI_SheZhi.tishiStr; 
             //Debug.Log("DuQuSheZhi");
         }
 
@@ -117,7 +117,7 @@ namespace YxModDll.Mod
 
         public void DingDian_Fun(Human human)
         {
-            var ext = human.GetExt();
+            //var ext = human.GetExt();
 
             //// 安全检查（防止 null）
             //if (ext == null || ext.dingdian == null)

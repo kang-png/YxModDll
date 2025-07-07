@@ -337,7 +337,8 @@ namespace YxModDll.Mod
                     }
                     else
                     {
-                        NetGame.instance.SendChatMessage("up");
+                        //NetGame.instance.SendChatMessage("up");
+                        Chat.FaYan("up");
                     }
 
                 }
@@ -357,7 +358,7 @@ namespace YxModDll.Mod
                     }
                     else
                     {
-                        NetGame.instance.SendChatMessage("ifg");
+                        Chat.FaYan("ifg");
                     }
 
                 }
@@ -898,7 +899,7 @@ namespace YxModDll.Mod
                 return;
             }
             human.SetPosition(human.transform.position + 3f * Vector3.up);
-            Chat.TiShi($"玩家 {human.player.host.name} 向上跳了3米");
+            //Chat.TiShi($"玩家 {human.player.host.name} 向上跳了3米");
 
         }
         public static void Ifg(Human human)
