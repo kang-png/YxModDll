@@ -1,5 +1,4 @@
-﻿using Multiplayer;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -11,21 +10,26 @@ namespace Doorstop
     {
         public static void Start()
         {
-            // 你的原始线程创建逻辑，不动
+            // 保留子线程延迟，防止太早注入
             new Thread(() =>
             {
-                Thread.Sleep(3000);
-                // 跨线程创建GameObject和挂组件
-                UnityEngine.Object.DontDestroyOnLoad(new GameObject("YxModLoader").AddComponent<ModEntry>());
+                Thread.Sleep(3000); // 3秒延迟，给Unity留初始化时间
+
+                // 使用主线程调度器安全执行Mod启动逻辑
+                UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                {
+                    Debug.Log("[YxMod] Starting mod initialization on main thread.");
+                    ModEntry.CreateAndAttach();
+                });
             }).Start();
         }
     }
 
-    // Unity主线程调度器，确保跨线程调用能跑到主线程执行
+    // 主线程调度器，确保所有Unity API调用在主线程执行
     public class UnityMainThreadDispatcher : MonoBehaviour
     {
-        private static readonly Queue<Action> _executionQueue = new Queue<Action>();
         private static UnityMainThreadDispatcher _instance;
+        private static readonly Queue<Action> _executionQueue = new Queue<Action>();
 
         public static UnityMainThreadDispatcher Instance()
         {
@@ -40,7 +44,6 @@ namespace Doorstop
 
         public void Enqueue(Action action)
         {
-            if (action == null) return;
             lock (_executionQueue)
             {
                 _executionQueue.Enqueue(action);
@@ -57,84 +60,76 @@ namespace Doorstop
                     if (_executionQueue.Count > 0)
                         action = _executionQueue.Dequeue();
                 }
-                if (action == null) break;
-                action.Invoke();
+
+                if (action == null)
+                    break;
+
+                try
+                {
+                    action.Invoke();
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError("[YxMod] Exception in UnityMainThreadDispatcher: " + ex);
+                }
             }
         }
     }
 
     public class ModEntry : MonoBehaviour
     {
-        private static bool _attached = false;
+        private static bool _initialized = false;
 
-        private void Awake()
+        // 安全的创建ModEntry GameObject并添加组件入口
+        public static void CreateAndAttach()
         {
-            Debug.Log("[YxMod] ModEntry Awake - scheduling AttachWithTimeout coroutine on main thread");
-
-            // 确保自己激活（一般没问题，但加个保险）
-            if (!gameObject.activeInHierarchy)
+            if (_initialized)
             {
-                gameObject.SetActive(true);
-            }
-
-            // 用主线程调度器跑协程，避免跨线程StartCoroutine无效
-            UnityMainThreadDispatcher.Instance().Enqueue(() =>
-            {
-                StartCoroutine(AttachWithTimeout());
-            });
-        }
-
-        private IEnumerator AttachWithTimeout()
-        {
-            float timeout = 30f;
-            float elapsed = 0f;
-
-            Debug.Log("[YxMod] AttachWithTimeout coroutine started");
-
-            while (elapsed < timeout)
-            {
-                if (_attached)
-                {
-                    Debug.Log("[YxMod] Already attached, exiting coroutine");
-                    yield break;
-                }
-
-                if (NetGame.instance != null)
-                {
-                    Debug.Log("[YxMod] NetGame.instance found, attaching mod");
-                    AttachMod();
-                    yield break;
-                }
-
-                yield return null;
-                elapsed += Time.deltaTime;
-            }
-
-            Debug.Log("[YxMod] Timeout reached, forcing mod attachment.");
-            AttachMod();
-        }
-
-        private void AttachMod()
-        {
-            if (_attached)
-            {
-                Debug.Log("[YxMod] AttachMod called but already attached");
+                Debug.Log("[YxMod] ModEntry already initialized.");
                 return;
             }
 
-            if (NetGame.instance != null)
+            var obj = new GameObject("YxModEntry");
+            UnityEngine.Object.DontDestroyOnLoad(obj);
+            var modEntry = obj.AddComponent<ModEntry>();
+
+            Debug.Log("[YxMod] ModEntry GameObject created and component added.");
+            _initialized = true;
+        }
+
+        private void Start()
+        {
+            Debug.Log("[YxMod] ModEntry Start() called. Starting initialization coroutine.");
+            StartCoroutine(WaitForUnityReadyAndAttach());
+        }
+
+        private IEnumerator WaitForUnityReadyAndAttach()
+        {
+            Debug.Log("[YxMod] Coroutine started: Waiting for Unity to be ready...");
+
+            // 等待Unity初始化完成，检测条件可按需调整
+            while (!IsUnityReady())
             {
-                var mod = NetGame.instance.gameObject.AddComponent<YxModDll.Mod.YxMod>();
-                Debug.Log($"[YxMod] Attaching YxMod to NetGame: {(mod != null ? "Success" : "Failed")}");
-            }
-            else
-            {
-                var dummy = new GameObject("YxMod_Dummy");
-                dummy.AddComponent<YxModDll.Mod.YxMod>();
-                Debug.Log("[YxMod] NetGame not found, attaching YxMod to dummy GameObject.");
+                yield return null;
             }
 
-            _attached = true;
+            Debug.Log("[YxMod] Unity is ready, attaching YxMod component.");
+
+            try
+            {
+                var mod = gameObject.AddComponent<YxModDll.Mod.YxMod>();
+                Debug.Log("[YxMod] YxMod component attached: " + (mod != null ? "Success" : "Failed"));
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("[YxMod] Exception when attaching YxMod: " + ex);
+            }
+        }
+
+        private bool IsUnityReady()
+        {
+            // 简单检测图形设备是否已初始化，可以根据实际需求扩展检测逻辑
+            return SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null;
         }
     }
 }
