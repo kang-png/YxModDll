@@ -27,12 +27,12 @@ namespace YxModDll.Patches
         private static FieldInfo __lobbyId;
 
 
-        public static string fangjianmingzi = SteamFriends.GetPersonaName();
-        public static int xujiarenshu = 0;
-        public static bool dangqianrenshupaixu;
-        public static bool simifangjian;
-        public static bool danyexianshi;
-        public static bool haoyoufangjian;
+        //public static string fangjianmingzi = SteamFriends.GetPersonaName();
+        //public static int xujiarenshu = 0;
+        //public static bool dangqianrenshupaixu;
+        //public static bool simifangjian;
+        //public static bool danyexianshi;
+        //public static bool haoyoufangjian;
         private void Awake()
         {
             //ShowMethod = typeof(NetChat).GetMethod("Show", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -74,7 +74,7 @@ namespace YxModDll.Patches
             }
             //好友房
             List<ILobbyEntry> haoyoulist = new List<ILobbyEntry>();
-            if (danyexianshi)
+            if (UI_SheZhi.danyexianshi)
             {
                 //this.onListLobbies = null;
                 CGameID cGameID = new CGameID(SteamUtils.GetAppID());
@@ -95,7 +95,7 @@ namespace YxModDll.Patches
 
 
                         var _name = (string)__name.GetValue(friendInfo);
-                        _name = (haoyoufangjian ? "@" : "") + SteamFriends.GetFriendPersonaName(friendByIndex);
+                        _name = (UI_SheZhi.haoyoufangjian ? "@" : "") + SteamFriends.GetFriendPersonaName(friendByIndex);
                         __name.SetValue(friendInfo, _name);
                         //friendInfo._name = (haoyoufangjian ? "@" : "") + SteamFriends.GetFriendPersonaName(friendByIndex);
                         FriendInfo friend = friendInfo;
@@ -107,7 +107,7 @@ namespace YxModDll.Patches
                         //}
                     }
                 }
-                if (dangqianrenshupaixu)
+                if (UI_SheZhi.dangqianrenshupaixu)
                 {
                     // 对yxmodlist进行排序
                     //haoyoulist.Sort((x, y) => ((FriendInfo)y).playersCurrent.CompareTo(((FriendInfo)x).playersCurrent));

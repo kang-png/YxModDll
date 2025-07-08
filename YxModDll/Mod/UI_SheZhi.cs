@@ -31,11 +31,15 @@ namespace YxModDll.Mod
 
         public static bool huisu;
         public static bool guanxing;
+        public static bool baoLiuDangQianSuDu;
         public static bool q;
         public static bool se;
         public static float gaodu ;
         public static int geshu;
         public static string tishiStr;
+        //public static int globalgeshu;
+        //public static string globaltishiStr;
+
 
         public static bool huicheliaotian;
         public static bool pingbiyansedaima;
@@ -146,6 +150,7 @@ namespace YxModDll.Mod
         public static bool haoyoufangjian;
         public static bool dangqianrenshupaixu;
         public static bool skinCheckEnabled;
+        public static bool fixWhiteHumanEnabled;
 
         public static void CreatUI()//创建菜单功能区
         {
@@ -187,15 +192,29 @@ namespace YxModDll.Mod
                     GUILayout.BeginHorizontal();
                     UI.CreatAnNiu_AnXia("Q定点", ref q, false, Q);
                     UI.CreatAnNiu_AnXia("SE定点", ref se, false, SE);
-                    UI.CreatAnNiu_AnXia("回溯", ref huisu, false,HuiSu);
-                    UI.CreatAnNiu_AnXia("惯性", ref guanxing, false,GuanXing);
+                    UI.CreatAnNiu_AnXia("回溯", ref huisu, false, HuiSu, "保留定点时的姿势");
+                    UI.CreatAnNiu_AnXia("惯性", ref guanxing, false, GuanXing, "保留定点时的速度");
+                    UI.CreatAnNiu_AnXia("保速", ref baoLiuDangQianSuDu, false, BaoSu, "保留读点时的速度");
                     GUILayout.EndHorizontal();
-                    UI.CreatShuZhi("定点高度", ref gaodu, 0.0f, 2.0f, 0.1f,GaoDu);
-                    UI.CreatShuZhi("存点数量", ref geshu, 1, 10, 1,GeShu);
-                    UI.CreatWenBenKuang("定点提示", ref tishiStr, 100, 210,TiShiStr);
                     GUILayout.Space(5);
                     UI.CreatFenGeXian();//分割线
                     GUILayout.Space(5);
+                    UI.CreatShuZhi("定点高度", ref gaodu, 0.0f, 2.0f, 0.1f,GaoDu);
+                    UI.CreatShuZhi("存点数量", ref geshu, 1, 10, 1,GeShu);
+                    UI.CreatWenBenKuang("定点提示", ref tishiStr, 100, 210,TiShiStr);
+                    GUILayout.Label(tishiStr, UI.SetLabelStyle_JuZhong());
+                    //GUILayout.Space(5);
+                    //UI.CreatFenGeXian();//分割线
+                    //GUILayout.Space(5);
+                    //GUILayout.Label(ColorfulSpeek.colorshows("他人设置：作为主机时其他玩家的设置"), UI.SetLabelStyle_JuZhong());
+                    //UI.CreatShuZhi("存点数量", ref globalgeshu, 1, 10, 1, GlobalGeShu);
+                    //UI.CreatWenBenKuang("定点提示", ref globaltishiStr, 100, 210, GlobalTiShiStr);
+                    //GUILayout.Label(globaltishiStr, UI.SetLabelStyle_JuZhong());
+                    GUILayout.Space(5);
+                    UI.CreatFenGeXian();//分割线
+                    GUILayout.Space(5);
+                    GUILayout.Label("定点提示支持富文本格式", UI.SetLabelStyle_JuZhong());
+                    GUILayout.Label("作为主机时，其他玩家将自动同步你的当前设置", UI.SetLabelStyle_JuZhong());
                     GUILayout.Label($"<i>仅房主或YxMod的房间有效</i>", UI.SetLabelStyle_JuZhong(), GUILayout.ExpandWidth(true));
                     break;
                 case "聊天设置":
@@ -511,6 +530,7 @@ namespace YxModDll.Mod
                         //UI.CreatAnNiu_AnXia("按照“YxMod - 好友 - 公开 - 私密”排序", ref danyepaixu, false);
                     }
                     UI.CreatAnNiu_AnXia("拦截异常皮肤加载", ref skinCheckEnabled, false, SaveSkinCheckSetting, "拦截超过10MB的皮肤加载");
+                    UI.CreatAnNiu_AnXia("修复小白人问题", ref fixWhiteHumanEnabled, false, SaveFixWhiteHumanSetting, "关卡加载完成后延迟两秒再次请求皮肤，修复部分玩家没加载出皮肤的问题");
                     break;
                 case "YxMod设置":
                     //呼出YxMod界面时人物不动
@@ -577,11 +597,14 @@ namespace YxModDll.Mod
         {
             huisu = PlayerPrefs.GetInt("huisudingdian", 0) > 0;
             guanxing = PlayerPrefs.GetInt("guanxingdingdian", 0) > 0;
+            baoLiuDangQianSuDu = PlayerPrefs.GetInt("baosudingdian", 0) > 1;
             q = PlayerPrefs.GetInt("qdingdian", 1) > 0;
             se = PlayerPrefs.GetInt("sedingdian", 1) > 0;
             gaodu = PlayerPrefs.GetFloat("dingdiangaodu", 0.2f);
             geshu = PlayerPrefs.GetInt("dingdiangeshu", 5);
             tishiStr = PlayerPrefs.GetString("dingdiantishi", "已存点");
+            //globalgeshu = PlayerPrefs.GetInt("globaldingdiangeshu", 2);
+            //globaltishiStr = PlayerPrefs.GetString("globaldingdiantishi", "已存点");
 
             huicheliaotian = PlayerPrefs.GetInt("huicheliaotian", 1) > 0;
             pingbiyansedaima = PlayerPrefs.GetInt("pingbiyansedaima", 0) > 0;
@@ -678,6 +701,7 @@ namespace YxModDll.Mod
             danyexianshi = PlayerPrefs.GetInt("danyexianshi", 1) > 0;
             haoyoufangjian = PlayerPrefs.GetInt("haoyoufangjian", 1) > 0;
             skinCheckEnabled = PlayerPrefs.GetInt("skinCheckEnabled", 1) > 0;
+            fixWhiteHumanEnabled = PlayerPrefs.GetInt("fixWhiteHumanEnabled", 1) > 0;
 
             //显示设置
             KeyDisplayUI.showKeys = PlayerPrefs.GetInt("showKeys", 0) > 0;
@@ -712,6 +736,7 @@ namespace YxModDll.Mod
             {
                 Chat.SendYxModMsgClient(Chat.YxModMsgStr("huisudingdian"), huisu ? "1" : "0");
                 Chat.SendYxModMsgClient(Chat.YxModMsgStr("guanxingdingdian"), guanxing ? "1" : "0");
+                Chat.SendYxModMsgClient(Chat.YxModMsgStr("baosudingdian"), baoLiuDangQianSuDu ? "1" : "0");
                 Chat.SendYxModMsgClient(Chat.YxModMsgStr("qdingdian"), q ? "1" : "0");
                 Chat.SendYxModMsgClient(Chat.YxModMsgStr("sedingdian"), se ? "1" : "0");
                 Chat.SendYxModMsgClient(Chat.YxModMsgStr("dingdiangaodu"), $"{gaodu}");
@@ -786,6 +811,10 @@ namespace YxModDll.Mod
         public static void SaveSkinCheckSetting()
         {
             PlayerPrefs.SetInt("skinCheckEnabled", skinCheckEnabled ? 1 : 0);
+        }
+        public static void SaveFixWhiteHumanSetting()
+        {
+            PlayerPrefs.SetInt("fixWhiteHumanEnabled", fixWhiteHumanEnabled ? 1 : 0);
         }
 
         public static void Skip_Start()
@@ -1128,20 +1157,58 @@ namespace YxModDll.Mod
         }
         public static void GuanXing()
         {
+            // 互斥：如果开了惯性，就关掉保速
+            if (guanxing)
+            {
+                baoLiuDangQianSuDu = false;
+            }
+
             if (NetGame.isServer)
             {
-                Human.all[0].GetExt().dingdian.guanxing = guanxing;
-
+                var ext = Human.all[0].GetExt().dingdian;
+                ext.guanxing = guanxing;
+                ext.baoLiuDangQianSuDu = baoLiuDangQianSuDu;
             }
             else if (NetGame.isClient)
             {
                 if (YxMod.YxModServer)
                 {
                     Chat.SendYxModMsgClient(Chat.YxModMsgStr("guanxingdingdian"), guanxing ? "1" : "0");
+                    Chat.SendYxModMsgClient(Chat.YxModMsgStr("baosudingdian"), baoLiuDangQianSuDu ? "1" : "0");
                 }
             }
+
+            PlayerPrefs.SetInt("guanxingdingdian", guanxing ? 1 : 0);
+            PlayerPrefs.SetInt("baosudingdian", baoLiuDangQianSuDu ? 1 : 0);
+        }
+        public static void BaoSu()
+        {
+            // 互斥：如果开了保速，就关掉惯性
+            if (baoLiuDangQianSuDu)
+            {
+                guanxing = false;
+            }
+
+            if (NetGame.isServer)
+            {
+                var ext = Human.all[0].GetExt().dingdian;
+                ext.baoLiuDangQianSuDu = baoLiuDangQianSuDu;
+                ext.guanxing = guanxing;
+            }
+            else if (NetGame.isClient)
+            {
+                if (YxMod.YxModServer)
+                {
+                    Chat.SendYxModMsgClient(Chat.YxModMsgStr("baosudingdian"), baoLiuDangQianSuDu ? "1" : "0");
+                    Chat.SendYxModMsgClient(Chat.YxModMsgStr("guanxingdingdian"), guanxing ? "1" : "0");
+                }
+            }
+
+            PlayerPrefs.SetInt("baosudingdian", baoLiuDangQianSuDu ? 1 : 0);
             PlayerPrefs.SetInt("guanxingdingdian", guanxing ? 1 : 0);
         }
+
+
         public static void Q()
         {
             if (NetGame.isServer)
@@ -1217,7 +1284,22 @@ namespace YxModDll.Mod
             }
             PlayerPrefs.SetString("dingdiantishi", tishiStr);
         }
-
+        //public static void GlobalGeShu()
+        //{
+        //    if (NetGame.isClient && YxMod.YxModServer)
+        //    {
+        //        Chat.SendYxModMsgClient(Chat.YxModMsgStr("globaldingdiangeshu"), globalgeshu.ToString());
+        //    }
+        //    PlayerPrefs.SetInt("globaldingdiangeshu", globalgeshu);
+        //}
+        //public static void GlobalTiShiStr()
+        //{
+        //    if (NetGame.isClient && YxMod.YxModServer)
+        //    {
+        //        Chat.SendYxModMsgClient(Chat.YxModMsgStr("globaldingdiantishi"), globaltishiStr);
+        //    }
+        //    PlayerPrefs.SetString("globaldingdiantishi", globaltishiStr);
+        //}
         public static void HuiCheLiaoTian()
         {
             PlayerPrefs.SetInt("huicheliaotian", huicheliaotian ? 1 : 0);

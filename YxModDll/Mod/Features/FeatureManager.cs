@@ -395,7 +395,7 @@ namespace YxModDll.Mod.Features
     		previewOnly = true;
     		noWorkshopReload = false;
     		noDelay = true;
-    		fixSkin = true;
+    		fixSkin = PlayerPrefs.GetInt("fixWhiteHumanEnabled", 1) > 0; ;
     		kickCheat = true;
     		pointCheat = true;
     		enableHotkeys = true;
@@ -2146,14 +2146,19 @@ namespace YxModDll.Mod.Features
                 return false;
             }
 
+            // 开关判断
+            if (!UI_SheZhi.skinCheckEnabled)
+            {
+                return true; // 不拦截，继续执行原方法
+            }
+
             try
             {
                 if (bytes.Length > 10 * 1024 * 1024) // 判断压缩文件大小
                 {
                     string msg = $"[贴图拦截] {name} 压缩贴图超过10MB（{bytes.Length / 1024}KB），已替换为白皮";
                     UnityEngine.Debug.LogWarning(msg);
-                    if (NetGame.instance?.local != null)
-                        Chat.TiShi(NetGame.instance.local, $"<color=yellow>{msg}</color>");
+                    Chat.TiShi(NetGame.instance.local, msg);
 
                     var part = PresetRepository.CreateDefaultSkin().main;
                     __result = part?.bytes != null ? FileTools.TextureFromBytes("DefaultMain", part.bytes) : null;
@@ -2711,5 +2716,19 @@ namespace YxModDll.Mod.Features
     	public static void LogErrorReplace(string s)
     	{
     	}
+        internal static void TryInitAutoClimb()
+        {
+            if (autoClimb)
+            {
+                climbState = 0;
+                Vector3 vector = (Human.Localplayer.ragdoll.partLeftHand.transform.position - Human.Localplayer.ragdoll.partRightHand.transform.position).ZeroY();
+                float num = Mathf.Atan2(vector.x, vector.z) * 57.29578f;
+                Human.Localplayer.controls.cameraYawAngle =
+                    ((Human.Localplayer.controls.cameraYawAngle - num) % 360f < 180f)
+                        ? (num + 90f)
+                        : (num - 90f);
+            }
+        }
+
     }
 }

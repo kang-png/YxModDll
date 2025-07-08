@@ -15,9 +15,12 @@ namespace YxModDll.Mod
         public bool kaiguan = true;
         public bool huisu;
         public bool guanxing;
+        public bool baoLiuDangQianSuDu;
         public float gaodu = 0.1f;
         public int geshu = 2;
-        public string tishiStr = "已存点";    //定点提示文本
+        public string tishiStr = "已存点";
+        //public int globalgeshu = 2;
+        //public string globaltishiStr = "已存点";
 
         private int m_geshu = 0;
         private int cundianId;
@@ -47,7 +50,8 @@ namespace YxModDll.Mod
         }
         private void DuQuSheZhi()
         {
-            tishiStr = UI_SheZhi.tishiStr; 
+            tishiStr = UI_SheZhi.tishiStr;
+            geshu = UI_SheZhi.geshu; 
             //Debug.Log("DuQuSheZhi");
         }
 
@@ -240,7 +244,10 @@ namespace YxModDll.Mod
                 human.transform.position = now_positions[qudianId] + new Vector3(0, gaodu, 0);
                 for (int j = 0; j < human.rigidbodies.Length; j++)
                 {
-                    human.rigidbodies[j].velocity = guanxing ? (now_rigi_speeds[qudianId][j]) : Vector3.zero;
+                    if (!baoLiuDangQianSuDu)
+                    {
+                        human.rigidbodies[j].velocity = guanxing ? (now_rigi_speeds[qudianId][j]) : Vector3.zero;
+                    }
                 }
                 return;
             }
@@ -249,7 +256,10 @@ namespace YxModDll.Mod
                 human.rigidbodies[j].transform.position = now_rigi_positions[qudianId][j];
                 human.rigidbodies[j].transform.rotation = now_rigi_rotations[qudianId][j];
                 human.rigidbodies[j].inertiaTensor = now_rigi_inertiaTensors[qudianId][j];
-                human.rigidbodies[j].velocity = guanxing ? (now_rigi_speeds[qudianId][j]) : Vector3.zero;
+                if (!baoLiuDangQianSuDu)
+                {
+                    human.rigidbodies[j].velocity = guanxing ? (now_rigi_speeds[qudianId][j]) : Vector3.zero;
+                }
             }
         }
     }

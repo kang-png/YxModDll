@@ -136,6 +136,7 @@ namespace YxModDll.Patches
             {
                 ext.dingdian.huisu = UI_SheZhi.huisu;
                 ext.dingdian.guanxing = UI_SheZhi.guanxing;
+                ext.dingdian.baoLiuDangQianSuDu = UI_SheZhi.baoLiuDangQianSuDu;
                 ext.dingdian.q = UI_SheZhi.q;
                 ext.dingdian.se = UI_SheZhi.se;
                 ext.dingdian.gaodu = UI_SheZhi.gaodu;

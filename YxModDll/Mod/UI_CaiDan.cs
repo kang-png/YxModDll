@@ -128,6 +128,9 @@ namespace YxModDll.Mod
                 UI.CreatAnNiu_AnXia("自动伸手", ref FeatureManager.autoReach, false, null, "下落状态自动伸手");
                 gaodu += UI.buttonHeight;
 
+                UI.CreatAnNiu_AnXia("自动爬墙", ref FeatureManager.autoClimb, false, FeatureManager.TryInitAutoClimb, "举起双手,贴着墙面站好（双手碰到墙），用快捷键 Ctrl+N 触发");
+                gaodu += UI.buttonHeight;
+
                 UI.CreatAnNiu_AnXia("自动海豚跳", ref FeatureManager.autoBhop, false, null, "速度大于3时，判断转向，自动转最佳角度");
                 gaodu += UI.buttonHeight;
 
@@ -155,9 +158,9 @@ namespace YxModDll.Mod
                 UI.CreatAnNiu_AnXia("滑冰图", ref HuaBing, false, HuaBingTu);
                 gaodu += UI.buttonHeight;
                 //UI.CreatAnNiu_AnXia("蹦迪图", ref BengDi, false);
-                GUILayout.Space(10);
-                gaodu += 10;
             }
+            GUILayout.Space(10);
+            gaodu += 10;
 
             UI.CreatAnNiu("定点设置>>", false, CaiDan_DingDianSheZhi);
             gaodu += UI.buttonHeight;
