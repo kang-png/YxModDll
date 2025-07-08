@@ -2739,7 +2739,7 @@ namespace YxModDll.Mod
                 }
             }
         }
-        public static void FaYan(string msg)
+        public static void FaYan(string msg, bool formatMsg = true)
         {
             string name = "";
             if (UI_SheZhi.MingZiSheZhi)
@@ -2769,7 +2769,7 @@ namespace YxModDll.Mod
                 name = SteamFriends.GetFriendPersonaName(SteamUser.GetSteamID());
             }
 
-            if (UI_SheZhi.FaYanSheZhi)
+            if (UI_SheZhi.FaYanSheZhi && formatMsg)
             {
                 msg = SetDaXiaoYanSe(msg, UI_SheZhi.FaYanDaXiaoID, UI_SheZhi.FaYanYanSeID, mingzi: false);
                 if (UI_SheZhi.FaYanCuTi)
@@ -2783,7 +2783,7 @@ namespace YxModDll.Mod
                 SendChatMessage(name + " " + msg, "");
 
             }
-            else if (!UI_SheZhi.FaYanSheZhi)
+            else
             {
                 SendChatMessage(name, msg);
             }

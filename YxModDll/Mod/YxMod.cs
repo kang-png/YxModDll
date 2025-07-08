@@ -203,6 +203,7 @@ namespace YxModDll.Mod
 
             // 启动协程下载并解压
             StartCoroutine(JianChaGengXin());
+            NetChat.RegisterCommand(true, true, "say", new Action<string>(this.CmdSay), null);
 
         }
         //public void OnGUI()
@@ -338,7 +339,7 @@ namespace YxModDll.Mod
                     else
                     {
                         //NetGame.instance.SendChatMessage("up");
-                        Chat.FaYan("up");
+                        Chat.FaYan("up", false);
                     }
 
                 }
@@ -358,7 +359,7 @@ namespace YxModDll.Mod
                     }
                     else
                     {
-                        Chat.FaYan("ifg");
+                        Chat.FaYan("ifg", false);
                     }
 
                 }
@@ -3117,6 +3118,10 @@ namespace YxModDll.Mod
             Chat.TiShi(whohuman.player.host, $"{num}号玩家不存在!");
             return null;
         }
-
+        private void CmdSay(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return;
+            Chat.FaYan(text, false);
+        }
     }
 }
