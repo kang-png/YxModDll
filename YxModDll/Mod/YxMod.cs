@@ -160,12 +160,6 @@ namespace YxModDll.Mod
 
             //StartCoroutine(JianChaGengXin());//检查更新
             //YanZheng_OK = true;
-            gameObject.AddComponent<UI_Main>();
-            gameObject.AddComponent<KeyDisplayUI>();//键盘UI
-            gameObject.AddComponent<MiniMap>();//小地图
-            gameObject.AddComponent<ColorfulSpeek>();//颜色发言
-            gameObject.AddComponent<FPSCounter>();//FPS
-            gameObject.AddComponent<YxModDll.Mod.Features.FeatureManager>();
 
             //StartCoroutine(DelayPatchAll());
 
@@ -187,6 +181,12 @@ namespace YxModDll.Mod
             // 注册编码支持（只需调用一次）
             // System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             //var go = NetGame.instance.gameObject;
+            gameObject.AddComponent<UI_Main>();
+            gameObject.AddComponent<KeyDisplayUI>();//键盘UI
+            gameObject.AddComponent<MiniMap>();//小地图
+            gameObject.AddComponent<ColorfulSpeek>();//颜色发言
+            gameObject.AddComponent<FPSCounter>();//FPS
+            gameObject.AddComponent<YxModDll.Mod.Features.FeatureManager>();
 
             gameObject.AddComponent<Patcher_App>();
             gameObject.AddComponent<Patcher_LevelInformationBox>();
