@@ -290,8 +290,12 @@ namespace YxModDll.Mod
                 {
                     //Debug.Log("显示鼠标");
                     ShowShuBiao = !ShowShuBiao;
+                    if (ShowShuBiao)
+                    {
+                        Chat.TiShi(NetGame.instance.local, "你按下了Shift键，已显示鼠标");
+                    }
                 }
-            
+
             }
 
 
@@ -342,7 +346,10 @@ namespace YxModDll.Mod
             {
                 ShowShuBiao = false;
             }
-        
+            //if (ShowShuBiao)
+            //{
+            //    GUI.Label(new Rect(10, Screen.height / 2 - 10, 200, 20), ColorfulSpeek.colorshows("按 Shift 键切换显示鼠标"));
+            //}
             if (ShowUI)
             {
                 mainUi();//创建主界面

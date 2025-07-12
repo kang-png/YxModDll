@@ -990,7 +990,7 @@ namespace YxModDll.Mod
             {
                 human.GetExt().zuoxiaTime -= Time.fixedDeltaTime;
 
-                human.onGround = true;
+                //human.onGround = true;
                 human.jump = false;
                 Vector3 b = Quaternion.Euler(0f, 0f, 0f) * Vector3.down;
                 human.ragdoll.partHips.rigidbody.AddForce(b * 1500f * 1f, ForceMode.Force);
@@ -1028,7 +1028,7 @@ namespace YxModDll.Mod
                 human.ragdoll.partHips.rigidbody.AddForce(a * 1000f * -4f * (guixia ? -1 : 1), ForceMode.Force);
             }
 
-            human.onGround = true;
+            //human.onGround = true;
             human.jump = false;
             Vector3 b = Quaternion.Euler(0f, 0f, 0f) * Vector3.down;
             human.ragdoll.partHips.rigidbody.AddForce(b * 1500f * 1f, ForceMode.Force);
@@ -1065,6 +1065,190 @@ namespace YxModDll.Mod
                 //human.ragdoll.partHips .rigidbody.SafeAddForce(-human.ragdoll.partHead.transform.up * 1500f);
             }
         }
+
+        public static void NinjaRunPose(Human human)
+        {
+            human.GetExt().ninjarun = true;
+            human.ragdoll.partBall.collider.enabled = false;
+        }
+
+        public static void NinjaRunPose_Fun(Human human)
+        {
+            if (!human.GetExt().ninjarun) return;
+
+            // 使用摄像机方向作为前进基准
+            float cameraYaw = human.controls.cameraYawAngle;
+            Vector3 forward = Quaternion.Euler(0f, cameraYaw, 0f) * Vector3.forward;
+            Vector3 up = Vector3.up;
+
+            // 核心参数 - 增强前倾
+            float bodyForce = 900f;  // 身体力量
+            float headForce = 650f;  // 头部力量
+            float armForce = 350f;   // 手臂力量
+
+            // 1. 增强胸部前倾 (100%向前 + 20%向下)
+            human.ragdoll.partChest.rigidbody.AddForce(
+                forward * bodyForce * 1.0f +  // 100%向前
+                up * bodyForce * -0.2f,       // 20%向下 (负向上)
+                ForceMode.Force
+            );
+
+            // 2. 增强头部前倾
+            human.ragdoll.partHead.rigidbody.AddForce(
+                forward * headForce * 0.8f +  // 80%向前
+                up * headForce * -0.1f,       // 10%向下
+                ForceMode.Force
+            );
+
+            // 3. 手臂后摆+抬高 (50%向后 + 50%向上)
+            Vector3 armDirection =
+                (-forward * 0.5f) +  // 50%向后
+                (up * 0.5f);         // 50%向上
+
+            human.ragdoll.partLeftHand.rigidbody.AddForce(armDirection * armForce, ForceMode.Force);
+            human.ragdoll.partRightHand.rigidbody.AddForce(armDirection * armForce, ForceMode.Force);
+
+            // 4. 平衡补偿 - 防止前移 (保持稳定)
+            human.ragdoll.partHips.rigidbody.AddForce(
+                -forward * bodyForce * 0.45f +  // 45%向后抵消
+                up * bodyForce * -0.25f,        // 25%向下稳定
+                ForceMode.Force
+            );
+
+            // 一次性执行后关闭状态
+            human.GetExt().ninjarun = false;
+            human.ragdoll.partBall.collider.enabled = true;
+        }
+        public static void FanChiBang(Human human)
+        {
+            var ext = human.GetExt();
+            ext.fanchibang = true;
+            human.ragdoll.partBall.collider.enabled = false; // 禁用碰撞体
+        }
+
+        public static void FanChiBang_Fun(Human human)
+        {
+            var ext = human.GetExt();
+            if (!ext.fanchibang) return;
+
+            // 状态锁定
+            human.state = HumanState.Idle;
+
+            // 清零速度，取消重力
+            foreach (var rb in human.rigidbodies)
+            {
+                Vector3 v = rb.velocity;
+                v.x *= 0.6f;
+                v.z *= 0.6f;
+                v.y *= 0f;
+                rb.velocity = v;
+                rb.useGravity = false;
+            }
+            // ✳️ 每帧缓慢上升（不限制目标高度）
+            human.SetPosition(human.transform.position + 0.003f * Vector3.up);
+
+            // 时间节奏控制
+            ext.baibiTime += Time.deltaTime;
+            float cycleTime = ext.baibiTime % 1f;
+
+            Vector3 right = human.ragdoll.partHead.transform.right;
+            Vector3 up = human.ragdoll.partHead.transform.up;
+
+            if (cycleTime < 0.5f)
+            {
+                // 左右推力（模拟扇动）
+                human.ragdoll.partLeftHand.rigidbody.SafeAddForce(-right * 2000f);
+                human.ragdoll.partRightHand.rigidbody.SafeAddForce(right * 2000f);
+            }
+            else
+            {
+                // 向下推力（上浮）
+                human.ragdoll.partLeftHand.rigidbody.SafeAddForce(-up * 1000f);
+                human.ragdoll.partRightHand.rigidbody.SafeAddForce(-up * 1000f);
+            }
+        }
+
+        public static void EndFanChiBang(Human human)
+        {
+            var ext = human.GetExt();
+            ext.fanchibang = false;
+            human.ragdoll.partBall.collider.enabled = true; // 禁用碰撞体
+            ext.baibiTime = 0f;
+            //ext.shengkongGaoDu = Vector3.zero;
+
+            foreach (var rb in human.rigidbodies)
+            {
+                rb.useGravity = true;
+            }
+        }
+        public static void FanChiBangY8(Human human)
+        {
+            var ext = human.GetExt();
+            ext.fanchibangY8 = true;
+
+            // 把头固定在空中
+            var head = human.ragdoll.partHead.rigidbody;
+            head.useGravity = false;
+            head.velocity = Vector3.zero;
+            head.isKinematic = true;
+
+            // ✅ 手臂不使用重力，保持扇动顺畅
+            human.ragdoll.partLeftArm.rigidbody.useGravity = false;
+            human.ragdoll.partLeftForearm.rigidbody.useGravity = false;
+            human.ragdoll.partLeftHand.rigidbody.useGravity = false;
+
+            human.ragdoll.partRightArm.rigidbody.useGravity = false;
+            human.ragdoll.partRightForearm.rigidbody.useGravity = false;
+            human.ragdoll.partRightHand.rigidbody.useGravity = false;
+        }
+
+        public static void FanChiBangY8_Fun(Human human)
+        {
+            var ext = human.GetExt();
+            if (!ext.fanchibangY8) return;
+
+            // ✅ 手臂扇动逻辑（不变）
+            float angle = Mathf.Sin(Time.time * 8f) * 45f;
+            Vector3 axis = Camera.main.transform.forward;
+            Quaternion leftRot = Quaternion.AngleAxis(angle, axis);
+            Quaternion rightRot = Quaternion.AngleAxis(-angle, axis);
+
+            human.ragdoll.partLeftArm.rigidbody.MoveRotation(leftRot);
+            human.ragdoll.partLeftForearm.rigidbody.MoveRotation(leftRot);
+            human.ragdoll.partLeftHand.rigidbody.MoveRotation(leftRot);
+
+            human.ragdoll.partRightArm.rigidbody.MoveRotation(rightRot);
+            human.ragdoll.partRightForearm.rigidbody.MoveRotation(rightRot);
+            human.ragdoll.partRightHand.rigidbody.MoveRotation(rightRot);
+
+            // ✅ 让头自然“向后倒”
+            // 添加一个向后小力，模拟后仰
+            var head = human.ragdoll.partHead.rigidbody;
+            Vector3 back = -Camera.main.transform.forward;
+            head.AddForce(back * 50f);
+        }
+
+        public static void EndFanChiBangY8(Human human)
+        {
+            var ext = human.GetExt();
+            ext.fanchibangY8 = false;
+
+            // ✅ 恢复头部状态
+            var head = human.ragdoll.partHead.rigidbody;
+            head.isKinematic = false;
+            head.useGravity = true;
+
+            // ✅ 恢复手臂重力
+            human.ragdoll.partLeftArm.rigidbody.useGravity = true;
+            human.ragdoll.partLeftForearm.rigidbody.useGravity = true;
+            human.ragdoll.partLeftHand.rigidbody.useGravity = true;
+
+            human.ragdoll.partRightArm.rigidbody.useGravity = true;
+            human.ragdoll.partRightForearm.rigidbody.useGravity = true;
+            human.ragdoll.partRightHand.rigidbody.useGravity = true;
+        }
+
+
         public static void TiTui(Human human)
         {
             if (!human.GetExt().yititui)

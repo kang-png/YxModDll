@@ -1,4 +1,5 @@
-﻿using Multiplayer;
+﻿using HumanAPI;
+using Multiplayer;
 using Steamworks;
 using System;
 using System.Collections.Generic;
@@ -144,6 +145,17 @@ namespace YxModDll.Mod
                     humanID = 0;
                     return;
                 }
+                UI.CreatAnNiu("修复皮肤", false, () => {
+
+                    if (human.player.skin == null)
+                    {
+                        human.player.skin = RagdollPresetMetadata.LoadNetSkin(human.player.localCoopIndex, human.player.skinUserId);
+                    }
+                    if (human.player.skin != null)
+                    {
+                        human.player.ApplyPreset(human.player.skin);
+                    }
+                });
                 GUILayout.BeginHorizontal();
                 if ((NetGame.isServer && humanID != 1) || (NetGame.isClient && !KeJiZiJi())) //不是自己
                 {

@@ -48,6 +48,11 @@ namespace YxModDll.Patches
         public bool yititui;//
         public bool quanji;//Y5拳击
         public bool chuquan;//出拳
+        public bool fanchibang;
+        public bool fanchibangY8;
+        public float baibiTime;
+        public Vector3 shengkongGaoDu = Vector3.zero;
+        public bool ninjarun; //忍者跑
         public int numY;//Y   0 晕倒    1 坐下     2 跪下    3 一字马   4 踢腿   5拳王
 
         public Human ntp_human;

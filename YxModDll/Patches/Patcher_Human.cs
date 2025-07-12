@@ -299,6 +299,10 @@ namespace YxModDll.Patches
             YxMod.YiZiMa_Fun(instance);
             YxMod.JiFei_Fun(instance);
             YxMod.QuanJi_Fun(instance);
+            YxMod.FanChiBang_Fun(instance);
+            YxMod.NinjaRunPose_Fun(instance);
+            YxMod.FanChiBangY8_Fun(instance);
+
             instance.GetExt().dingdian.DingDian_Fun(instance);
             YxMod.WuPengZhuang_Fun(instance);
             YxMod.GuaJian_Fun(instance);
@@ -391,52 +395,81 @@ namespace YxModDll.Patches
 
         private static void ProcessInput(Human instance)
         {
+            // 如果不是客户端 && 没在录像播放中，才处理输入
             if (!NetGame.isClient && !ReplayRecorder.isPlaying)
             {
+                var ext = instance.GetExt(); // 获取扩展字段
+
+                // 如果按住了 Y 键（对应 controls.unconscious）
                 if (instance.controls.unconscious)
                 {
-                    if (instance.GetExt().numY == 0)
+                    // 根据当前 Y 动作编号（numY）执行对应功能
+                    switch (ext.numY)
                     {
-                        instance.MakeUnconscious();
-                    }
-                    else if (instance.GetExt().numY == 1)//坐下
-                    {
-                        YxMod.ZuoXia(instance);
-                    }
-                    else if (instance.GetExt().numY == 2)//跪下
-                    {
-                        YxMod.ZuoXia(instance, true);
-                    }
-                    else if (instance.GetExt().numY == 3)//一字马
-                    {
-                        YxMod.YiZiMa(instance);
-                    }
-                    else if (instance.GetExt().numY == 4)//踢腿
-                    {
-                        YxMod.TiTui(instance);
-                    }
-                    else if (instance.GetExt().numY == 5)//拳王
-                    {
-                        instance.GetExt().quanji = true;
-                        YxMod.QuanJiAnimation(instance);
+                        case 0: // 普通晕倒
+                            instance.MakeUnconscious();
+                            break;
+
+                        case 1: // 坐下
+                            YxMod.ZuoXia(instance);
+                            break;
+
+                        case 2: // 跪下
+                            YxMod.ZuoXia(instance, true);
+                            break;
+
+                        case 3: // 一字马
+                            YxMod.YiZiMa(instance);
+                            break;
+
+                        case 4: // 踢腿
+                            YxMod.TiTui(instance);
+                            break;
+
+                        case 5: // 拳王模式（开启状态标记 + 播动画）
+                            ext.quanji = true;
+                            YxMod.QuanJiAnimation(instance);
+                            break;
+
+                        case 6: // 扇翅膀（只在初次按下时触发一次）
+                            YxMod.FanChiBang(instance); // 开启扇翅膀状态
+                            break;
+
+                        case 7: // 忍者疾跑（进入固定姿势）
+                            YxMod.NinjaRunPose(instance);
+                            break;
+
+                        case 8: 
+                            YxMod.FanChiBangY8(instance);
+                            break;
                     }
                 }
-                else
+                else // 松开 Y 键时
                 {
-                    instance.GetExt().yititui = false;
-                    instance.GetExt().titui = false;
-                    instance.GetExt().quanji = false;
+                    // 重置某些状态（如果正在执行特定动作）
+                    ext.yititui = false;
+                    ext.titui = false;
+                    ext.quanji = false;
+
+                    // 如果仍处于扇翅膀状态，立即关闭（恢复重力等）
+                    if (ext.fanchibang)
+                    {
+                        YxMod.EndFanChiBang(instance);
+                    }
+                    if (ext.fanchibangY8)
+                    {
+                        YxMod.EndFanChiBangY8(instance);
+                    }
                 }
-                //if (controls.unconscious)
-                //{
-                //	MakeUnconscious();
-                //}
+
+                // 调用原版的动作控制（跳跃、移动等）
                 if (instance.motionControl2.enabled)
                 {
                     instance.motionControl2.OnFixedUpdate();
                 }
             }
         }
+
 
         private static void PushGroundAngle(Human instance)
         {

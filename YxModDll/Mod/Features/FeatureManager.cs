@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Windows.Interop;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -298,7 +299,9 @@ namespace YxModDll.Mod.Features
 
     	public static Coroutine loadCheckpointCoroutine;
 
-    	public static readonly string[] exceptScenes = new string[2] { "DontDestroyOnLoad", "HideAndDontSave" };
+        private Coroutine bhopCoroutine = null;
+
+        public static readonly string[] exceptScenes = new string[2] { "DontDestroyOnLoad", "HideAndDontSave" };
 
     	public static readonly Dictionary<Type, string> typeColors = new Dictionary<Type, string>
     	{
@@ -448,6 +451,134 @@ namespace YxModDll.Mod.Features
     		harmony = Harmony.CreateAndPatchAll(typeof(FeatureManager), "com.plcc.hff.humanmod");
     	}
 
+	public void Update()
+	{
+		if (Game.instance == null)
+		{
+			return;
+		}
+		if (MenuSystem.keyboardState == KeyboardState.None && enableHotkeys)
+		{
+			if (Input.GetKeyDown(KeyCode.G))
+			{
+				if (FreeRoamCam.allowFreeRoam)
+				{
+					Vector3 position = freeRoamCam.transform.position + 1f * freeRoamCam.transform.forward;
+					List<GameObject> allChildren = GetAllChildren(Game.currentLevel.gameObject, search: false);
+					selected = allChildren.SelectMin((GameObject gameObject2) => Vector3.Distance(gameObject2.transform.position, position));
+				}
+				else if (!NetGame.isClient && Human.Localplayer.hasGrabbed)
+				{
+					selected = Utils.grabManager.Invoke(Human.Localplayer).grabbedObjects[0];
+				}
+				else
+				{
+					List<GameObject> allChildren2 = GetAllChildren(Game.currentLevel.gameObject, search: false);
+					selected = allChildren2.SelectMin((GameObject gameObject2) => Vector3.Distance(gameObject2.transform.position, Human.Localplayer.ragdoll.partLeftHand.transform.position));
+				}
+				parent = selected.transform.parent.gameObject;
+				RefreshObjects();
+			}
+			if (Input.GetKeyDown(KeyCode.H) && Human.Localplayer.hasGrabbed)
+			{
+				foreach (GameObject grabbedObject in Utils.grabManager.Invoke(Human.Localplayer).grabbedObjects)
+				{
+					grabbedObject.SetActive(value: false);
+				}
+			}
+			if (Input.GetKeyDown(KeyCode.L) && Input.GetKey(KeyCode.LeftControl))
+			{
+				RatingMenu.instance.LevelOver();
+				App.instance.KillGame();
+				Dialogs.ConnectionLost(delegate
+				{
+					MenuSystem.instance.ShowMainMenu<MenuTransition>();
+				});
+			}
+            if (Input.GetKeyDown(KeyCode.P) && Input.GetKey(KeyCode.LeftControl))
+            {
+                if (bhopCoroutine == null)
+                    bhopCoroutine = StartCoroutine(TestBhop());
+                else
+                {
+                    StopCoroutine(bhopCoroutine);
+                    bhopCoroutine = null;
+                    yawOverride = null;  // 恢复状态
+                    jumpDir = 0;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.N) && Input.GetKey(KeyCode.LeftControl))
+			{
+				autoClimb = !autoClimb;
+				if (autoClimb)
+				{
+					climbState = 0;
+					Vector3 vector = (Human.Localplayer.ragdoll.partLeftHand.transform.position - Human.Localplayer.ragdoll.partRightHand.transform.position).ZeroY();
+					float num = Mathf.Atan2(vector.x, vector.z) * 57.29578f;
+					Human.Localplayer.controls.cameraYawAngle = (((Human.Localplayer.controls.cameraYawAngle - num) % 360f < 180f) ? (num + 90f) : (num - 90f));
+				}
+			}
+		}
+		if (gameLevel != Game.instance.currentLevelNumber)
+		{
+			RenderCheckpoints();
+			RenderLoadingZones();
+			RenderDeathZones();
+			RenderAirWalls();
+			RenderFakeObjects();
+			foreach (GameObject instance in instances)
+			{
+				UnityEngine.Object.Destroy(instance);
+			}
+			instances.Clear();
+			lastCp = (from checkpoint in FindObjects<Checkpoint>()
+				select checkpoint.number).MaxOr(0);
+			netBodyCount = FindObjects<NetBody>().Count((NetBody netBody) => !exceptScenes.Contains(netBody.gameObject.scene.name));
+			triggerVolumes = FindObjects<TriggerVolume>().ToArray();
+			triggerObjects = triggerVolumes.SelectMany(GetTriggerObjects).Distinct().ToArray();
+			labelVolumes = FindObjects<ColliderLabelTriggerVolume>().ToArray();
+			labelObjects = FindObjects<ColliderLabel>().ToArray();
+			grabSensors = (from c in ((IEnumerable<Component>)FindObjects<GrabSensor>()).Concat((IEnumerable<Component>)FindObjects<HumanAPI.Button>()).Concat(FindObjects<Lever>())
+				select c.gameObject).ToArray();
+			otherSensors = FindObjects<OtherCollisionSensor>().ToArray();
+			if (newbieMode)
+			{
+				CollectionExtensions.Do<LODGroup>(FindObjects<LODGroup>(), (Action<LODGroup>)UnityEngine.Object.Destroy);
+			}
+			gameLevel = Game.instance.currentLevelNumber;
+		}
+		if (lastHumanCount != Human.all.Count)
+		{
+			IgnoreCollisionUpdate();
+			lastHumanCount = Human.all.Count;
+		}
+		if (NetGame.isServer || NetGame.isClient)
+		{
+			previousLobbyID = ((NetTransportSteam)NetGame.instance.transport).lobbyID;
+			PlayerPrefs.SetInt("previousLobbyID", (int)(ulong)previousLobbyID);
+		}
+		if (FreeRoamCam.allowFreeRoam && controlCheat)
+		{
+			ControlObject();
+		}
+		if ((object)freeRoamCam == null)
+		{
+			freeRoamCam = UnityEngine.Object.FindObjectOfType<FreeRoamCam>();
+		}
+		if ((object)nodeGraphViewer == null)
+		{
+			nodeGraphViewer = ((Component)this).gameObject.AddComponent<NodeGraphViewer>();
+		}
+		foreach (Human item3 in Human.all)
+		{
+			if (!item3.player.host.players.Contains(item3.player) && !item3.IsLocalPlayer && removeBugHuman)
+			{
+				Shell.Print("Removed Bug Human " + item3.player?.host.name);
+				Human.all.Remove(item3);
+				UnityEngine.Object.Destroy(item3.player);
+			}
+		}
+	}
 
     	public void FixedUpdate()
     	{
@@ -2078,7 +2209,7 @@ namespace YxModDll.Mod.Features
     		if (isLocal)
     		{
     			ragdollPresetMetadata = NetPlayer.GetLocalSkin(localCoopIndex);
-    		}
+            }
     		else
     		{
     			ragdollPresetMetadata = RagdollPresetMetadata.LoadNetSkin(localCoopIndex, skinUserId);
@@ -2089,8 +2220,8 @@ namespace YxModDll.Mod.Features
     			if (Options.parental == 1)
     			{
     				ragdollPresetMetadata?.ClearCustomisation();
-    			}
-    		}
+                }
+            }
     		component.netId = id;
     		component.host = host;
     		component.localCoopIndex = localCoopIndex;
@@ -2136,56 +2267,125 @@ namespace YxModDll.Mod.Features
     		return false;
     	}
 
-        [HarmonyPatch(typeof(FileTools), nameof(FileTools.TextureFromBytes))]
-        [HarmonyPrefix]
-        public static bool TextureFromBytes_Prefix(string name, byte[] bytes, ref Texture2D __result)
+        public static RagdollPresetMetadata ResizeSkinPreset(RagdollPresetMetadata original, int maxSize = 1024)
         {
-            if (bytes == null)
+            if (original == null) return null;
+
+            // 创建一个新的实例
+            RagdollPresetMetadata resized = new RagdollPresetMetadata();
+
+            // 局部函数：缩放并返回新的bytes
+            byte[] ResizeBytes(byte[] bytes)
             {
-                __result = null;
-                return false;
+                if (bytes == null || bytes.Length == 0) return bytes;
+
+                Texture2D tex = new Texture2D(2, 2);
+                tex.LoadImage(bytes);
+
+                if (tex.width <= maxSize && tex.height <= maxSize)
+                    return bytes;
+
+                float scale = Mathf.Min((float)maxSize / tex.width, (float)maxSize / tex.height);
+                int newW = Mathf.RoundToInt(tex.width * scale);
+                int newH = Mathf.RoundToInt(tex.height * scale);
+
+                RenderTexture rt = RenderTexture.GetTemporary(newW, newH);
+                Graphics.Blit(tex, rt);
+                RenderTexture.active = rt;
+
+                Texture2D resizedTex = new Texture2D(newW, newH, TextureFormat.RGBA32, false);
+                resizedTex.ReadPixels(new Rect(0, 0, newW, newH), 0, 0);
+                resizedTex.Apply();
+
+                RenderTexture.active = null;
+                RenderTexture.ReleaseTemporary(rt);
+
+                byte[] newBytes = resizedTex.EncodeToPNG();
+
+                UnityEngine.Object.Destroy(tex);
+                UnityEngine.Object.Destroy(resizedTex);
+
+                return newBytes;
             }
 
-            // 开关判断
-            if (!UI_SheZhi.skinCheckEnabled)
+            // 复制并缩放部分，假设是对象且有bytes字段
+            void CopyAndResizePart(string partName)
             {
-                return true; // 不拦截，继续执行原方法
+                var part = original.GetType().GetField(partName)?.GetValue(original);
+                if (part == null) return;
+
+                var bytesField = part.GetType().GetField("bytes");
+                if (bytesField == null) return;
+
+                byte[] originalBytes = bytesField.GetValue(part) as byte[];
+                if (originalBytes == null) return;
+
+                byte[] resizedBytes = ResizeBytes(originalBytes);
+
+                // 创建新实例同类型
+                var newPart = Activator.CreateInstance(part.GetType());
+                bytesField.SetValue(newPart, resizedBytes);
+
+                // 赋值回resized对象对应字段
+                var field = resized.GetType().GetField(partName);
+                if (field != null)
+                    field.SetValue(resized, newPart);
             }
 
-            try
-            {
-                if (bytes.Length > 10 * 1024 * 1024) // 判断压缩文件大小
-                {
-                    string msg = $"[贴图拦截] {name} 压缩贴图超过10MB（{bytes.Length / 1024}KB），已替换为白皮";
-                    UnityEngine.Debug.LogWarning(msg);
-                    Chat.TiShi(NetGame.instance.local, msg);
+            CopyAndResizePart("main");
+            CopyAndResizePart("head");
+            CopyAndResizePart("upperBody");
+            CopyAndResizePart("lowerBody");
 
-                    var part = PresetRepository.CreateDefaultSkin().main;
-                    __result = part?.bytes != null ? FileTools.TextureFromBytes("DefaultMain", part.bytes) : null;
-                    return false;
-                }
+            // 如果还有其他字段需要复制，可以在这里补充
 
-                Texture2D tex = FileTools.NativeTextureDecode(bytes, true);
-                if (tex == null)
-                {
-                    tex = new Texture2D(1, 1);
-                    tex.name = name;
-                    tex.LoadImage(bytes);
-                }
-
-                tex.name = name;
-                __result = tex;
-                return false;
-            }
-            catch (Exception ex)
-            {
-                UnityEngine.Debug.LogException(ex);
-                __result = null;
-                return false;
-            }
+            return resized;
+        }
+        [HarmonyPatch(typeof(NetPlayer), nameof(NetPlayer.ApplyPreset))]
+        [HarmonyPrefix]
+        public static void Prefix_ApplyPreset(ref RagdollPresetMetadata preset, bool bake, bool useBaseTexture)
+        {
+            UnityEngine.Debug.LogWarning("ApplyPreset 补丁触发");
+            if (UI_SheZhi.skinCheckEnabled)
+                preset = ResizeSkinPreset(preset, 1024);
         }
 
 
+
+
+        //[HarmonyPatch(typeof(FileTools), "TextureFromBytes")]
+        //[HarmonyPrefix]
+        //public static bool Patch_TextureFromBytes(string name, byte[] bytes, ref Texture2D __result)
+        //{
+        //    UnityEngine.Debug.Log("TextureFromBytes补丁");
+
+        //    if (!UI_SheZhi.skinCheckEnabled)
+        //        return true;
+
+        //    if (bytes.Length > 5 * 1024 * 1024)
+        //    {
+        //        string msg = $"[纹理拦截] {name} 尺寸过大 ({bytes.Length / 1024f:F1}KB)，已替换为安全纹理";
+        //        UnityEngine.Debug.Log(msg);
+        //        Chat.TiShi(NetGame.instance.local, msg);
+
+        //        __result = new Texture2D(1, 1, TextureFormat.RGB24, false);
+        //        __result.SetPixel(0, 0, Color.white);
+        //        __result.Apply();
+        //        return false;
+        //    }
+
+        //    return true;
+        //}
+
+        //[HarmonyPatch(typeof(Texture2D), "Compress")]
+        //[HarmonyPrefix]
+        //public static bool Prefix_Compress(Texture2D __instance, bool highQuality)
+        //{
+        //    UnityEngine.Debug.Log("Compress补丁");
+        //    if (!UI_SheZhi.skinCheckEnabled)
+        //        return true;
+        //    return false;
+        //}
 
 
 

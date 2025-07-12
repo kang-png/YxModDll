@@ -16,8 +16,6 @@ namespace YxModDll.Patches
 
         private void Awake()
         {
-            Debug.Log("[YxMod] 初始化 OnDownloadThumbnail Patch");
-
             BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
 
             _onReadField = targetType.GetField("onRead", flags);

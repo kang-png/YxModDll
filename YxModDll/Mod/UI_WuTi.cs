@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using YxModDll.Mod.Features;
 
 
 
@@ -30,6 +31,7 @@ namespace YxModDll.Mod
             GUILayout.Space(5);
             UI.CreatFenGeXian();//分割线
             GUILayout.Space(5);
+            UI.CreatAnNiu_AnXia("节点图查看器", ref FeatureManager.nodeGraphViewer.view, false, TryEnableNodeGraphViewer);
             GUILayout.Label($"<i>空空如也,开发中...</i>", UI.SetLabelStyle_JuZhong(), GUILayout.ExpandWidth(true));
 
 
@@ -79,6 +81,15 @@ namespace YxModDll.Mod
             //GUILayout.EndArea();
 
         }
+
+        public static void TryEnableNodeGraphViewer()
+        {
+            if (FeatureManager.nodeGraphViewer.view)
+            {
+                FeatureManager.nodeGraphViewer.Enable();
+            }
+        }
+
 
     }
 }

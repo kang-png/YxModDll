@@ -422,6 +422,7 @@ namespace YxModDll.Mod
                     GUILayout.Space(5);
                     UI.CreatFenGeXian();//分割线
                     GUILayout.Space(5);
+                    GUILayout.Label("提示：使用 /say [内容] 可发送无颜色消息，避免富文本干扰，如：/say dingdian 4", UI.SetLabelStyle_JuZhong());
                     break;
                 case "开房设置":
                     //房名设置//最大人数//仅限邀请//锁定关卡//挂机提醒//房间外显最大人数和当前人数修改
