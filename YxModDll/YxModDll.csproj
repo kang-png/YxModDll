@@ -60,6 +60,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Numerics" />
@@ -185,6 +186,7 @@
     <Compile Include="Mod\Features\ReadOnlyList.cs" />
     <Compile Include="Mod\Features\Side.cs" />
     <Compile Include="Mod\Features\Utils.cs" />
+    <Compile Include="Mod\Utils\YxImageHelper.cs" />
     <Compile Include="Patches\Patcher_Human.cs" />
     <Compile Include="Patches\Patcher_NetGame.cs" />
     <Compile Include="Patches\Patcher_NetPlayer.cs" />

@@ -13,10 +13,12 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Windows.Interop;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
+using YxModDll.Mod.Utils;
 
 namespace YxModDll.Mod.Features
 {
@@ -398,7 +400,7 @@ namespace YxModDll.Mod.Features
     		previewOnly = true;
     		noWorkshopReload = false;
     		noDelay = true;
-    		fixSkin = PlayerPrefs.GetInt("fixWhiteHumanEnabled", 1) > 0; ;
+    		fixSkin = false;
     		kickCheat = true;
     		pointCheat = true;
     		enableHotkeys = true;
@@ -521,11 +523,12 @@ namespace YxModDll.Mod.Features
 		}
 		if (gameLevel != Game.instance.currentLevelNumber)
 		{
-			RenderCheckpoints();
-			RenderLoadingZones();
-			RenderDeathZones();
-			RenderAirWalls();
-			RenderFakeObjects();
+            //RenderCheckpoints();
+            //RenderLoadingZones();
+            //RenderDeathZones();
+            RenderZoneVisuals();
+            RenderAirWalls();
+            RenderFakeObjects();
 			foreach (GameObject instance in instances)
 			{
 				UnityEngine.Object.Destroy(instance);
@@ -955,15 +958,58 @@ namespace YxModDll.Mod.Features
     		}
     	}
 
-    	public void RenderAirWalls()
-    	{
-    		CollectionExtensions.Do<GameObject>((IEnumerable<GameObject>)airWallVisuals, (Action<GameObject>)UnityEngine.Object.Destroy);
-    		airWallVisuals.Clear();
-    		if (showAirWall)
-    		{
-    			((MonoBehaviour)this).StartCoroutine(RenderAirWallsCoroutine());
-    		}
-    	}
+        //public void RenderAirWalls()
+        //{
+        //	CollectionExtensions.Do<GameObject>((IEnumerable<GameObject>)airWallVisuals, (Action<GameObject>)UnityEngine.Object.Destroy);
+        //	airWallVisuals.Clear();
+        //	if (showAirWall)
+        //	{
+        //		((MonoBehaviour)this).StartCoroutine(RenderAirWallsCoroutine());
+        //	}
+        //}
+        private Coroutine autoRefreshCoroutine;
+        private float refreshInterval = 10f;
+
+        public void RenderAirWalls()
+        {
+            // 清除旧的可视化物体
+            CollectionExtensions.Do<GameObject>((IEnumerable<GameObject>)airWallVisuals, (Action<GameObject>)UnityEngine.Object.Destroy);
+            airWallVisuals.Clear();
+
+            // 如果开启了空气墙显示
+            if (showAirWall)
+            {
+                // 防止重复开启协程
+                if (autoRefreshCoroutine != null)
+                {
+                    ((MonoBehaviour)this).StopCoroutine(autoRefreshCoroutine);
+                }
+
+                // 启动自动刷新
+                autoRefreshCoroutine = ((MonoBehaviour)this).StartCoroutine(AutoRefreshAirWalls());
+            }
+            else
+            {
+                // 如果关闭了空气墙显示，也关闭刷新协程
+                if (autoRefreshCoroutine != null)
+                {
+                    ((MonoBehaviour)this).StopCoroutine(autoRefreshCoroutine);
+                    autoRefreshCoroutine = null;
+                }
+            }
+        }
+        private IEnumerator AutoRefreshAirWalls()
+        {
+            while (true)
+            {
+                // 清除旧的可视化物体
+                CollectionExtensions.Do<GameObject>((IEnumerable<GameObject>)airWallVisuals, (Action<GameObject>)UnityEngine.Object.Destroy);
+                airWallVisuals.Clear();
+                yield return RenderAirWallsCoroutine();
+                yield return new WaitForSeconds(refreshInterval);
+            }
+        }
+
 
         public void RenderZoneVisuals()
         {
@@ -1027,9 +1073,12 @@ namespace YxModDll.Mod.Features
     			typeof(Wind2),
     			typeof(ForceArea)
     		};
-    		foreach (Collider collider in FindObjects<Collider>())
-    		{
-    			MonoBehaviour.print(collider.name);
+            Vector3 center = Human.all.Count > 0 ? Human.all[0].transform.position : Vector3.zero;
+            foreach (Collider collider in FindObjects<Collider>())
+            {
+                if ((collider.transform.position - center).sqrMagnitude > 100f * 100f)
+                    continue;
+                //MonoBehaviour.print(collider.name);
     			collider.GetComponent<Renderer>();
     			_ = collider.GetComponent<MeshCollider>()?.sharedMesh;
     			_ = collider.GetComponents<Collider>().Length;
@@ -2267,88 +2316,191 @@ namespace YxModDll.Mod.Features
     		return false;
     	}
 
-        public static RagdollPresetMetadata ResizeSkinPreset(RagdollPresetMetadata original, int maxSize = 1024)
-        {
-            if (original == null) return null;
-
-            // 创建一个新的实例
-            RagdollPresetMetadata resized = new RagdollPresetMetadata();
-
-            // 局部函数：缩放并返回新的bytes
-            byte[] ResizeBytes(byte[] bytes)
-            {
-                if (bytes == null || bytes.Length == 0) return bytes;
-
-                Texture2D tex = new Texture2D(2, 2);
-                tex.LoadImage(bytes);
-
-                if (tex.width <= maxSize && tex.height <= maxSize)
-                    return bytes;
-
-                float scale = Mathf.Min((float)maxSize / tex.width, (float)maxSize / tex.height);
-                int newW = Mathf.RoundToInt(tex.width * scale);
-                int newH = Mathf.RoundToInt(tex.height * scale);
-
-                RenderTexture rt = RenderTexture.GetTemporary(newW, newH);
-                Graphics.Blit(tex, rt);
-                RenderTexture.active = rt;
-
-                Texture2D resizedTex = new Texture2D(newW, newH, TextureFormat.RGBA32, false);
-                resizedTex.ReadPixels(new Rect(0, 0, newW, newH), 0, 0);
-                resizedTex.Apply();
-
-                RenderTexture.active = null;
-                RenderTexture.ReleaseTemporary(rt);
-
-                byte[] newBytes = resizedTex.EncodeToPNG();
-
-                UnityEngine.Object.Destroy(tex);
-                UnityEngine.Object.Destroy(resizedTex);
-
-                return newBytes;
-            }
-
-            // 复制并缩放部分，假设是对象且有bytes字段
-            void CopyAndResizePart(string partName)
-            {
-                var part = original.GetType().GetField(partName)?.GetValue(original);
-                if (part == null) return;
-
-                var bytesField = part.GetType().GetField("bytes");
-                if (bytesField == null) return;
-
-                byte[] originalBytes = bytesField.GetValue(part) as byte[];
-                if (originalBytes == null) return;
-
-                byte[] resizedBytes = ResizeBytes(originalBytes);
-
-                // 创建新实例同类型
-                var newPart = Activator.CreateInstance(part.GetType());
-                bytesField.SetValue(newPart, resizedBytes);
-
-                // 赋值回resized对象对应字段
-                var field = resized.GetType().GetField(partName);
-                if (field != null)
-                    field.SetValue(resized, newPart);
-            }
-
-            CopyAndResizePart("main");
-            CopyAndResizePart("head");
-            CopyAndResizePart("upperBody");
-            CopyAndResizePart("lowerBody");
-
-            // 如果还有其他字段需要复制，可以在这里补充
-
-            return resized;
-        }
-        [HarmonyPatch(typeof(NetPlayer), nameof(NetPlayer.ApplyPreset))]
+        [HarmonyPatch(typeof(Resources), "UnloadUnusedAssets")]
         [HarmonyPrefix]
-        public static void Prefix_ApplyPreset(ref RagdollPresetMetadata preset, bool bake, bool useBaseTexture)
+        public static void Patch_UnloadUnusedAssets()
         {
-            UnityEngine.Debug.LogWarning("ApplyPreset 补丁触发");
-            if (UI_SheZhi.skinCheckEnabled)
-                preset = ResizeSkinPreset(preset, 1024);
+            UnityEngine.Debug.Log("UnloadUnusedAssets 补丁触发");
+            if (NetGame.instance?.local != null)
+            {
+                Chat.TiShi(NetGame.instance.local, "[YxMod] 正在卸载未使用的资源，请稍候...");
+            }
         }
+
+        [HarmonyPatch(typeof(RagdollTexture), "BakeTexture")]
+        [HarmonyPrefix]
+        public static bool Prefix_BakeTexture(RagdollTexture __instance, ref RenderTexture rt, bool compress)
+        {
+            UnityEngine.Debug.Log("BakeTexture 补丁触发");
+            if (!UI_SheZhi.skinCheckEnabled || rt == null)
+                return true;
+
+            if (rt.width <= 1024 && rt.height <= 1024)
+                return true;
+
+            int newW = Mathf.Min(rt.width, 1024);
+            int newH = Mathf.Min(rt.height, 1024);
+
+            RenderTexture downscaled = RenderTexture.GetTemporary(newW, newH);
+            Graphics.Blit(rt, downscaled);
+
+            UnityEngine.Debug.Log($"[BakeTexture缩放] 原尺寸: {rt.width}x{rt.height} => 缩放为: {newW}x{newH}");
+            Chat.TiShi(NetGame.instance.local, $"[BakeTexture缩放] 将贴图缩放为 {newW}x{newH}");
+
+            rt = downscaled;
+            __instance.width = newW;
+            __instance.height = newH;
+
+            return true;
+        }
+
+        [HarmonyPatch(typeof(RagdollTexture), "BakeTexture")]
+        [HarmonyPostfix]
+        public static void Postfix_BakeTexture(RenderTexture rt)
+        {
+            UnityEngine.Debug.Log("BakeTexture 后补丁触发");
+            if (!UI_SheZhi.skinCheckEnabled || rt == null)
+                return;
+
+            // 这里判断尺寸，如果是缩放后的RT就释放
+            if (rt.width <= 1024 && rt.height <= 1024)
+            {
+                RenderTexture.ReleaseTemporary(rt);
+                UnityEngine.Debug.Log("BakeTexture 缩放后RenderTexture已释放");
+            }
+        }
+
+        [HarmonyPatch(typeof(FileTools), "TextureFromBytes")]
+        [HarmonyPostfix]
+        public static bool Patch_TextureFromBytes(ref Texture2D __result, string name, byte[] bytes)
+        {
+            if (!UI_SheZhi.skinCheckEnabled || __result == null)
+                return true;
+
+            __result = YxImageHelper.LoadAndResizeTexture(name, bytes, 1024);
+            return false; // 跳过原方法
+            //int max = Mathf.Max(__result.width, __result.height);
+            //if (max <= 1024)
+            //    return;
+
+            //float scale = 1024f / max;
+            //int newW = Mathf.RoundToInt(__result.width * scale);
+            //int newH = Mathf.RoundToInt(__result.height * scale);
+
+            //RenderTexture rt = RenderTexture.GetTemporary(newW, newH);
+            //RenderTexture.active = rt;
+            //Graphics.Blit(__result, rt);
+
+            //Texture2D resized = new Texture2D(newW, newH, TextureFormat.RGBA32, false);
+            //resized.ReadPixels(new Rect(0, 0, newW, newH), 0, 0);
+            //resized.Apply();
+
+            //RenderTexture.active = null;
+            //RenderTexture.ReleaseTemporary(rt);
+            //UnityEngine.Object.Destroy(__result); // 销毁旧图
+
+            //resized.name = name;
+            //__result = resized;
+
+            //UnityEngine.Debug.Log($"[TextureFromBytes缩放] {name} => {newW}x{newH}");
+            //Chat.TiShi(NetGame.instance.local, $"[TextureFromBytes缩放] {name} 缩放为 {newW}x{newH}");
+        }
+
+
+        //[HarmonyPatch(typeof(NetPlayer), "ApplyPreset")]
+        //[HarmonyPrefix]
+        //public static void Prefix_ApplyPreset(ref RagdollPresetMetadata preset, bool bake, bool useBaseTexture)
+        //{
+        //    UnityEngine.Debug.LogWarning("ApplyPreset 补丁触发");
+
+        //    if (!UI_SheZhi.skinCheckEnabled || preset == null)
+        //        return;
+
+        //    ResizeIfNeeded(preset.main, "main");
+        //    ResizeIfNeeded(preset.head, "head");
+        //    ResizeIfNeeded(preset.upperBody, "upperBody");
+        //    ResizeIfNeeded(preset.lowerBody, "lowerBody");
+
+        //}
+
+        //private static void ResizeIfNeeded(RagdollPresetPartMetadata part, string label)
+        //{
+        //    if (part?.bytes == null || part.bytes.Length == 0) return;
+
+        //    try
+        //    {
+        //        Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+        //        tex.LoadImage(part.bytes, markNonReadable: false);
+        //        tex.name = $"Resizing-{label}";
+
+        //        int maxDim = Math.Max(tex.width, tex.height);
+        //        if (maxDim <= 1024) return; // 不需要缩放
+
+        //        float scale = 1024f / maxDim;
+        //        int newW = Mathf.RoundToInt(tex.width * scale);
+        //        int newH = Mathf.RoundToInt(tex.height * scale);
+
+        //        // 使用 RenderTexture 进行缩放
+        //        RenderTexture rt = RenderTexture.GetTemporary(newW, newH);
+        //        RenderTexture.active = rt;
+
+        //        Graphics.Blit(tex, rt);
+        //        Texture2D resized = new Texture2D(newW, newH, TextureFormat.RGBA32, false);
+        //        resized.ReadPixels(new Rect(0, 0, newW, newH), 0, 0);
+        //        resized.Apply();
+
+        //        RenderTexture.active = null;
+        //        RenderTexture.ReleaseTemporary(rt);
+
+        //        // 编码并替换原始数据
+        //        part.bytes = resized.EncodeToPNG();
+        //        UnityEngine.Object.Destroy(tex);
+        //        UnityEngine.Object.Destroy(resized);
+
+        //        string msg = $"[缩放] {label} 原尺寸 {tex.width}x{tex.height} => 缩放为 {newW}x{newH}";
+        //        UnityEngine.Debug.Log(msg);
+        //        Chat.TiShi(NetGame.instance.local, msg);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        UnityEngine.Debug.LogException(ex);
+        //    }
+        //}
+        //public static void ResizeIfNeeded1(ref Texture2D tex, int maxSize, string label)
+        //{
+        //    if (tex == null || (tex.width <= maxSize && tex.height <= maxSize)) return;
+
+        //    try
+        //    {
+        //        int newW = Mathf.Min(tex.width, maxSize);
+        //        int newH = Mathf.Min(tex.height, maxSize);
+
+        //        UnityEngine.Debug.LogWarning($"[缩放纹理] {label} {tex.width}x{tex.height} → {newW}x{newH}");
+
+        //        // 1. 将原纹理渲染到一个 RenderTexture 上
+        //        RenderTexture rt = RenderTexture.GetTemporary(newW, newH);
+        //        Graphics.Blit(tex, rt);
+
+        //        // 2. 从 RenderTexture 拷贝为可读的 Texture2D
+        //        RenderTexture previous = RenderTexture.active;
+        //        RenderTexture.active = rt;
+
+        //        Texture2D newTex = new Texture2D(newW, newH, TextureFormat.RGBA32, false);
+        //        newTex.ReadPixels(new Rect(0, 0, newW, newH), 0, 0);
+        //        newTex.Apply();
+
+        //        RenderTexture.active = previous;
+        //        RenderTexture.ReleaseTemporary(rt);
+
+        //        // 替换旧贴图
+        //        tex = newTex;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        UnityEngine.Debug.LogError($"[缩放失败] {label}：{ex}");
+        //    }
+        //}
+
 
 
 

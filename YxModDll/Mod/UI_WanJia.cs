@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using YxModDll.Mod.Features;
 using YxModDll.Patches;
 
 
@@ -146,16 +147,11 @@ namespace YxModDll.Mod
                     return;
                 }
                 UI.CreatAnNiu("修复皮肤", false, () => {
-
-                    if (human.player.skin == null)
+                    if (!human.player.isLocalPlayer)
                     {
-                        human.player.skin = RagdollPresetMetadata.LoadNetSkin(human.player.localCoopIndex, human.player.skinUserId);
+                        (FeatureManager.instance).StartCoroutine(FeatureManager.instance.OnReceiveSkinCoroutine(human.player));
                     }
-                    if (human.player.skin != null)
-                    {
-                        human.player.ApplyPreset(human.player.skin);
-                    }
-                });
+                },"点一下就行，请不要频繁点击");
                 GUILayout.BeginHorizontal();
                 if ((NetGame.isServer && humanID != 1) || (NetGame.isClient && !KeJiZiJi())) //不是自己
                 {

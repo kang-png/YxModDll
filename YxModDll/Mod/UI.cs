@@ -338,7 +338,7 @@ namespace YxModDll.Mod
 
         }
 
-        public static void CreatAnNiu(string name, bool chuizhijuzhong = true, Action callback = null)//一般按钮
+        public static void CreatAnNiu(string name, bool chuizhijuzhong = true, Action callback = null, string tooltip = null)//一般按钮
         {
             if (chuizhijuzhong)
             {
@@ -346,9 +346,18 @@ namespace YxModDll.Mod
                 GUILayout.FlexibleSpace();
             }
 
-            if (GUILayout.Button(ColorfulSpeek.colorshows(name), styleButton()))
+            GUIContent content = new GUIContent(ColorfulSpeek.colorshows(name));
+            Rect buttonRect = GUILayoutUtility.GetRect(content, styleButton());
+
+            if (GUI.Button(buttonRect, content, styleButton()))
             {
                 callback?.Invoke(); // 如果callback不为null，则调用它
+            }
+
+            // 设置提示文字
+            if (!string.IsNullOrEmpty(tooltip) && buttonRect.Contains(Event.current.mousePosition))
+            {
+                currentTooltip = tooltip;
             }
             //int topBottomPadding = (GUI.skin.button.padding.top + GUI.skin.button.padding.bottom); // 这是按钮样式自带的上下内边距之和
             //float estimatedButtonHeight = GUI.skin.button.CalcSize(new GUIContent("Sample Text")).y + topBottomPadding;

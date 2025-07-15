@@ -531,7 +531,7 @@ namespace YxModDll.Mod
                         //UI.CreatAnNiu_AnXia("按照“YxMod - 好友 - 公开 - 私密”排序", ref danyepaixu, false);
                     }
                     UI.CreatAnNiu_AnXia("拦截异常皮肤加载", ref skinCheckEnabled, false, SaveSkinCheckSetting, "拦截超过10MB的皮肤加载");
-                    UI.CreatAnNiu_AnXia("修复小白人问题", ref fixWhiteHumanEnabled, false, SaveFixWhiteHumanSetting, "关卡加载完成后延迟两秒再次请求皮肤，修复部分玩家没加载出皮肤的问题");
+                    //UI.CreatAnNiu_AnXia("修复小白人问题", ref fixWhiteHumanEnabled, false, SaveFixWhiteHumanSetting, "关卡加载完成后延迟两秒再次请求皮肤，修复部分玩家没加载出皮肤的问题");
                     break;
                 case "YxMod设置":
                     //呼出YxMod界面时人物不动
