@@ -81,6 +81,15 @@ namespace YxModDll.Mod
 
             if (humanID == 0)
             {
+                UI.CreatAnNiu("修复所有人皮肤", false, () => {
+                    foreach (NetPlayer player in NetGame.instance.players)
+                    {
+                        if (!player.isLocalPlayer)
+                        {
+                            (FeatureManager.instance).StartCoroutine(FeatureManager.instance.OnReceiveSkinCoroutine(player));
+                        }
+                    }
+                }, "重新加载所有人的皮肤，异步执行不会卡。慎点！会占大量内存可能蹦，优先用个人皮肤修复");
                 if (NetGame.isServer)
                 {
                     GUILayout.BeginHorizontal();

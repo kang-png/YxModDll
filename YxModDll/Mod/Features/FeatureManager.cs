@@ -18,7 +18,6 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
-using YxModDll.Mod.Utils;
 
 namespace YxModDll.Mod.Features
 {
@@ -2316,16 +2315,16 @@ namespace YxModDll.Mod.Features
     		return false;
     	}
 
-        [HarmonyPatch(typeof(Resources), "UnloadUnusedAssets")]
-        [HarmonyPrefix]
-        public static void Patch_UnloadUnusedAssets()
-        {
-            UnityEngine.Debug.Log("UnloadUnusedAssets 补丁触发");
-            if (NetGame.instance?.local != null)
-            {
-                Chat.TiShi(NetGame.instance.local, "[YxMod] 正在卸载未使用的资源，请稍候...");
-            }
-        }
+        //[HarmonyPatch(typeof(Resources), "UnloadUnusedAssets")]
+        //[HarmonyPrefix]
+        //public static void Patch_UnloadUnusedAssets()
+        //{
+        //    UnityEngine.Debug.Log("UnloadUnusedAssets 补丁触发");
+        //    if (NetGame.instance?.local != null)
+        //    {
+        //        Chat.TiShi(NetGame.instance.local, "[YxMod] 正在卸载未使用的资源，请稍候...");
+        //    }
+        //}
 
         [HarmonyPatch(typeof(RagdollTexture), "BakeTexture")]
         [HarmonyPrefix]
@@ -2370,175 +2369,82 @@ namespace YxModDll.Mod.Features
             }
         }
 
+
         [HarmonyPatch(typeof(FileTools), "TextureFromBytes")]
         [HarmonyPostfix]
-        public static bool Patch_TextureFromBytes(ref Texture2D __result, string name, byte[] bytes)
+        public static void Patch_TextureFromBytes(ref Texture2D __result, string name, byte[] bytes)
         {
+            //UnityEngine.Debug.Log("TextureFromBytes 补丁触发");
             if (!UI_SheZhi.skinCheckEnabled || __result == null)
-                return true;
+                return;
 
-            __result = YxImageHelper.LoadAndResizeTexture(name, bytes, 1024);
-            return false; // 跳过原方法
-            //int max = Mathf.Max(__result.width, __result.height);
-            //if (max <= 1024)
-            //    return;
+            int max = Mathf.Max(__result.width, __result.height);
+            if (max <= 1024)
+                return;
 
-            //float scale = 1024f / max;
-            //int newW = Mathf.RoundToInt(__result.width * scale);
-            //int newH = Mathf.RoundToInt(__result.height * scale);
+            float scale = 1024f / max;
+            int newW = Mathf.RoundToInt(__result.width * scale);
+            int newH = Mathf.RoundToInt(__result.height * scale);
 
-            //RenderTexture rt = RenderTexture.GetTemporary(newW, newH);
-            //RenderTexture.active = rt;
-            //Graphics.Blit(__result, rt);
+            RenderTexture rt = RenderTexture.GetTemporary(newW, newH);
+            RenderTexture.active = rt;
+            Graphics.Blit(__result, rt);
 
-            //Texture2D resized = new Texture2D(newW, newH, TextureFormat.RGBA32, false);
-            //resized.ReadPixels(new Rect(0, 0, newW, newH), 0, 0);
-            //resized.Apply();
+            Texture2D resized = new Texture2D(newW, newH, TextureFormat.RGBA32, false);
+            resized.ReadPixels(new Rect(0, 0, newW, newH), 0, 0);
+            resized.Apply();
 
-            //RenderTexture.active = null;
-            //RenderTexture.ReleaseTemporary(rt);
-            //UnityEngine.Object.Destroy(__result); // 销毁旧图
+            RenderTexture.active = null;
+            RenderTexture.ReleaseTemporary(rt);
+            UnityEngine.Object.Destroy(__result); // 销毁旧图
 
-            //resized.name = name;
-            //__result = resized;
+            resized.name = name;
+            __result = resized;
 
-            //UnityEngine.Debug.Log($"[TextureFromBytes缩放] {name} => {newW}x{newH}");
-            //Chat.TiShi(NetGame.instance.local, $"[TextureFromBytes缩放] {name} 缩放为 {newW}x{newH}");
+            UnityEngine.Debug.Log($"[TextureFromBytes缩放] {name} => {newW}x{newH}");
+            Chat.TiShi(NetGame.instance.local, $"[TextureFromBytes缩放] {name} 缩放为 {newW}x{newH}");
         }
-
-
-        //[HarmonyPatch(typeof(NetPlayer), "ApplyPreset")]
-        //[HarmonyPrefix]
-        //public static void Prefix_ApplyPreset(ref RagdollPresetMetadata preset, bool bake, bool useBaseTexture)
+        [HarmonyPatch(typeof(Game), "UnloadBundle")]
+        [HarmonyPostfix]
+        static IEnumerator Patch_UnloadBundle(IEnumerator __result)
+        {
+            // 先执行原协程逻辑
+            while (__result.MoveNext())
+            {
+                yield return __result.Current;
+            }
+            UnityEngine.Debug.Log("[YxMod] 上一个地图资源包卸载完成（Unload(true)）。");
+            Chat.TiShi(NetGame.instance.local, "[YxMod] 上一个地图资源包卸载完成（Unload(true)）。");
+            yield return Resources.UnloadUnusedAssets();
+        }
+        //[HarmonyPatch(typeof(App), "EnterLobbyAsync")]
+        //[HarmonyPostfix]
+        //static IEnumerator EnterLobbyAsyncPostfix(IEnumerator __result, App __instance)
         //{
-        //    UnityEngine.Debug.LogWarning("ApplyPreset 补丁触发");
-
-        //    if (!UI_SheZhi.skinCheckEnabled || preset == null)
-        //        return;
-
-        //    ResizeIfNeeded(preset.main, "main");
-        //    ResizeIfNeeded(preset.head, "head");
-        //    ResizeIfNeeded(preset.upperBody, "upperBody");
-        //    ResizeIfNeeded(preset.lowerBody, "lowerBody");
-
-        //}
-
-        //private static void ResizeIfNeeded(RagdollPresetPartMetadata part, string label)
-        //{
-        //    if (part?.bytes == null || part.bytes.Length == 0) return;
-
-        //    try
+        //    while (__result.MoveNext())
         //    {
-        //        Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-        //        tex.LoadImage(part.bytes, markNonReadable: false);
-        //        tex.name = $"Resizing-{label}";
-
-        //        int maxDim = Math.Max(tex.width, tex.height);
-        //        if (maxDim <= 1024) return; // 不需要缩放
-
-        //        float scale = 1024f / maxDim;
-        //        int newW = Mathf.RoundToInt(tex.width * scale);
-        //        int newH = Mathf.RoundToInt(tex.height * scale);
-
-        //        // 使用 RenderTexture 进行缩放
-        //        RenderTexture rt = RenderTexture.GetTemporary(newW, newH);
-        //        RenderTexture.active = rt;
-
-        //        Graphics.Blit(tex, rt);
-        //        Texture2D resized = new Texture2D(newW, newH, TextureFormat.RGBA32, false);
-        //        resized.ReadPixels(new Rect(0, 0, newW, newH), 0, 0);
-        //        resized.Apply();
-
-        //        RenderTexture.active = null;
-        //        RenderTexture.ReleaseTemporary(rt);
-
-        //        // 编码并替换原始数据
-        //        part.bytes = resized.EncodeToPNG();
-        //        UnityEngine.Object.Destroy(tex);
-        //        UnityEngine.Object.Destroy(resized);
-
-        //        string msg = $"[缩放] {label} 原尺寸 {tex.width}x{tex.height} => 缩放为 {newW}x{newH}";
-        //        UnityEngine.Debug.Log(msg);
-        //        Chat.TiShi(NetGame.instance.local, msg);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        UnityEngine.Debug.LogException(ex);
-        //    }
-        //}
-        //public static void ResizeIfNeeded1(ref Texture2D tex, int maxSize, string label)
-        //{
-        //    if (tex == null || (tex.width <= maxSize && tex.height <= maxSize)) return;
-
-        //    try
-        //    {
-        //        int newW = Mathf.Min(tex.width, maxSize);
-        //        int newH = Mathf.Min(tex.height, maxSize);
-
-        //        UnityEngine.Debug.LogWarning($"[缩放纹理] {label} {tex.width}x{tex.height} → {newW}x{newH}");
-
-        //        // 1. 将原纹理渲染到一个 RenderTexture 上
-        //        RenderTexture rt = RenderTexture.GetTemporary(newW, newH);
-        //        Graphics.Blit(tex, rt);
-
-        //        // 2. 从 RenderTexture 拷贝为可读的 Texture2D
-        //        RenderTexture previous = RenderTexture.active;
-        //        RenderTexture.active = rt;
-
-        //        Texture2D newTex = new Texture2D(newW, newH, TextureFormat.RGBA32, false);
-        //        newTex.ReadPixels(new Rect(0, 0, newW, newH), 0, 0);
-        //        newTex.Apply();
-
-        //        RenderTexture.active = previous;
-        //        RenderTexture.ReleaseTemporary(rt);
-
-        //        // 替换旧贴图
-        //        tex = newTex;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        UnityEngine.Debug.LogError($"[缩放失败] {label}：{ex}");
-        //    }
-        //}
-
-
-
-
-
-        //[HarmonyPatch(typeof(FileTools), "TextureFromBytes")]
-        //[HarmonyPrefix]
-        //public static bool Patch_TextureFromBytes(string name, byte[] bytes, ref Texture2D __result)
-        //{
-        //    UnityEngine.Debug.Log("TextureFromBytes补丁");
-
-        //    if (!UI_SheZhi.skinCheckEnabled)
-        //        return true;
-
-        //    if (bytes.Length > 5 * 1024 * 1024)
-        //    {
-        //        string msg = $"[纹理拦截] {name} 尺寸过大 ({bytes.Length / 1024f:F1}KB)，已替换为安全纹理";
-        //        UnityEngine.Debug.Log(msg);
-        //        Chat.TiShi(NetGame.instance.local, msg);
-
-        //        __result = new Texture2D(1, 1, TextureFormat.RGB24, false);
-        //        __result.SetPixel(0, 0, Color.white);
-        //        __result.Apply();
-        //        return false;
+        //        yield return __result.Current;
         //    }
 
-        //    return true;
-        //}
+        //    // 用反射访问私有字段 lobbyAssetbundle
+        //    FieldInfo field = typeof(App).GetField("lobbyAssetbundle", BindingFlags.NonPublic | BindingFlags.Instance);
+        //    AssetBundle bundle = (AssetBundle)field?.GetValue(__instance);
 
-        //[HarmonyPatch(typeof(Texture2D), "Compress")]
-        //[HarmonyPrefix]
-        //public static bool Prefix_Compress(Texture2D __instance, bool highQuality)
-        //{
-        //    UnityEngine.Debug.Log("Compress补丁");
-        //    if (!UI_SheZhi.skinCheckEnabled)
-        //        return true;
-        //    return false;
-        //}
+        //    if (bundle != null)
+        //    {
+        //        UnityEngine.Debug.Log("[YxMod] 正在使用Unload(true)卸载资源包...");
+        //        Chat.TiShi(NetGame.instance.local, "[YxMod] 正在使用Unload(true)卸载资源包...");
+        //        bundle.Unload(true);
 
+        //        // 同时清空字段，防止后续误用
+        //        field.SetValue(__instance, null);
+        //    }
+
+        //    // 卸载无引用资源
+        //    yield return Resources.UnloadUnusedAssets();
+        //    UnityEngine.Debug.Log("[YxMod] 内存清理完成。");
+        //    Chat.TiShi(NetGame.instance.local, "[YxMod] 内存清理完成。");
+        //}
 
 
         [HarmonyPatch(typeof(SafeForces), "SafeAddForce")]
