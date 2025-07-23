@@ -115,11 +115,23 @@ namespace YxModDll.Mod
         public UI_Windows gongneng = new UI_Windows("全局功能开关(K)", gongnengUiRect);
         public UI_Windows wanjia = new UI_Windows("玩家控制(P)", wanjiaUiRect);
         public UI_Windows wuti = new UI_Windows("物体控制(I)", wutiUiRect);
+        public UI_Windows huantu = new UI_Windows("换图(H)", huantuUiRect);
         public UI_Windows shezhi = new UI_Windows("设置(O)", shezhiUiRect);
 
         public UI_Windows chuansong = new UI_Windows("传送至(C)", chuansongUiRect);
         public UI_Windows xuanfu = new UI_Windows("悬浮于(X)", xuanfuUiRect);
         public UI_Windows qianshou = new UI_Windows("牵手(Z)", qianshouUiRect);
+
+        //换图窗体
+        public static bool ShowHuanTuUI;
+        public static bool ShowHuanTuUI2;
+        public static int huantuUI_kuan = 250;
+        public static int huantuUI_gao = 400;
+        public static int huantuUI_left = 0;
+        public static int huantuUI_top = Screen.height - huantuUI_gao;
+
+        public static Rect huantuUiRect = new Rect(huantuUI_left, huantuUI_top, huantuUI_kuan, huantuUI_gao);
+
         void Awake()
         {
             // 使用Debug.Log()方法来将文本输出到控制台
@@ -148,6 +160,7 @@ namespace YxModDll.Mod
 
         void Update()
         {
+            
 
             if (Input.GetKeyDown(KeyCode.Home))
             {
@@ -161,6 +174,7 @@ namespace YxModDll.Mod
                     ShowChuanSongUI2 = ShowChuanSongUI; ShowChuanSongUI = false;
                     ShowXuanFuUI2 = ShowXuanFuUI; ShowXuanFuUI = false;
                     ShowQianShouUI2 = ShowQianShouUI; ShowQianShouUI = false;
+                    ShowHuanTuUI2 = ShowHuanTuUI; ShowHuanTuUI=false;
                     ShowShuBiao = false;
                 }
                 else
@@ -173,6 +187,7 @@ namespace YxModDll.Mod
                     ShowChuanSongUI = ShowChuanSongUI2;
                     ShowXuanFuUI = ShowXuanFuUI2;
                     ShowQianShouUI = ShowQianShouUI2;
+                    ShowHuanTuUI = ShowHuanTuUI2;
                     ShowShuBiao = true;
                 }
                 ShowUI = !ShowUI;
@@ -181,7 +196,7 @@ namespace YxModDll.Mod
 
             if (Input.GetKeyDown(KeyCode.Tab))
             {
-                if (ShowCaiDanUI || ShowGongNengUI || ShowWanJiaUI || ShowWuTiUI || ShowSheZhiUI || ShowChuanSongUI || ShowXuanFuUI || ShowQianShouUI)
+                if (ShowCaiDanUI || ShowGongNengUI || ShowWanJiaUI || ShowWuTiUI || ShowSheZhiUI || ShowChuanSongUI || ShowXuanFuUI || ShowQianShouUI || ShowHuanTuUI)
                 {
                     XianShiCaiDan(false);
                 }
@@ -194,7 +209,15 @@ namespace YxModDll.Mod
             if (Input.GetKeyDown(KeyCode.P) && !NetChat.typing)
             {
                 ShowWanJiaUI = !ShowWanJiaUI;
-                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI)
+                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI || !ShowHuanTuUI)
+                {
+                    ShowShuBiao = false;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.H) && !NetChat.typing)
+            {
+                ShowHuanTuUI = !ShowHuanTuUI;
+                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI || !ShowHuanTuUI)
                 {
                     ShowShuBiao = false;
                 }
@@ -202,7 +225,7 @@ namespace YxModDll.Mod
             if (Input.GetKeyDown(KeyCode.O) && !NetChat.typing)
             {
                 ShowSheZhiUI = !ShowSheZhiUI;
-                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI)
+                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI || !ShowHuanTuUI)
                 {
                     ShowShuBiao = false;
                 }
@@ -210,7 +233,7 @@ namespace YxModDll.Mod
             if (Input.GetKeyDown(KeyCode.I) && !NetChat.typing)
             {
                 ShowWuTiUI = !ShowWuTiUI;
-                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI)
+                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI || !ShowHuanTuUI)
                 {
                     ShowShuBiao = false;
                 }
@@ -218,7 +241,7 @@ namespace YxModDll.Mod
             if (Input.GetKeyDown(KeyCode.K) && !NetChat.typing)
             {
                 ShowGongNengUI = !ShowGongNengUI;
-                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI)
+                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI || !ShowHuanTuUI)
                 {
                     ShowShuBiao = false;
                 }
@@ -286,7 +309,7 @@ namespace YxModDll.Mod
             if ((Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift)) && !NetChat.typing)
             {
                 //Debug.Log("按了shift");
-                if(!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI && UI_SheZhi.shift_xianshishubiao)
+                if(!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI && !ShowHuanTuUI && UI_SheZhi.shift_xianshishubiao)
                 {
                     //Debug.Log("显示鼠标");
                     ShowShuBiao = !ShowShuBiao;
@@ -300,6 +323,7 @@ namespace YxModDll.Mod
 
 
             UI_CaiDan.Update();//更新头顶灯光跟随
+            UI_HuanTu.Update();//
         }
         public static void XianShiCaiDan(bool xianshi = true)
         {
@@ -315,6 +339,7 @@ namespace YxModDll.Mod
                 ShowChuanSongUI = ShowChuanSongUI2;
                 ShowXuanFuUI = ShowXuanFuUI2;
                 ShowQianShouUI = ShowQianShouUI2;
+                ShowHuanTuUI = ShowHuanTuUI2;
                 ShowShuBiao = true;
             }
             else
@@ -328,6 +353,7 @@ namespace YxModDll.Mod
                 ShowChuanSongUI2 = ShowChuanSongUI; ShowChuanSongUI = false;
                 ShowXuanFuUI2 = ShowXuanFuUI; ShowXuanFuUI = false;
                 ShowQianShouUI2 = ShowQianShouUI; ShowQianShouUI = false;
+                ShowHuanTuUI2 = ShowHuanTuUI; ShowHuanTuUI = false;
                 ShowShuBiao = false;
             }
         }
@@ -409,6 +435,11 @@ namespace YxModDll.Mod
                     //UI_Windows.biaotiUiweith = shezhiUI_kuan;
                     shezhi.CreatWindowsUi(UiState.SheZhi);
                 }
+                if(ShowHuanTuUI)
+                {
+                    ShowUI = true; ShowShuBiao = true;
+                    huantu.CreatWindowsUi(UiState.HuanTu);
+                }
             }
             UI.DrawTooltip();
 
@@ -417,7 +448,7 @@ namespace YxModDll.Mod
         private void mainUi()//创建主界面
         {
             // 判断是否有任意子菜单打开
-            bool hasAnySubMenuOpen = ShowCaiDanUI || ShowWanJiaUI || ShowGongNengUI || ShowWuTiUI || ShowSheZhiUI || ShowChuanSongUI || ShowXuanFuUI || ShowQianShouUI;
+            bool hasAnySubMenuOpen = ShowCaiDanUI || ShowWanJiaUI || ShowGongNengUI || ShowWuTiUI || ShowSheZhiUI || ShowChuanSongUI || ShowXuanFuUI || ShowQianShouUI || ShowHuanTuUI;
 
             // 判断鼠标是否在主界面区域内
             Vector2 mousePos = Event.current.mousePosition;
@@ -469,7 +500,7 @@ namespace YxModDll.Mod
             UI.CreatAnNiu_AnXia("玩家控制(P)", ref ShowWanJiaUI);
             UI.CreatAnNiu_AnXia("功能开关(K)", ref ShowGongNengUI);
             UI.CreatAnNiu_AnXia("物体控制(I)", ref ShowWuTiUI);
-            //UI.CreatAnNiu_AnXia("娱乐模式(L)", ref ShowYuLeUI);
+            UI.CreatAnNiu_AnXia("换图(H)", ref ShowHuanTuUI);
             UI.CreatAnNiu_AnXia("设置(O)", ref ShowSheZhiUI);
         }
 

@@ -112,6 +112,9 @@ namespace YxModDll.Mod
                 case UiState.SheZhi:
                     UI_SheZhi.CreatUI();
                     break;
+                case UiState.HuanTu:
+                    UI_HuanTu.CreatUI();
+                    break;
                 case UiState.ChuanSong:
                     UI_ChuanSong.CreatUI();
                     break;
@@ -172,6 +175,9 @@ namespace YxModDll.Mod
                     break;
                 case UiState.SheZhi:
                     UI_Main.ShowSheZhiUI = !UI_Main.ShowSheZhiUI;
+                    break;
+                case UiState.HuanTu:
+                    UI_Main.ShowHuanTuUI = !UI_Main.ShowHuanTuUI;
                     break;
                 case UiState.ChuanSong:
                     UI_Main.ShowChuanSongUI = !UI_Main.ShowChuanSongUI;
