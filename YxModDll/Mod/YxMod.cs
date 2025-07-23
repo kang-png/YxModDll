@@ -38,6 +38,7 @@ namespace YxModDll.Mod
 {
     public class YxMod : MonoBehaviour
     {
+        private static string YYYYYYY = "111111111111111111";
         public static bool YxModServer = false;
         public static bool KeJiQuanXian = false;
         public static int fenshen_cam;//分身相机
@@ -64,6 +65,7 @@ namespace YxModDll.Mod
 
         private static string SubstringBetween(string source, string startMarker, string endMarker)
         {
+            YYYYYYY = "33333333333333333";
             // 找到开始标记的位置
             int startIndex = source.IndexOf(startMarker) + startMarker.Length;
 
