@@ -182,7 +182,7 @@ namespace YxModDll.Mod
             style.fontSize = 20;
             return style;
         }
-        public static void CreatShuZhi(string name, ref float zhi, float min, float max, float add, Action callback = null)//创建加减数值的按钮
+        public static void CreatShuZhi(string name, ref float zhi, float min, float max, float add, Action callback = null, float? yuan = null)//创建加减数值的按钮
         {
             GUILayout.BeginHorizontal();
             ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
@@ -206,7 +206,7 @@ namespace YxModDll.Mod
             string zhiStr = zhi.ToString("0.0");
 
             // 绘制可编辑文本框
-            zhiStr = GUILayout.TextField(zhiStr, SetLabelStyle_JuZhong(), GUILayout.Width(40));
+            zhiStr = GUILayout.TextField(zhiStr, SetLabelStyle_JuZhong());
 
             // 尝试解析用户输入并更新 zhi
             if (float.TryParse(zhiStr, out float inputValue))
@@ -233,11 +233,21 @@ namespace YxModDll.Mod
                     callback?.Invoke(); // 如果callback不为null，则调用它
                 }
             }
+
+            if (yuan.HasValue)
+            {
+                if (GUILayout.Button(ColorfulSpeek.colorshows("重置"), UI.styleButton()))
+                {
+                    zhi = float.Parse(yuan.Value.ToString("0.0"));
+                    callback?.Invoke();
+                }
+            }
+
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
         }
-        public static void CreatShuZhi(string name, ref int zhi, int min, int max, int add, Action callback = null)//创建加减数值的按钮
+        public static void CreatShuZhi(string name, ref int zhi, int min, int max, int add, Action callback = null, int? yuan = null)//创建加减数值的按钮
         {
             GUILayout.BeginHorizontal();
             ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
@@ -259,7 +269,7 @@ namespace YxModDll.Mod
 
             // 显示可编辑输入框（整数）
             string inputStr = zhi.ToString();
-            inputStr = GUILayout.TextField(inputStr, SetLabelStyle_JuZhong(), GUILayout.Width(40));
+            inputStr = GUILayout.TextField(inputStr, SetLabelStyle_JuZhong());
 
             if (int.TryParse(inputStr, out int parsedValue))
             {
@@ -284,6 +294,16 @@ namespace YxModDll.Mod
                     callback?.Invoke(); // 如果callback不为null，则调用它
                 }
             }
+
+            if (yuan.HasValue)
+            {
+                if (GUILayout.Button(ColorfulSpeek.colorshows("重置"), UI.styleButton()))
+                {
+                    zhi = yuan.Value;
+                    callback?.Invoke();
+                }
+            }
+
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 

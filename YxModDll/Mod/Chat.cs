@@ -1540,16 +1540,6 @@ namespace YxModDll.Mod
             {
                 if (nick.Length != 0)
                 {
-                    //string text = nick;//.ToLower();
-                    ////Debug.Log(text);
-                    //text = Regex.Replace(text, @"<i>|</i>", "");
-                    //text = Regex.Replace(text, @"<b>|</b>", "");
-                    //text = Regex.Replace(text, @"<size=\d+?>|</size>", "");
-                    //text = Regex.Replace(text, @"<#", "<color=#");
-                    ////Debug.Log(text);
-                    //text = Regex.Replace(text, @"<color=#[\da-fA-F]+?>|</color>", "");
-                    ////text = Regex.Replace(text, $"{netHost}", "");
-                    //text = text.Replace($"{netHost.name}", "").Trim();
                     string text = QuDiaoDaiMa(nick, netHost.name);
                     MsgSetGongNeng(text, netHost, human);
                 }
@@ -2744,7 +2734,7 @@ namespace YxModDll.Mod
                 }
             }
         }
-        public static void Send(string msg)
+        public static void Send(string msg, bool formatMsg = true)
         {
             if (NetGame.isNetStarted)
             {
@@ -2755,7 +2745,7 @@ namespace YxModDll.Mod
                 }
                 else
                 {
-                    Chat.FaYan(msg);
+                    Chat.FaYan(msg, formatMsg);
                 }
 
                 if (NetGame.isServer)

@@ -3,6 +3,8 @@ using Multiplayer;
 using Steamworks;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -81,15 +83,6 @@ namespace YxModDll.Mod
 
             if (humanID == 0)
             {
-                UI.CreatAnNiu("修复所有人皮肤", false, () => {
-                    foreach (NetPlayer player in NetGame.instance.players)
-                    {
-                        if (!player.isLocalPlayer)
-                        {
-                            (FeatureManager.instance).StartCoroutine(FeatureManager.instance.OnReceiveSkinCoroutine(player));
-                        }
-                    }
-                }, "重新加载所有人的皮肤，异步执行不会卡。慎点！会占大量内存可能蹦，优先用个人皮肤修复");
                 if (NetGame.isServer)
                 {
                     GUILayout.BeginHorizontal();
@@ -146,6 +139,20 @@ namespace YxModDll.Mod
                     UI.CreatAnNiu_AnXia("超级跳", ref allchaojitiao, false, chaojitiao);
                     GUILayout.EndHorizontal();
                 }
+
+                GUILayout.Space(5);
+                UI.CreatFenGeXian();//分割线
+                GUILayout.Space(5);
+
+                UI.CreatAnNiu("修复所有人皮肤", false, () => {
+                    foreach (NetPlayer player in NetGame.instance.players)
+                    {
+                        if (!player.isLocalPlayer)
+                        {
+                            (FeatureManager.instance).StartCoroutine(FeatureManager.instance.OnReceiveSkinCoroutine(player));
+                        }
+                    }
+                }, "重新加载所有人的皮肤，异步执行不会卡。慎点！会占大量内存可能蹦，优先用个人皮肤修复");
             }
             else
             {
@@ -155,12 +162,6 @@ namespace YxModDll.Mod
                     humanID = 0;
                     return;
                 }
-                UI.CreatAnNiu("修复皮肤", false, () => {
-                    if (!human.player.isLocalPlayer)
-                    {
-                        (FeatureManager.instance).StartCoroutine(FeatureManager.instance.OnReceiveSkinCoroutine(human.player));
-                    }
-                },"点一下就行，请不要频繁点击");
                 GUILayout.BeginHorizontal();
                 if ((NetGame.isServer && humanID != 1) || (NetGame.isClient && !KeJiZiJi())) //不是自己
                 {
@@ -240,6 +241,165 @@ namespace YxModDll.Mod
                     GUILayout.BeginHorizontal();
                     UI.CreatAnNiu_AnXia("超级跳", ref human.GetExt().chaojitiao, false, chaojitiao);
                     GUILayout.EndHorizontal();
+                }
+
+                GUILayout.Space(5);
+                UI.CreatFenGeXian();//分割线
+                GUILayout.Space(5);
+
+                if (NetGame.isServer)
+                {
+                    GUILayout.Label(ColorfulSpeek.colorshows("服务端属性>>"));
+                    float drag = human.rigidbodies[0].drag;
+                    float mass = human.mass;
+                    float maxLiftForce = human.motionControl2.hands.maxLiftForce;
+                    float weight = human.weight;
+
+                    UI.CreatShuZhi("体重", ref weight, 500f, 2000f, 10f, () => {
+                        human.weight = weight;
+                    }, yuan: 1020.24f);
+
+                    GUILayout.BeginHorizontal();
+                    UI.CreatShuZhi("阻力", ref drag, 0f, 5f, 0.1f, () => {
+                        human.SetDrag(drag, true);
+                    });
+                    if (GUILayout.Button("重置", UI.styleButton()))
+                    {
+                        human.ResetDrag();
+                        drag = human.rigidbodies[0].drag;
+                    }
+                    GUILayout.FlexibleSpace();
+                    GUILayout.EndHorizontal();
+
+                    UI.CreatShuZhi("手部力量", ref maxLiftForce, 0f, 1000f, 50f, () => {
+                        human.motionControl2.hands.maxLiftForce = maxLiftForce;
+                    }, yuan: 500f);
+
+                    UI.CreatShuZhi("跳跃间距", ref mass, 10f, 200f, 5f, () => {
+                        human.mass = mass;
+                    }, yuan: 104f);
+                }
+                if (NetGame.isServer || (NetGame.isClient && KeJiZiJi()))
+                {
+                    GUILayout.Label(ColorfulSpeek.colorshows("客户端属性>>"));
+                    float gravityY = Physics.gravity.y;
+                    UI.CreatShuZhi("修改重力", ref gravityY, -50f, 0f, 0.5f, () => {
+                        Physics.gravity = new Vector3(0f, gravityY, 0f);
+                    }, yuan: -9.81f);
+
+                    UI.CreatAnNiu_AnXia("修改速度", ref FeatureManager.modifySpeed, false, null, "点按钮切换开关");
+                    if (FeatureManager.modifySpeed)
+                    {
+                        float tempSpeed = 1f;
+                        float.TryParse(FeatureManager.curSpeed, out tempSpeed);
+
+                        UI.CreatShuZhi("速度", ref tempSpeed, 0f, 5f, 0.1f, () =>
+                        {
+                            FeatureManager.curSpeed = tempSpeed.ToString("0.00");
+                        }, yuan: 1f);
+                    }
+
+                    UI.CreatAnNiu_AnXia("修改手长", ref FeatureManager.modifyHand, false, null, "点按钮切换开关");
+                    if (FeatureManager.modifyHand)
+                    {
+                        // 普通手长
+                        float curHandVal = 0f;
+                        float.TryParse(FeatureManager.curHand, out curHandVal);
+                        UI.CreatShuZhi("普通手长", ref curHandVal, 0f, 100f, 0.1f, () =>
+                        {
+                            FeatureManager.curHand = curHandVal.ToString("0.00");
+                        }, yuan: 0f);
+
+                        // 伸手手长
+                        float curExtendedHandVal = 0f;
+                        float.TryParse(FeatureManager.curExtendedHand, out curExtendedHandVal);
+                        UI.CreatShuZhi("伸手手长", ref curExtendedHandVal, 0f, 100f, 0.1f, () =>
+                        {
+                            FeatureManager.curExtendedHand = curExtendedHandVal.ToString("0.00");
+                        }, yuan: 0.25f);
+                    }
+
+                }
+
+                GUILayout.Space(5);
+                UI.CreatFenGeXian();//分割线
+                GUILayout.Space(5);
+
+                GUILayout.Label(ColorfulSpeek.colorshows("皮肤管理>>"));
+                UI.CreatAnNiu("修复皮肤", false, () => {
+                    if (!human.player.isLocalPlayer)
+                    {
+                        (FeatureManager.instance).StartCoroutine(FeatureManager.instance.OnReceiveSkinCoroutine(human.player));
+                    }
+                }, "如果本地无皮肤数据，会向服务器请求一次（可能拿到旧皮肤）；已有本地数据时将直接应用。请勿重复点击。");
+                if (NetGame.isServer || (NetGame.isClient && KeJiZiJi()))
+                {
+                    GUILayout.BeginHorizontal();
+                    UI.CreatAnNiu("刷新皮肤", false, () =>
+                    {
+                        WorkshopRepository.instance.presetRepo.ResetPresets();
+                    }, "清除皮肤缓存，重新加载 MainCharacter 和 CoopCharacter 皮肤");
+                    UI.CreatAnNiu("切换皮肤", false, () =>
+                    {
+                        var netPlayer = Human.Localplayer?.player;
+                        if (netPlayer != null)
+                        {
+                            // 读取当前皮肤索引（默认为0）
+                            int curIndex = PlayerPrefs.GetInt("MainSkinIndex", 0);
+                            // 切换到另一个（0 -> 1, 1 -> 0）
+                            int newIndex = (curIndex + 1) % 2;
+
+                            // 获取目标皮肤
+                            var newSkin = WorkshopRepository.instance.presetRepo.GetPlayerSkin(newIndex);
+                            if (newSkin != null)
+                            {
+                                // 切换皮肤
+                                HuanFu(netPlayer, newSkin);
+                                // 保存新的索引
+                                PlayerPrefs.SetInt("MainSkinIndex", newIndex);
+                                // 显示提示
+                                Chat.TiShi(NetGame.instance.local, $"皮肤已切换为玩家{newIndex + 1}");
+                            }
+                            else
+                            {
+                                Chat.TiShi(NetGame.instance.local, "皮肤切换失败，目标皮肤不存在");
+                            }
+                        }
+                        else
+                        {
+                            Chat.TiShi(NetGame.instance.local, "本地玩家未加载");
+                        }
+                    }, "换皮肤会发送给所有人，请勿频繁切换");
+                    GUILayout.EndHorizontal();
+                    //UI.CreatAnNiu("打开文件", false, () =>
+                    //{
+                    //    Process.Start("explorer.exe", $"\"{Application.persistentDataPath}\"");
+                    //    Chat.TiShi(NetGame.instance.local, $"已打开文件夹：{Application.persistentDataPath}");
+                    //});
+                    UI.CreatAnNiu("保存皮肤！慎点", false, () =>
+                    {
+                        int slot = PlayerPrefs.GetInt("MainSkinIndex", 0);
+                        WorkshopRepository.instance.presetRepo.SaveSkin(slot, human.player.skin);
+                        string charName = slot == 0 ? "MainCharacter" : "CoopCharacter";
+                        Chat.TiShi(NetGame.instance.local, $"皮肤已保存到 {charName}，下次启动游戏会自动应用");
+
+                    }, "注意：此操作会覆盖本地皮肤！工坊皮肤仅临时生效，想要永久生效请点击保存按钮。");
+                    //GUILayout.Label(ColorfulSpeek.colorshows("订阅皮肤列表"), UI.SetLabelStyle_JuZhong());
+                    for (int j = 0; j < WorkshopRepository.instance.presetRepo.Count; j++)
+                    {
+                        RagdollPresetMetadata preset = WorkshopRepository.instance.presetRepo[j];
+                        if (preset == null) continue;
+
+                        string btnText = $"{j + 1}. {preset.title}";
+
+                        // 用CreatAnNiu创建按钮，点击调用HuanFu换皮肤
+                        UI.CreatAnNiu(btnText, false, () =>
+                        {
+                            human.player.skin = preset;
+                            HuanFu(human?.player, preset);
+                            Chat.TiShi(NetGame.instance.local, $"已切换到皮肤: {preset.title}");
+                        });
+                    }
                 }
             }
             GUILayout.EndScrollView();
@@ -1149,6 +1309,65 @@ namespace YxModDll.Mod
             else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
             {
                 Chat.SendYxModMsgClient(Chat.YxModMsgStr("chaojitiao"), $"{humanID - 1}");
+            }
+        }
+        public static void HuanFu(NetPlayer netPlayer, RagdollPresetMetadata skin)
+        {
+            byte[] array;
+            if (skin != null)
+            {
+                array = skin.GetSerialized();
+            }
+            else
+            {
+                Chat.TiShi("原皮肤未加载");
+                return;
+                //if (((NetPlayer)netPlayer_1).host.inform.list_0.Count == 0)
+                //{
+                //    //smethod_47(("玩家[{0}]原皮肤未加载", (object)((NetPlayer)netPlayer_1).host.name));
+                //    return;
+                //}
+                //array = ((NetPlayer)netPlayer_1).host.inform.list_0[0];
+            }
+            netPlayer.ApplyPreset(RagdollPresetMetadata.Deserialize(array), bake: false);
+            NetStream netStream = NetGame.BeginMessage(NetMsgId.SendSkin);
+            try
+            {
+                netStream.WriteNetId(netPlayer.localCoopIndex);
+                netStream.Write(netPlayer.skinUserId);
+                netStream.WriteArray(array, 32);
+                if (NetGame.isClient)
+                {
+                    NetGame.instance.SendReliableToServer(netStream);
+                }
+                for (int i = 0; i < NetGame.instance.readyclients.Count; i++)
+                {
+                    NetHost netHost = NetGame.instance.readyclients[i];
+                    if (netHost != null && netHost != NetGame.instance.local)
+                    {
+                        //ssr4 = true;
+                        NetGame.instance.SendReliable(netHost, netStream);
+                        //if (!ssr4)
+                        //{
+                        //    //("玩家[{0}]可见失败", (object)netHost.name));
+                        //}
+                        //else
+                        //{
+                        //    smethod_47("皮肤改变成功");
+                        //}
+                    }
+                }
+            }
+            catch
+            {
+                Chat.TiShi("皮肤改变失败");
+            }
+            finally
+            {
+                if (netStream != null)
+                {
+                    netStream = netStream.Release();
+                }
             }
         }
     }

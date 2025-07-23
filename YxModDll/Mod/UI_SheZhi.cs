@@ -34,6 +34,7 @@ namespace YxModDll.Mod
         public static bool baoLiuDangQianSuDu;
         public static bool q;
         public static bool se;
+        public static bool faq;
         public static float gaodu ;
         public static int geshu;
         public static string tishiStr;
@@ -150,6 +151,7 @@ namespace YxModDll.Mod
         public static bool haoyoufangjian;
         public static bool dangqianrenshupaixu;
         public static bool skinCheckEnabled;
+        public static bool skinUseRGB24Format;
         public static bool fixWhiteHumanEnabled;
 
         public static void CreatUI()//创建菜单功能区
@@ -192,6 +194,11 @@ namespace YxModDll.Mod
                     GUILayout.BeginHorizontal();
                     UI.CreatAnNiu_AnXia("Q定点", ref q, false, Q);
                     UI.CreatAnNiu_AnXia("SE定点", ref se, false, SE);
+                    UI.CreatAnNiu_AnXia("发Q定点", ref faq, false, () => {
+                        PlayerPrefs.SetInt("faqdingdian", faq ? 1 : 0);
+                    }, "网络不佳时若常误触读点，建议开启此功能，通过发送 Q 指令实现定点。");
+                    GUILayout.EndHorizontal();
+                    GUILayout.BeginHorizontal();
                     UI.CreatAnNiu_AnXia("回溯", ref huisu, false, HuiSu, "保留定点时的姿势");
                     UI.CreatAnNiu_AnXia("惯性", ref guanxing, false, GuanXing, "保留定点时的速度");
                     UI.CreatAnNiu_AnXia("保速", ref baoLiuDangQianSuDu, false, BaoSu, "保留读点时的速度");
@@ -239,13 +246,14 @@ namespace YxModDll.Mod
                         yanseNamesColored[i2] = ColorfulSpeek.colorshows(yanseNames[i2]);
                     }
 
-                    UI.CreatAnNiu_AnXia("名字设置>>", ref MingZiSheZhi, false, SetMingZiSheZhi);
+                    UI.CreatAnNiu_AnXia("名字设置>>", ref MingZiSheZhi, false, SetMingZiSheZhi,"点按钮切换开关");
                     if (MingZiSheZhi)
                     {
                         UI.CreatAnNiu_AnXia("自定义代码", ref MingZiZiDingYi, false, SetMingZiZiDingYi);
                         if (MingZiZiDingYi)
                         {
                             UI.CreatWenBenKuang(null, ref MingZiDaiMa, 1000, 297, SetMingZiDaiMa);
+                            GUILayout.Label(MingZiDaiMa, UI.SetLabelStyle_JuZhong());
                         }
                         else
                         {
@@ -337,7 +345,7 @@ namespace YxModDll.Mod
                     GUILayout.Space(5);
                     UI.CreatFenGeXian();//分割线
                     GUILayout.Space(5);
-                    UI.CreatAnNiu_AnXia("发言设置>>", ref FaYanSheZhi, false, SetFaYanSheZhi);
+                    UI.CreatAnNiu_AnXia("发言设置>>", ref FaYanSheZhi, false, SetFaYanSheZhi, "点按钮切换开关");
                     if (FaYanSheZhi)
                     {
                         GUILayout.BeginHorizontal();
@@ -417,7 +425,7 @@ namespace YxModDll.Mod
                                 break;
                         }
                         GUILayout.EndHorizontal();
-                        GUILayout.Label(Chat.SetDaXiaoYanSe("jumps over the lazy dog.", FaYanDaXiaoID, FaYanYanSeID, false), UI.SetLabelStyle_JuZhong());
+                        GUILayout.Label(Chat.SetDaXiaoYanSe("佩玉鸣鸾罢歌舞，妈妈带我吃红薯", FaYanDaXiaoID, FaYanYanSeID, false), UI.SetLabelStyle_JuZhong());
                     }
                     GUILayout.Space(5);
                     UI.CreatFenGeXian();//分割线
@@ -530,8 +538,18 @@ namespace YxModDll.Mod
                         UI.CreatAnNiu_AnXia("好友房间(用 @ 标识)", ref haoyoufangjian, false,HaoYouFangJian);
                         //UI.CreatAnNiu_AnXia("按照“YxMod - 好友 - 公开 - 私密”排序", ref danyepaixu, false);
                     }
-                    UI.CreatAnNiu_AnXia("拦截异常皮肤加载", ref skinCheckEnabled, false, SaveSkinCheckSetting, "拦截超过10MB的皮肤加载");
-                    //UI.CreatAnNiu_AnXia("修复小白人问题", ref fixWhiteHumanEnabled, false, SaveFixWhiteHumanSetting, "关卡加载完成后延迟两秒再次请求皮肤，修复部分玩家没加载出皮肤的问题");
+                    UI.CreatAnNiu_AnXia("降低贴图分辨率", ref skinCheckEnabled, false, SaveSkinCheckSetting,
+                        "将 2048×2048 的皮肤压缩为 1024×1024，减少约 75% 的内存占用，有助于降低内存溢出风险");
+
+                    UI.CreatAnNiu_AnXia("修改贴图格式", ref skinUseRGB24Format, false, () =>
+                    {
+                        PlayerPrefs.SetInt("skinUseRGB24Format", skinUseRGB24Format ? 1 : 0);
+                    },"将贴图格式更改为 RGB24（不支持透明像素），可减少约 25% 的内存占用。可与分辨率压缩叠加，总体节省约 81.25%");
+
+                    GUILayout.Space(5);
+                    UI.CreatFenGeXian();
+                    GUILayout.Space(5);
+                    GUILayout.Label("提示：人类为32位程序，最多只能使用2GB内存，内存满后必然崩溃。建议地图大小不要超过300MB。每位玩家的皮肤大约包含2-4张2048分辨率的图片，加载后会占用约44-88MB内存。", UI.SetLabelStyle_JuZhong());
                     break;
                 case "YxMod设置":
                     //呼出YxMod界面时人物不动
@@ -547,9 +565,9 @@ namespace YxModDll.Mod
 
                     UI.CreatAnNiu_AnXia("按Shift键显示鼠标", ref shift_xianshishubiao, false, Shift_XianShiShuBiao);
                     UI.CreatAnNiu_AnXia("显示鼠标时人物不可控", ref noKong_xianshishubiao, false, NoKong_XianShiShuBiao);
-                    UI.CreatAnNiu_AnXia("房主时默认打开客机权限", ref morenkejiquanxian, false, MoRenKeJiQuanXian);
+                    UI.CreatAnNiu_AnXia("房主时默认打开客机权限", ref morenkejiquanxian, false, MoRenKeJiQuanXian, "开启后，所有人默认拥有房主权限。为避免混乱，建议关闭");
                     UI.CreatAnNiu_AnXia("房主时不受客机玩家控制", ref fangzhububeikong, false, FangZhuBuBeiKong);
-                    UI.CreatAnNiu_AnXia("客机时禁止其他客机控制我", ref jinzhibeikong, false, JinZhiBeiKong);
+                    UI.CreatAnNiu_AnXia("客机时禁止其他客机控制我", ref jinzhibeikong, false, JinZhiBeiKong, "开启后，其他客机无法控制你，连自己也不行。如需控制自己，请关闭此选项");
                 
                     break;
             }
@@ -598,9 +616,10 @@ namespace YxModDll.Mod
         {
             huisu = PlayerPrefs.GetInt("huisudingdian", 0) > 0;
             guanxing = PlayerPrefs.GetInt("guanxingdingdian", 0) > 0;
-            baoLiuDangQianSuDu = PlayerPrefs.GetInt("baosudingdian", 0) > 1;
+            baoLiuDangQianSuDu = PlayerPrefs.GetInt("baosudingdian", 0) > 0;
             q = PlayerPrefs.GetInt("qdingdian", 1) > 0;
             se = PlayerPrefs.GetInt("sedingdian", 1) > 0;
+            faq = PlayerPrefs.GetInt("faqdingdian", 0) > 0;
             gaodu = PlayerPrefs.GetFloat("dingdiangaodu", 0.2f);
             geshu = PlayerPrefs.GetInt("dingdiangeshu", 5);
             tishiStr = PlayerPrefs.GetString("dingdiantishi", "已存点");
@@ -702,6 +721,7 @@ namespace YxModDll.Mod
             danyexianshi = PlayerPrefs.GetInt("danyexianshi", 1) > 0;
             haoyoufangjian = PlayerPrefs.GetInt("haoyoufangjian", 1) > 0;
             skinCheckEnabled = PlayerPrefs.GetInt("skinCheckEnabled", 1) > 0;
+            skinUseRGB24Format = PlayerPrefs.GetInt("skinUseRGB24Format", 1) > 0;
             fixWhiteHumanEnabled = PlayerPrefs.GetInt("fixWhiteHumanEnabled", 1) > 0;
 
             //显示设置

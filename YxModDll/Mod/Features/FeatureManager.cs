@@ -2344,7 +2344,7 @@ namespace YxModDll.Mod.Features
             Graphics.Blit(rt, downscaled);
 
             UnityEngine.Debug.Log($"[BakeTexture缩放] 原尺寸: {rt.width}x{rt.height} => 缩放为: {newW}x{newH}");
-            Chat.TiShi(NetGame.instance.local, $"[BakeTexture缩放] 将贴图缩放为 {newW}x{newH}");
+            //Chat.TiShi(NetGame.instance.local, $"[BakeTexture缩放] 将贴图缩放为 {newW}x{newH}");
 
             rt = downscaled;
             __instance.width = newW;
@@ -2366,6 +2366,32 @@ namespace YxModDll.Mod.Features
             {
                 RenderTexture.ReleaseTemporary(rt);
                 UnityEngine.Debug.Log("BakeTexture 缩放后RenderTexture已释放");
+            }
+        }
+        [HarmonyPatch(typeof(Texture2D), ".ctor", new[] { typeof(int), typeof(int) })]
+        public static class Texture2DPatch
+        {
+            [HarmonyTranspiler]
+            public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            {
+                // ✅ 开关判断：如果不开启，则直接返回原始指令
+                if (!UI_SheZhi.skinUseRGB24Format)
+                {
+                    return instructions;
+                }
+
+                var codes = new List<CodeInstruction>(instructions);
+
+                for (int i = 0; i < codes.Count; i++)
+                {
+                    if (codes[i].opcode == OpCodes.Ldc_I4 && (int)codes[i].operand == (int)TextureFormat.RGBA32)
+                    {
+                        codes[i].operand = (int)TextureFormat.RGB24;
+                        UnityEngine.Debug.Log("[YxMod] Texture2D 构造函数中已将 RGBA32 替换为 RGB24");
+                    }
+                }
+
+                return codes;
             }
         }
 
@@ -2390,7 +2416,8 @@ namespace YxModDll.Mod.Features
             RenderTexture.active = rt;
             Graphics.Blit(__result, rt);
 
-            Texture2D resized = new Texture2D(newW, newH, TextureFormat.RGBA32, false);
+            //Texture2D resized = new Texture2D(newW, newH, TextureFormat.RGBA32, false);
+            Texture2D resized = new Texture2D(newW, newH);
             resized.ReadPixels(new Rect(0, 0, newW, newH), 0, 0);
             resized.Apply();
 
@@ -2402,7 +2429,7 @@ namespace YxModDll.Mod.Features
             __result = resized;
 
             UnityEngine.Debug.Log($"[TextureFromBytes缩放] {name} => {newW}x{newH}");
-            Chat.TiShi(NetGame.instance.local, $"[TextureFromBytes缩放] {name} 缩放为 {newW}x{newH}");
+            //Chat.TiShi(NetGame.instance.local, $"[TextureFromBytes缩放] {name} 缩放为 {newW}x{newH}");
         }
         [HarmonyPatch(typeof(Game), "UnloadBundle")]
         [HarmonyPostfix]
@@ -2413,9 +2440,9 @@ namespace YxModDll.Mod.Features
             {
                 yield return __result.Current;
             }
-            UnityEngine.Debug.Log("[YxMod] 上一个地图资源包卸载完成（Unload(true)）。");
-            Chat.TiShi(NetGame.instance.local, "[YxMod] 上一个地图资源包卸载完成（Unload(true)）。");
-            yield return Resources.UnloadUnusedAssets();
+            //UnityEngine.Debug.Log("[YxMod] 上一个地图资源包卸载完成（Unload(true)）。");
+            //Chat.TiShi(NetGame.instance.local, "[YxMod] 上一个地图资源包卸载完成（Unload(true)）。");
+            //yield return Resources.UnloadUnusedAssets();
         }
         //[HarmonyPatch(typeof(App), "EnterLobbyAsync")]
         //[HarmonyPostfix]

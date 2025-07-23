@@ -339,7 +339,7 @@ namespace YxModDll.Mod
                     else
                     {
                         //NetGame.instance.SendChatMessage("up");
-                        Chat.FaYan("up", false);
+                        Chat.Send("up", false);
                     }
 
                 }
@@ -359,7 +359,7 @@ namespace YxModDll.Mod
                     }
                     else
                     {
-                        Chat.FaYan("ifg", false);
+                        Chat.Send("ifg", false);
                     }
 
                 }
@@ -3305,7 +3305,7 @@ namespace YxModDll.Mod
         private void CmdSay(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) return;
-            Chat.FaYan(text, false);
+            Chat.Send(text, false);
         }
     }
 }

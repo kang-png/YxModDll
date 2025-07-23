@@ -110,6 +110,7 @@ namespace YxModDll.Mod
                 }
                 else if (NetGame.isClient)
                 {
+                    if (UI_SheZhi.faq) { Chat.Send("q", false);return; }
                     Human human2 = NetGame.instance.local.players[0].human;
                     human2.player.SendMove(-1f, human2.controls.walkLocalDirection.x, human2.controls.cameraPitchAngle, human2.controls.cameraYawAngle, human2.controls.leftExtend, human2.controls.rightExtend, human2.controls.jump, false, false);
                     human2.player.SendMove(-1f, human2.controls.walkLocalDirection.x, human2.controls.cameraPitchAngle, human2.controls.cameraYawAngle, human2.controls.leftExtend, human2.controls.rightExtend, human2.controls.jump, false, true);
@@ -121,17 +122,6 @@ namespace YxModDll.Mod
 
         public void DingDian_Fun(Human human)
         {
-            //var ext = human.GetExt();
-
-            //// 安全检查（防止 null）
-            //if (ext == null || ext.dingdian == null)
-            //{
-            //    Debug.LogWarning("[YxMod] ext 或 ext.dingdian 未初始化，自动初始化");
-            //    ext.human = human;
-            //    ext.YxModChuShiHua();
-            //    return; // 可选：跳过本帧执行，下一帧再跑
-            //}
-
             if (!UI_GongNeng.dingdian_KaiGuan || !human.GetExt().dingdian.kaiguan)
             {
                 return;//Chat.TiShi(human.player.host, $"定点系统已关闭");

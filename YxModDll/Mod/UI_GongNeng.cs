@@ -47,8 +47,8 @@ namespace YxModDll.Mod
             UI.CreatAnNiu_AnXia("IFG", ref ifg_KaiGuan, false, Ifg);
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
-            UI.CreatAnNiu_AnXia("客机权限", ref kejiquanxian_KaiGuan, false, KeJiQuanXian);
-            UI.CreatAnNiu_AnXia("聊天框权限", ref liaotiankuangquanxian_KaiGuan, false, LiaoTianKuangQuanXian);
+            UI.CreatAnNiu_AnXia("客机权限", ref kejiquanxian_KaiGuan, false, KeJiQuanXian, "建议开启，以便手动赋予个别玩家房主级权限。配合使用时，建议关闭 YxMod 设置中的“房主时默认打开客机权限”选项");
+            UI.CreatAnNiu_AnXia("聊天框权限", ref liaotiankuangquanxian_KaiGuan, false, LiaoTianKuangQuanXian, "建议开启，开启后玩家只能控制自己，仅可使用传送、挂件等功能");
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             UI.CreatAnNiu_AnXia("飞天系统", ref feitianxitong_KaiGuan, false, FeiTianXiTong);

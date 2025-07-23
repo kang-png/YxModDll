@@ -160,7 +160,7 @@ namespace YxModDll.Patches
             }
 
             App.instance.OnClientCountChanged();
-            if (Chat.JinRuLiKai_XiaoXi)
+            if (Chat.JinRuLiKai_XiaoXi && client.name != "RequestAddPlayer")
             {
                 Chat.TiShi($"玩家 {client.name} 进来了", TiShiMsgId.Join);      //进场消息
                 Chat.YxModHelloServer(client);//服务器发送 [YxMod]  等待客户端响应
@@ -212,7 +212,7 @@ namespace YxModDll.Patches
                 }
             }
             App.instance.OnClientCountChanged();
-            if (Chat.JinRuLiKai_XiaoXi)
+            if (Chat.JinRuLiKai_XiaoXi && client.name != "RequestAddPlayer")
             {
                 Chat.TiShi($"玩家 {client.name} 离开了", TiShiMsgId.Join);
             }
