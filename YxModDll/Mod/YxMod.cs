@@ -178,7 +178,6 @@ namespace YxModDll.Mod
         //}
         private void Start()
         {
-
             //Debug.Log("[YxMod] 1111111");
             // 注册编码支持（只需调用一次）
             // System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
@@ -209,8 +208,6 @@ namespace YxModDll.Mod
             // 启动协程下载并解压
             //StartCoroutine(JianChaGengXin());
             NetChat.RegisterCommand(true, true, "say", new Action<string>(this.CmdSay), null);
-
-            //Debug.Log("3333");
 
         }
         //public void OnGUI()
