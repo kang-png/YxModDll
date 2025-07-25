@@ -5,7 +5,6 @@ using Multiplayer;
 using Steamworks;
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -451,7 +450,6 @@ namespace YxModDll.Mod.Features
     		pc = new PerformanceCounter("Process", "Working Set - Private", Process.GetCurrentProcess().ProcessName);
     		HarmonyFileLog.Enabled = true;
     		harmony = Harmony.CreateAndPatchAll(typeof(FeatureManager), "com.plcc.hff.humanmod");
-            //harmony.PatchAll(typeof(Texture2DPatch));
     	}
 
 	public void Update()
@@ -2332,7 +2330,7 @@ namespace YxModDll.Mod.Features
         [HarmonyPrefix]
         public static bool Prefix_BakeTexture(RagdollTexture __instance, ref RenderTexture rt, bool compress)
         {
-            //UnityEngine.Debug.Log("BakeTexture 补丁触发");
+            UnityEngine.Debug.Log("BakeTexture 补丁触发");
             if (!UI_SheZhi.skinCheckEnabled || rt == null)
                 return true;
 
@@ -2359,7 +2357,7 @@ namespace YxModDll.Mod.Features
         [HarmonyPostfix]
         public static void Postfix_BakeTexture(RenderTexture rt)
         {
-            //UnityEngine.Debug.Log("BakeTexture 后补丁触发");
+            UnityEngine.Debug.Log("BakeTexture 后补丁触发");
             if (!UI_SheZhi.skinCheckEnabled || rt == null)
                 return;
 
@@ -2367,58 +2365,35 @@ namespace YxModDll.Mod.Features
             if (rt.width <= 1024 && rt.height <= 1024)
             {
                 RenderTexture.ReleaseTemporary(rt);
-                //UnityEngine.Debug.Log("BakeTexture 缩放后RenderTexture已释放");
+                UnityEngine.Debug.Log("BakeTexture 缩放后RenderTexture已释放");
             }
         }
-        //[HarmonyPatch(typeof(Texture2D), MethodType.Constructor, new[] { typeof(int), typeof(int) })]
-        //public static class Texture2DPatch
-        //{
-        //    [HarmonyTranspiler]
-        //    public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-        //    {
-        //        // ✅ 开关判断：如果不开启，则直接返回原始指令
-        //        if (!UI_SheZhi.skinUseRGB24Format)
-        //        {
-        //            return instructions;
-        //        }
-
-        //        var codes = new List<CodeInstruction>(instructions);
-
-        //        for (int i = 0; i < codes.Count; i++)
-        //        {
-        //            if (codes[i].opcode == OpCodes.Ldc_I4 && (int)codes[i].operand == (int)TextureFormat.RGBA32)
-        //            {
-        //                codes[i].operand = (int)TextureFormat.RGB24;
-        //                UnityEngine.Debug.Log("[YxMod] Texture2D 构造函数中已将 RGBA32 替换为 RGB24");
-        //            }
-        //        }
-
-        //        return codes;
-        //    }
-        //}
-        [HarmonyPatch(typeof(Texture2D), MethodType.Constructor, new Type[] { typeof(int), typeof(int) })]
-        [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> Texture2D_ctor_Transpiler(IEnumerable<CodeInstruction> instructions)
+        [HarmonyPatch(typeof(Texture2D), ".ctor", new[] { typeof(int), typeof(int) })]
+        public static class Texture2DPatch
         {
-            //UnityEngine.Debug.Log("Texture2D.ctor 补丁触发");
-
-            if (!UI_SheZhi.skinUseRGB24Format)
-                return instructions;
-
-            var codes = new List<CodeInstruction>(instructions);
-
-            for (int i = 0; i < codes.Count; i++)
+            [HarmonyTranspiler]
+            public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
-                if (codes[i].opcode == OpCodes.Ldc_I4 && (int)codes[i].operand == (int)TextureFormat.RGBA32)
+                // ✅ 开关判断：如果不开启，则直接返回原始指令
+                if (!UI_SheZhi.skinUseRGB24Format)
                 {
-                    codes[i].operand = (int)TextureFormat.RGB24;
-                    UnityEngine.Debug.Log("[YxMod] Texture2D 构造函数中已将 RGBA32 替换为 RGB24");
+                    return instructions;
                 }
+
+                var codes = new List<CodeInstruction>(instructions);
+
+                for (int i = 0; i < codes.Count; i++)
+                {
+                    if (codes[i].opcode == OpCodes.Ldc_I4 && (int)codes[i].operand == (int)TextureFormat.RGBA32)
+                    {
+                        codes[i].operand = (int)TextureFormat.RGB24;
+                        UnityEngine.Debug.Log("[YxMod] Texture2D 构造函数中已将 RGBA32 替换为 RGB24");
+                    }
+                }
+
+                return codes;
             }
-
-            return codes;
         }
-
 
 
         [HarmonyPatch(typeof(FileTools), "TextureFromBytes")]
@@ -2456,86 +2431,19 @@ namespace YxModDll.Mod.Features
             UnityEngine.Debug.Log($"[TextureFromBytes缩放] {name} => {newW}x{newH}");
             //Chat.TiShi(NetGame.instance.local, $"[TextureFromBytes缩放] {name} 缩放为 {newW}x{newH}");
         }
-        //[HarmonyPatch(typeof(Game), "UnloadBundle")]
-        //[HarmonyPostfix]
-        //static IEnumerator Patch_UnloadBundle(IEnumerator __result)
-        //{
-        //    // 先执行原协程逻辑
-        //    while (__result.MoveNext())
-        //    {
-        //        yield return __result.Current;
-        //    }
-        //    //UnityEngine.Debug.Log("[YxMod] 上一个地图资源包卸载完成（Unload(true)）。");
-        //    //Chat.TiShi(NetGame.instance.local, "[YxMod] 上一个地图资源包卸载完成（Unload(true)）。");
-        //    //yield return Resources.UnloadUnusedAssets();
-        //}
-
-
-        private static readonly ConcurrentDictionary<string, DateTime> lastSkinReceiveTime = new();
-
-        [HarmonyPatch(typeof(NetGame), "OnClientReceive")]
-        [HarmonyPrefix]
-        public static bool Prefix_OnClientReceive(object connection, NetStream stream)
+        [HarmonyPatch(typeof(Game), "UnloadBundle")]
+        [HarmonyPostfix]
+        static IEnumerator Patch_UnloadBundle(IEnumerator __result)
         {
-            //UnityEngine.Debug.Log("OnClientReceive 补丁触发");
-            // 克隆 NetStream
-            NetStream clone = NetStream.AllocStream(stream);
-            NetMsgId netMsgId = clone.ReadMsgId();
-            clone.Release();
-
-            string playerId = connection.ToString();
-
-            if (netMsgId == NetMsgId.RemoveHost)
+            // 先执行原协程逻辑
+            while (__result.MoveNext())
             {
-                if (playerId != Human.all[0].player.skinUserId)
-                {
-                    Chat.TiShi(NetGame.instance.local, $"玩家 {playerId} 在踢你！");
-                    return false;
-                }
-                return true;
+                yield return __result.Current;
             }
-
-            //if (netMsgId == NetMsgId.SendSkin)
-            //{
-            //    if (playerId != Human.all[0].player.skinUserId && lastSkinReceiveTime.TryGetValue(playerId, out DateTime lastTime) &&
-            //        (DateTime.Now - lastTime).TotalMinutes < 5)
-            //    {
-            //        UnityEngine.Debug.Log($"玩家 {playerId} 5分钟内只能换一次皮肤！");
-            //        return false;
-            //    }
-            //    lastSkinReceiveTime[playerId] = DateTime.Now;
-            //}
-            return true;
+            //UnityEngine.Debug.Log("[YxMod] 上一个地图资源包卸载完成（Unload(true)）。");
+            //Chat.TiShi(NetGame.instance.local, "[YxMod] 上一个地图资源包卸载完成（Unload(true)）。");
+            //yield return Resources.UnloadUnusedAssets();
         }
-        //[HarmonyPatch(typeof(NetGame), "OnServerReceive")]
-        //[HarmonyPrefix]
-        //public static bool Prefix_OnServerReceive(NetHost client, NetStream stream)
-        //{
-        //    NetStream clone = NetStream.AllocStream(stream);
-        //    NetMsgId netMsgId = clone.ReadMsgId();
-        //    clone.Release();
-
-        //    string playerId = client?.connection.ToString();
-        //    string playerName = client?.name ?? "未知玩家";
-
-        //    if (netMsgId == NetMsgId.SendSkin)
-        //    {
-        //        if (lastSkinReceiveTime.TryGetValue(playerId, out DateTime lastTime) &&
-        //            (DateTime.Now - lastTime).TotalMinutes < 5)
-        //        {
-        //            //UnityEngine.Debug.Log($"玩家 {playerName}（{playerId}）5分钟内重复发送皮肤，已拦截。");
-        //            Chat.TiShi($"玩家 {playerName}（{playerId}）5分钟内重复发送皮肤，已拦截。");
-        //            return false;
-        //        }
-
-        //        lastSkinReceiveTime[playerId] = DateTime.Now;
-
-        //        // 可选：提示有人换皮肤
-        //        //UnityEngine.Debug.Log($"玩家 {playerName}（{playerId}）正在更换皮肤");
-        //    }
-
-        //    return true;
-        //}
         //[HarmonyPatch(typeof(App), "EnterLobbyAsync")]
         //[HarmonyPostfix]
         //static IEnumerator EnterLobbyAsyncPostfix(IEnumerator __result, App __instance)
