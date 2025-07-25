@@ -44,7 +44,7 @@ namespace YxModDll.Mod
                 Chat.TiShi(NetGame.instance.local, "不能当自己的头部挂件");
                 return;
             }
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.guajianxitong_KaiGuan)
                 {
@@ -62,7 +62,7 @@ namespace YxModDll.Mod
         }
         public static void QuXiaoXuanFu()//取消悬浮
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 //YxMod.QuXiaoGuaJian(NetGame.instance.server.players[0].human);
                 YxMod.QuXiaoGuaJian(Human.all[yuan_humanID-1]);

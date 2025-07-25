@@ -185,7 +185,7 @@ namespace YxModDll.Mod
                 }
                 GUILayout.EndHorizontal();
 
-                if (NetGame.isServer || (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))) //自己
+                if (NetGame.isServer || NetGame.isLocal || (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))) //自己
                 {
                     GUILayout.BeginHorizontal();
                     UI.CreatAnNiu_AnXia("个人定点", ref human.GetExt().dingdian.kaiguan, false, GeRenDingDian);
@@ -247,7 +247,7 @@ namespace YxModDll.Mod
                 UI.CreatFenGeXian();//分割线
                 GUILayout.Space(5);
 
-                if (NetGame.isServer)
+                if (NetGame.isServer || NetGame.isLocal)
                 {
                     GUILayout.Label(ColorfulSpeek.colorshows("服务端属性>>"));
                     float drag = human.rigidbodies[0].drag;
@@ -263,12 +263,12 @@ namespace YxModDll.Mod
                     UI.CreatShuZhi("阻力", ref drag, 0f, 5f, 0.1f, () => {
                         human.SetDrag(drag, true);
                     });
-                    if (GUILayout.Button("重置", UI.styleButton()))
+                    if (GUILayout.Button(ColorfulSpeek.colorshows("重置"), UI.styleButton()))
                     {
                         human.ResetDrag();
                         drag = human.rigidbodies[0].drag;
                     }
-                    GUILayout.FlexibleSpace();
+                    //GUILayout.FlexibleSpace();
                     GUILayout.EndHorizontal();
 
                     UI.CreatShuZhi("手部力量", ref maxLiftForce, 0f, 1000f, 50f, () => {
@@ -279,7 +279,7 @@ namespace YxModDll.Mod
                         human.mass = mass;
                     }, yuan: 104f);
                 }
-                if (NetGame.isServer || (NetGame.isClient && KeJiZiJi()))
+                if (NetGame.isServer || NetGame.isLocal || (NetGame.isClient && KeJiZiJi()))
                 {
                     GUILayout.Label(ColorfulSpeek.colorshows("客户端属性>>"));
                     float gravityY = Physics.gravity.y;
@@ -332,7 +332,7 @@ namespace YxModDll.Mod
                         (FeatureManager.instance).StartCoroutine(FeatureManager.instance.OnReceiveSkinCoroutine(human.player));
                     }
                 }, "如果本地无皮肤数据，会向服务器请求一次（可能拿到旧皮肤）；已有本地数据时将直接应用。请勿重复点击。");
-                if (NetGame.isServer || (NetGame.isClient && KeJiZiJi()))
+                if (NetGame.isServer || NetGame.isLocal || (NetGame.isClient && KeJiZiJi()))
                 {
                     GUILayout.BeginHorizontal();
                     UI.CreatAnNiu("刷新皮肤", false, () =>
@@ -369,7 +369,7 @@ namespace YxModDll.Mod
                         {
                             Chat.TiShi(NetGame.instance.local, "本地玩家未加载");
                         }
-                    }, "换皮肤会发送给所有人，请勿频繁切换");
+                    }, "换皮肤会发送给所有人，请勿频繁切换。防止炸房，五分钟只能换一次");
                     GUILayout.EndHorizontal();
                     //UI.CreatAnNiu("打开文件", false, () =>
                     //{
@@ -606,7 +606,7 @@ namespace YxModDll.Mod
         }
         private static void WuJiaSi()//无假死
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.wujiasi_KaiGuan)
                 {
@@ -634,7 +634,7 @@ namespace YxModDll.Mod
         }
         private static void WuPengZhuang()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.wupengzhuang_KaiGuan)
                 {
@@ -661,7 +661,7 @@ namespace YxModDll.Mod
         }
         public static void FeiTian()//飞天
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.feitianxitong_KaiGuan)
                 {
@@ -699,7 +699,7 @@ namespace YxModDll.Mod
         }
         private static void ChaoRen()//超人
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.feitianxitong_KaiGuan)
                 {
@@ -727,7 +727,7 @@ namespace YxModDll.Mod
         }
         private static void ShanXian()//闪现
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.shanxianxitong_KaiGuan)
                 {
@@ -755,7 +755,7 @@ namespace YxModDll.Mod
 
         private static void DongJie()//冻结
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -786,7 +786,7 @@ namespace YxModDll.Mod
         }
         private static void BanShen()//半身不遂
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -817,7 +817,7 @@ namespace YxModDll.Mod
 
         private static void BengDi()//蹦迪
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -847,7 +847,7 @@ namespace YxModDll.Mod
         }
         private static void SanJiTiao()//三级跳
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -874,7 +874,7 @@ namespace YxModDll.Mod
         }
         private static void DianTun()//电臀
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -904,7 +904,7 @@ namespace YxModDll.Mod
         }
         private static void QiQiu()//气球
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -934,7 +934,7 @@ namespace YxModDll.Mod
         }
         private static void QiQiuXiFa()//气球戏法
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -961,7 +961,7 @@ namespace YxModDll.Mod
         }
         private static void DaoLi()//倒立
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -990,7 +990,7 @@ namespace YxModDll.Mod
         }
         private static void ZhuanQuan()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -1017,7 +1017,7 @@ namespace YxModDll.Mod
         }
         private static void TuoLuo()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -1044,7 +1044,7 @@ namespace YxModDll.Mod
         }
         private static void KeTouGuai()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -1071,7 +1071,7 @@ namespace YxModDll.Mod
         }
         private static void DiaoSiGui()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -1100,7 +1100,7 @@ namespace YxModDll.Mod
         }
         private static void PangXie()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -1127,7 +1127,7 @@ namespace YxModDll.Mod
         }
         private static void QianShui()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -1154,7 +1154,7 @@ namespace YxModDll.Mod
         }
         private static void TuiQue()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -1184,7 +1184,7 @@ namespace YxModDll.Mod
         }
         private static void TuiGuai()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -1213,7 +1213,7 @@ namespace YxModDll.Mod
         }
         private static void ChaiChu()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -1248,7 +1248,7 @@ namespace YxModDll.Mod
         }
         private static void KongQiPao()//空气炮
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -1284,7 +1284,7 @@ namespace YxModDll.Mod
 
         private static void chaojitiao()//超级跳
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 if (!UI_GongNeng.yulexitong_KaiGuan)
                 {
@@ -1320,7 +1320,7 @@ namespace YxModDll.Mod
             }
             else
             {
-                Chat.TiShi("原皮肤未加载");
+                Chat.TiShi(NetGame.instance.local, "原皮肤未加载");
                 return;
                 //if (((NetPlayer)netPlayer_1).host.inform.list_0.Count == 0)
                 //{
@@ -1360,7 +1360,7 @@ namespace YxModDll.Mod
             }
             catch
             {
-                Chat.TiShi("皮肤改变失败");
+                Chat.TiShi(NetGame.instance.local, "皮肤改变失败");
             }
             finally
             {

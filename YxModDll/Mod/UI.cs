@@ -243,7 +243,7 @@ namespace YxModDll.Mod
                 }
             }
 
-            GUILayout.FlexibleSpace();
+            //GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
         }
@@ -304,7 +304,7 @@ namespace YxModDll.Mod
                 }
             }
 
-            GUILayout.FlexibleSpace();
+            //GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
         }
