@@ -2495,47 +2495,47 @@ namespace YxModDll.Mod.Features
                 return true;
             }
 
-            if (netMsgId == NetMsgId.SendSkin)
-            {
-                if (playerId != Human.all[0].player.skinUserId && lastSkinReceiveTime.TryGetValue(playerId, out DateTime lastTime) &&
-                    (DateTime.Now - lastTime).TotalMinutes < 5)
-                {
-                    UnityEngine.Debug.Log($"玩家 {playerId} 5分钟内只能换一次皮肤！");
-                    return false;
-                }
-                lastSkinReceiveTime[playerId] = DateTime.Now;
-            }
+            //if (netMsgId == NetMsgId.SendSkin)
+            //{
+            //    if (playerId != Human.all[0].player.skinUserId && lastSkinReceiveTime.TryGetValue(playerId, out DateTime lastTime) &&
+            //        (DateTime.Now - lastTime).TotalMinutes < 5)
+            //    {
+            //        UnityEngine.Debug.Log($"玩家 {playerId} 5分钟内只能换一次皮肤！");
+            //        return false;
+            //    }
+            //    lastSkinReceiveTime[playerId] = DateTime.Now;
+            //}
             return true;
         }
-        [HarmonyPatch(typeof(NetGame), "OnServerReceive")]
-        [HarmonyPrefix]
-        public static bool Prefix_OnServerReceive(NetHost client, NetStream stream)
-        {
-            NetStream clone = NetStream.AllocStream(stream);
-            NetMsgId netMsgId = clone.ReadMsgId();
-            clone.Release();
+        //[HarmonyPatch(typeof(NetGame), "OnServerReceive")]
+        //[HarmonyPrefix]
+        //public static bool Prefix_OnServerReceive(NetHost client, NetStream stream)
+        //{
+        //    NetStream clone = NetStream.AllocStream(stream);
+        //    NetMsgId netMsgId = clone.ReadMsgId();
+        //    clone.Release();
 
-            string playerId = client?.connection.ToString();
-            string playerName = client?.name ?? "未知玩家";
+        //    string playerId = client?.connection.ToString();
+        //    string playerName = client?.name ?? "未知玩家";
 
-            if (netMsgId == NetMsgId.SendSkin)
-            {
-                if (lastSkinReceiveTime.TryGetValue(playerId, out DateTime lastTime) &&
-                    (DateTime.Now - lastTime).TotalMinutes < 5)
-                {
-                    //UnityEngine.Debug.Log($"玩家 {playerName}（{playerId}）5分钟内重复发送皮肤，已拦截。");
-                    Chat.TiShi($"玩家 {playerName}（{playerId}）5分钟内重复发送皮肤，已拦截。");
-                    return false;
-                }
+        //    if (netMsgId == NetMsgId.SendSkin)
+        //    {
+        //        if (lastSkinReceiveTime.TryGetValue(playerId, out DateTime lastTime) &&
+        //            (DateTime.Now - lastTime).TotalMinutes < 5)
+        //        {
+        //            //UnityEngine.Debug.Log($"玩家 {playerName}（{playerId}）5分钟内重复发送皮肤，已拦截。");
+        //            Chat.TiShi($"玩家 {playerName}（{playerId}）5分钟内重复发送皮肤，已拦截。");
+        //            return false;
+        //        }
 
-                lastSkinReceiveTime[playerId] = DateTime.Now;
+        //        lastSkinReceiveTime[playerId] = DateTime.Now;
 
-                // 可选：提示有人换皮肤
-                //UnityEngine.Debug.Log($"玩家 {playerName}（{playerId}）正在更换皮肤");
-            }
+        //        // 可选：提示有人换皮肤
+        //        //UnityEngine.Debug.Log($"玩家 {playerName}（{playerId}）正在更换皮肤");
+        //    }
 
-            return true;
-        }
+        //    return true;
+        //}
         //[HarmonyPatch(typeof(App), "EnterLobbyAsync")]
         //[HarmonyPostfix]
         //static IEnumerator EnterLobbyAsyncPostfix(IEnumerator __result, App __instance)

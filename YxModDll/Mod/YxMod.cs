@@ -178,6 +178,7 @@ namespace YxModDll.Mod
         //}
         private void Start()
         {
+            //Debug.Log("[YxMod] 1111111");
             // 注册编码支持（只需调用一次）
             // System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             //var go = NetGame.instance.gameObject;

@@ -34,7 +34,7 @@ namespace YxModDll.Patches
 
 
 
-            Patcher2.MethodPatch(typeof(MenuSystem), "BindCursor", new[] { typeof(bool) }, typeof(Patcher_MenuSystem), "BindCursor", new[] { typeof(MenuSystem), typeof(bool) });
+            //Patcher2.MethodPatch(typeof(MenuSystem), "BindCursor", new[] { typeof(bool) }, typeof(Patcher_MenuSystem), "BindCursor", new[] { typeof(MenuSystem), typeof(bool) });
         }
 
         //private void OnGUI()
