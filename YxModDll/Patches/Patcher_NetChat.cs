@@ -127,7 +127,7 @@ namespace YxModDll.Patches
                 {
                     // 获取 CommandRegistry 类的 Execute 方法
                     MethodInfo executeMethod = typeof(CommandRegistry).GetMethod("Execute", BindingFlags.NonPublic | BindingFlags.Instance);
-                    if (NetGame.isServer)
+                    if (NetGame.isServer || NetGame.isLocal)
                     {
                         //NetChat.serverCommands.Execute(text.Substring(1));
                         var serverCommands = _serverCommands.GetValue(null);

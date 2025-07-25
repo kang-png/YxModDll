@@ -9,8 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Voronoi2;
-
-
+using YxModDll.Mod.Features;
 using YxModDll.Patches;
 
 namespace YxModDll.Mod
@@ -320,8 +319,14 @@ namespace YxModDll.Mod
                 }
 
             }
-
-
+            if (ShowShuBiao || NetChat.typing && !Utils.useMenuInput.Invoke(MenuSystem.instance))
+            {
+                MenuSystem.instance.EnterMenuInputMode();
+            }
+            else
+            {
+                MenuSystem.instance.ExitMenuInputMode();
+            }
             UI_CaiDan.Update();//更新头顶灯光跟随
             UI_HuanTu.Update();//
         }

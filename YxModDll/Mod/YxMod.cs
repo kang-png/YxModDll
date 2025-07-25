@@ -38,7 +38,6 @@ namespace YxModDll.Mod
 {
     public class YxMod : MonoBehaviour
     {
-        private static string YYYYYYY = "111111111111111111";
         public static bool YxModServer = false;
         public static bool KeJiQuanXian = false;
         public static int fenshen_cam;//分身相机
@@ -65,7 +64,6 @@ namespace YxModDll.Mod
 
         private static string SubstringBetween(string source, string startMarker, string endMarker)
         {
-            YYYYYYY = "33333333333333333";
             // 找到开始标记的位置
             int startIndex = source.IndexOf(startMarker) + startMarker.Length;
 
@@ -91,66 +89,66 @@ namespace YxModDll.Mod
         }
 
 
-        IEnumerator JianChaGengXin()
-        {
-            Debug.Log("准备检查 doorstop_config.ini...");
+        //IEnumerator JianChaGengXin()
+        //{
+        //    Debug.Log("准备检查 doorstop_config.ini...");
 
-            string configPath = Path.Combine(Application.dataPath, "../doorstop_config.ini");
-            if (!File.Exists(configPath))
-            {
-                Debug.LogError("找不到 doorstop_config.ini，取消更新操作");
-                yield break;
-            }
+        //    string configPath = Path.Combine(Application.dataPath, "../doorstop_config.ini");
+        //    if (!File.Exists(configPath))
+        //    {
+        //        Debug.LogError("找不到 doorstop_config.ini，取消更新操作");
+        //        yield break;
+        //    }
 
-            // 读取当前 DLL 路径
-            string[] lines = File.ReadAllLines(configPath);
-            string currentDll = null;
-            for (int i = 0; i < lines.Length; i++)
-            {
-                if (lines[i].StartsWith("target_assembly="))
-                {
-                    currentDll = lines[i].Substring("target_assembly=".Length).Trim();
-                    break;
-                }
-            }
+        //    // 读取当前 DLL 路径
+        //    string[] lines = File.ReadAllLines(configPath);
+        //    string currentDll = null;
+        //    for (int i = 0; i < lines.Length; i++)
+        //    {
+        //        if (lines[i].StartsWith("target_assembly="))
+        //        {
+        //            currentDll = lines[i].Substring("target_assembly=".Length).Trim();
+        //            break;
+        //        }
+        //    }
 
-            if (string.IsNullOrEmpty(currentDll))
-            {
-                Debug.LogError("doorstop_config.ini 中未指定 target_assembly");
-                yield break;
-            }
+        //    if (string.IsNullOrEmpty(currentDll))
+        //    {
+        //        Debug.LogError("doorstop_config.ini 中未指定 target_assembly");
+        //        yield break;
+        //    }
 
-            Debug.Log("开始下载更新 DLL...");
+        //    Debug.Log("开始下载更新 DLL...");
 
-            UnityWebRequest www = UnityWebRequest.Get(updateUrl);
-            yield return www.SendWebRequest();
+        //    UnityWebRequest www = UnityWebRequest.Get(updateUrl);
+        //    yield return www.SendWebRequest();
 
-            if (www.isNetworkError || www.isHttpError)
-            {
-                Debug.LogError("下载失败: " + www.error);
-                yield break;
-            }
+        //    if (www.isNetworkError || www.isHttpError)
+        //    {
+        //        Debug.LogError("下载失败: " + www.error);
+        //        yield break;
+        //    }
 
-            // 计算目标 DLL 文件路径（A <-> B 轮换）
-            string nextDll = currentDll.Contains("_A") ? "YxModDll_B.dll" : "YxModDll_A.dll";
-            string targetDllPath = Path.Combine(Application.dataPath, "..", nextDll);
+        //    // 计算目标 DLL 文件路径（A <-> B 轮换）
+        //    string nextDll = currentDll.Contains("_A") ? "YxModDll_B.dll" : "YxModDll_A.dll";
+        //    string targetDllPath = Path.Combine(Application.dataPath, "..", nextDll);
 
-            File.WriteAllBytes(targetDllPath, www.downloadHandler.data);
-            Debug.Log($"DLL 已写入: {targetDllPath}");
+        //    File.WriteAllBytes(targetDllPath, www.downloadHandler.data);
+        //    Debug.Log($"DLL 已写入: {targetDllPath}");
 
-            // 更新 config 文件
-            for (int i = 0; i < lines.Length; i++)
-            {
-                if (lines[i].StartsWith("target_assembly="))
-                {
-                    lines[i] = $"target_assembly={nextDll}";
-                }
-            }
-            File.WriteAllLines(configPath, lines);
-            Debug.Log("已更新 doorstop_config.ini，准备下次启动使用新 DLL");
+        //    // 更新 config 文件
+        //    for (int i = 0; i < lines.Length; i++)
+        //    {
+        //        if (lines[i].StartsWith("target_assembly="))
+        //        {
+        //            lines[i] = $"target_assembly={nextDll}";
+        //        }
+        //    }
+        //    File.WriteAllLines(configPath, lines);
+        //    Debug.Log("已更新 doorstop_config.ini，准备下次启动使用新 DLL");
 
-            Debug.Log("更新完成，请重启游戏！");
-        }
+        //    Debug.Log("更新完成，请重启游戏！");
+        //}
 
 
 
@@ -180,7 +178,8 @@ namespace YxModDll.Mod
         //}
         private void Start()
         {
-            //Debug.Log("11111");
+
+            //Debug.Log("[YxMod] 1111111");
             // 注册编码支持（只需调用一次）
             // System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             //var go = NetGame.instance.gameObject;
@@ -208,7 +207,7 @@ namespace YxModDll.Mod
             gameObject.AddComponent<DiTuSuoLueTu>();
 
             // 启动协程下载并解压
-            StartCoroutine(JianChaGengXin());
+            //StartCoroutine(JianChaGengXin());
             NetChat.RegisterCommand(true, true, "say", new Action<string>(this.CmdSay), null);
 
             //Debug.Log("3333");
@@ -328,13 +327,13 @@ namespace YxModDll.Mod
                 Debug.Log("按了F7");
                 ChuangJianFangJian();
             }
-            if ((!NetGame.isServer && !NetGame.isClient) || NetChat.typing || Shell.visible)
+            if ((!NetGame.isServer && !NetGame.isLocal && !NetGame.isClient) || NetChat.typing || Shell.visible)
             {
                 return;
             }
             if (Game.GetKeyDown(KeyCode.Mouse3) || Game.GetKeyDown(KeyCode.Mouse2) || Game.GetKeyDown(KeyCode.U))
             {
-                if (NetGame.isServer)
+                if (NetGame.isServer || NetGame.isLocal)
                 {
                     Up(Human.all[0]);
                 }
@@ -355,7 +354,7 @@ namespace YxModDll.Mod
             }
             if (Game.GetKeyDown(KeyCode.Mouse4) || Game.GetKeyDown(KeyCode.B))
             {
-                if (NetGame.isServer)
+                if (NetGame.isServer || NetGame.isLocal)
                 {
                     Ifg(Human.all[0]);
                 }
@@ -391,7 +390,7 @@ namespace YxModDll.Mod
             }
             if (Game.GetKeyDown(KeyCode.F4))///软趴趴 全体飞天
             {
-                if (NetGame.isServer)
+                if (NetGame.isServer || NetGame.isLocal)
                 {
                     if (!UI_GongNeng.feitianxitong_KaiGuan)
                     {
@@ -424,7 +423,7 @@ namespace YxModDll.Mod
             // F8自由视角   F9游戏截图
             if (Game.GetKeyDown(KeyCode.F10))///软趴趴  全员闪现   ///我的 全员超人
             {
-                if (NetGame.isServer)
+                if (NetGame.isServer || NetGame.isLocal)
                 {
                     if (!UI_GongNeng.feitianxitong_KaiGuan)
                     {
@@ -443,7 +442,7 @@ namespace YxModDll.Mod
             }
             if (Game.GetKeyDown(KeyCode.F11))///软趴趴  全员三级跳    ///我的  全员闪现
             {
-                if (NetGame.isServer)
+                if (NetGame.isServer || NetGame.isLocal)
                 {
                     if (!UI_GongNeng.shanxianxitong_KaiGuan)
                     {
@@ -839,7 +838,7 @@ namespace YxModDll.Mod
                 Game.currentLevel.prerespawn(Game.instance.currentCheckpointNumber, false);
             }
             Game.currentLevel.Reset(Game.instance.currentCheckpointNumber, Game.instance.currentCheckpointSubObjectives);
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 NetSceneManager.ResetLevel(Game.instance.currentCheckpointNumber, Game.instance.currentCheckpointSubObjectives);
             }

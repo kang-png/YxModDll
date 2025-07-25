@@ -703,7 +703,7 @@ namespace YxModDll.Mod
             jinzhijiaru = PlayerPrefs.GetInt("jinzhijiaru", 0) > 0;
             pingbizhafang = PlayerPrefs.GetInt("pingbizhafang", 1) > 0;
             pingbici = PlayerPrefs.GetString("pingbici", "大佬炸房|闲人速退|■");
-            pingbizishu = PlayerPrefs.GetInt("pingbizishu", 50);
+            pingbizishu = PlayerPrefs.GetInt("pingbizishu", 150);
             pingbicishu = PlayerPrefs.GetInt("pingbicishu", 5);
             fayanjiange = PlayerPrefs.GetFloat("fayanjiange", 0.5f);
 
@@ -1184,7 +1184,7 @@ namespace YxModDll.Mod
                 baoLiuDangQianSuDu = false;
             }
 
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 var ext = Human.all[0].GetExt().dingdian;
                 ext.guanxing = guanxing;
@@ -1210,7 +1210,7 @@ namespace YxModDll.Mod
                 guanxing = false;
             }
 
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 var ext = Human.all[0].GetExt().dingdian;
                 ext.baoLiuDangQianSuDu = baoLiuDangQianSuDu;
@@ -1232,7 +1232,7 @@ namespace YxModDll.Mod
 
         public static void Q()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 Human.all[0].GetExt().dingdian.q = q;
             }
@@ -1247,7 +1247,7 @@ namespace YxModDll.Mod
         }
         public static void SE()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 Human.all[0].GetExt().dingdian.se = se;
             }
@@ -1262,7 +1262,7 @@ namespace YxModDll.Mod
         }
         public static void GaoDu()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 Human.all[0].GetExt().dingdian.gaodu = gaodu;
             }
@@ -1277,7 +1277,7 @@ namespace YxModDll.Mod
         }
         public static void GeShu()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 Human.all[0].GetExt().dingdian.geshu = geshu;
             }
@@ -1292,7 +1292,7 @@ namespace YxModDll.Mod
         }
         public static void TiShiStr()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 Human.all[0].GetExt().dingdian.tishiStr = tishiStr;
             }

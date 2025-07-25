@@ -39,7 +39,7 @@ namespace YxModDll.Mod
 
         public DingDian()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 DuQuSheZhi();
             }
@@ -83,14 +83,14 @@ namespace YxModDll.Mod
 
         public static void Update()
         {
-            if ((!NetGame.isServer && !NetGame.isClient) || NetChat.typing || Shell.visible)
+            if ((!NetGame.isServer && !NetGame.isLocal && !NetGame.isClient) || NetChat.typing || Shell.visible)
             {
                 return;
             }
 
             if (Input.GetKeyDown(KeyCode.Q))
             {
-                if (NetGame.isServer)
+                if (NetGame.isServer || NetGame.isLocal)
                 {
                     if (!UI_GongNeng.dingdian_KaiGuan)
                     {

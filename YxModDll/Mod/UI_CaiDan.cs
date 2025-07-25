@@ -52,13 +52,13 @@ namespace YxModDll.Mod
             UI.CreatAnNiu("继续", false, JiXu);
             gaodu += UI.buttonHeight;
 
-            if (NetGame.isServer || (NetGame.isClient))
+            if (NetGame.isServer || NetGame.isLocal || (NetGame.isClient))
             {
                 UI.CreatAnNiu("载点(Ctrl+F)", false, ZaiRuCunDangDian_CaiDan);
                 gaodu += UI.buttonHeight;
             }
 
-            if (NetGame.isServer || (NetGame.isClient && YxMod.YxModServer && YxMod.KeJiQuanXian))
+            if (NetGame.isServer || NetGame.isLocal || (NetGame.isClient && YxMod.YxModServer && YxMod.KeJiQuanXian))
             {
                 UI.CreatAnNiu("重新开始", false, ChongXinKaiShi_CaiDan);
                 gaodu += UI.buttonHeight;
@@ -111,7 +111,7 @@ namespace YxModDll.Mod
             GUILayout.Space(10);
             gaodu += 10;
 
-            if (NetGame.isServer || (NetGame.isClient))
+            if (NetGame.isServer || NetGame.isLocal || (NetGame.isClient))
             {
                 GUILayout.BeginHorizontal();
                 UI.CreatAnNiu("分身+1", false, AddFenShen);
@@ -234,7 +234,7 @@ namespace YxModDll.Mod
         }
         public static void ZaiRuCunDangDian()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 Game.instance.Respawn(NetGame.instance.local.players[0].human, Vector3.zero);
                 //Game.instance.RestartCheckpoint();//全部
@@ -252,7 +252,7 @@ namespace YxModDll.Mod
         }
         public static void ChongXinKaiShi()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 Game.instance.RestartLevel();
                 Game.instance.Resume();
@@ -272,7 +272,7 @@ namespace YxModDll.Mod
         }
         public static void ShangYiGuan()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 YxMod.ShangYiGuan();
                 Chat.TiShi($"玩家 {NetGame.instance.local.name} 使游戏进入到第 {Game.instance.currentCheckpointNumber + 1} 关");
@@ -290,7 +290,7 @@ namespace YxModDll.Mod
         }
         public static void XiaYiGuan()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 YxMod.XiaYiGuan();
                 Chat.TiShi($"玩家 {NetGame.instance.local.name} 使游戏进入到第 {Game.instance.currentCheckpointNumber + 1} 关");
@@ -308,7 +308,7 @@ namespace YxModDll.Mod
         }
         public static void ChongZhiWuPin()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 YxMod.ChongZhiWuPin();
                 Chat.TiShi($"玩家 {NetGame.instance.local.name} 重置了所有物品");
@@ -805,7 +805,7 @@ namespace YxModDll.Mod
         }
         private static void HuaBingTu()
         {
-            if (NetGame.isServer)
+            if (NetGame.isServer || NetGame.isLocal)
             {
                 HuaBingTu_Fun(HuaBing);
                 if(HuaBing)
