@@ -155,6 +155,19 @@ namespace YxModDll.Mod
 
             return styleButton;
         }
+        public static GUIStyle styleButton_Left() /// 滑动效果,字体居左
+        {
+            GUIStyle styleButton = new GUIStyle(GUI.skin.button);
+            styleButton.normal.background = anniuTexture; // 按钮的背景纹理
+            styleButton.active.background = anniuTexture2; // 假设按下时的纹理
+            styleButton.hover.background = styleButton.active.background;
+            styleButton.normal.textColor = Color.white;
+            styleButton.hover.textColor = Color.black;
+            styleButton.alignment = TextAnchor.MiddleLeft;
+            styleButton.fontSize = 20;
+
+            return styleButton;
+        }
         public static float GetButtonHeight(GUIStyle style, string sampleText = "按钮")
         {
             //GUIStyle style = styleButton();
@@ -357,7 +370,37 @@ namespace YxModDll.Mod
             GUILayout.Box("", LineStyle, GUILayout.ExpandWidth(true), GUILayout.Height(2)); // 高度设为2代表线条的粗细
 
         }
+        public static void CreatAnNiu_Left(string name, bool chuizhijuzhong = true, Action callback = null, string tooltip = null)//一般按钮
+        {
+            if (chuizhijuzhong)
+            {
+                GUILayout.BeginVertical();
+                GUILayout.FlexibleSpace();
+            }
 
+            GUIContent content = new GUIContent(ColorfulSpeek.colorshows(name));
+            Rect buttonRect = GUILayoutUtility.GetRect(content, styleButton());
+
+            if (GUI.Button(buttonRect, content, styleButton_Left()))
+            {
+                callback?.Invoke(); // 如果callback不为null，则调用它
+            }
+
+            // 设置提示文字
+            if (!string.IsNullOrEmpty(tooltip) && buttonRect.Contains(Event.current.mousePosition))
+            {
+                currentTooltip = tooltip;
+            }
+            //int topBottomPadding = (GUI.skin.button.padding.top + GUI.skin.button.padding.bottom); // 这是按钮样式自带的上下内边距之和
+            //float estimatedButtonHeight = GUI.skin.button.CalcSize(new GUIContent("Sample Text")).y + topBottomPadding;
+            if (chuizhijuzhong)
+            {
+                GUILayout.FlexibleSpace();
+                GUILayout.EndVertical();
+            }
+            buttonHeight = GetButtonHeight(styleButton(), ColorfulSpeek.colorshows(name)) + 6;
+            //Debug.Log(buttonHeight);
+        }
         public static void CreatAnNiu(string name, bool chuizhijuzhong = true, Action callback = null, string tooltip = null)//一般按钮
         {
             if (chuizhijuzhong)
