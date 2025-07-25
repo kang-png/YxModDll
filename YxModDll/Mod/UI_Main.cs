@@ -205,104 +205,107 @@ namespace YxModDll.Mod
                 }
                 //ShowCaiDanUI = !ShowCaiDanUI;
             }
-            if (Input.GetKeyDown(KeyCode.P) && !NetChat.typing)
+            if (ShowUI)
             {
-                ShowWanJiaUI = !ShowWanJiaUI;
-                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI || !ShowHuanTuUI)
+                if (Input.GetKeyDown(KeyCode.P) && !NetChat.typing)
                 {
-                    ShowShuBiao = false;
-                }
-            }
-            if (Input.GetKeyDown(KeyCode.H) && !NetChat.typing)
-            {
-                ShowHuanTuUI = !ShowHuanTuUI;
-                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI || !ShowHuanTuUI)
-                {
-                    ShowShuBiao = false;
-                }
-            }
-            if (Input.GetKeyDown(KeyCode.O) && !NetChat.typing)
-            {
-                ShowSheZhiUI = !ShowSheZhiUI;
-                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI || !ShowHuanTuUI)
-                {
-                    ShowShuBiao = false;
-                }
-            }
-            if (Input.GetKeyDown(KeyCode.I) && !NetChat.typing)
-            {
-                ShowWuTiUI = !ShowWuTiUI;
-                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI || !ShowHuanTuUI)
-                {
-                    ShowShuBiao = false;
-                }
-            }
-            if (Input.GetKeyDown(KeyCode.K) && !NetChat.typing)
-            {
-                ShowGongNengUI = !ShowGongNengUI;
-                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI || !ShowHuanTuUI)
-                {
-                    ShowShuBiao = false;
-                }
-            }
-            if (Input.GetKeyDown(KeyCode.C) && !NetChat.typing)
-            {
-                ShowChuanSongUI = !ShowChuanSongUI;
-                if (ShowChuanSongUI)
-                {
-                    ShowXuanFuUI = ShowQianShouUI = false;
-                    if (NetGame.isServer)
+                    ShowWanJiaUI = !ShowWanJiaUI;
+                    if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI || !ShowHuanTuUI)
                     {
-                        UI_ChuanSong.yuan_humanID = 1;
-                    }
-                    else if (NetGame.isClient)
-                    {
-                        UI_ChuanSong.yuan_humanID = UI_WanJia.GetClientHumanID();
+                        ShowShuBiao = false;
                     }
                 }
-                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI)
+                if (Input.GetKeyDown(KeyCode.H) && !NetChat.typing && !Human.Localplayer.hasGrabbed)
                 {
-                    ShowShuBiao = false;
-                }
-            }
-            if (Input.GetKeyDown(KeyCode.X) && !NetChat.typing)
-            {
-                ShowXuanFuUI = !ShowXuanFuUI;
-                if (ShowXuanFuUI)
-                {
-                    ShowChuanSongUI = ShowQianShouUI = false;
-                    if (NetGame.isServer)
+                    ShowHuanTuUI = !ShowHuanTuUI;
+                    if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI || !ShowHuanTuUI)
                     {
-                        UI_XuanFu.yuan_humanID = 1;
-                    }
-                    else if (NetGame.isClient)
-                    {
-                        UI_XuanFu.yuan_humanID = UI_WanJia.GetClientHumanID();
+                        ShowShuBiao = false;
                     }
                 }
-                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI)
+                if (Input.GetKeyDown(KeyCode.O) && !NetChat.typing)
                 {
-                    ShowShuBiao = false;
-                }
-            }
-            if (Input.GetKeyDown(KeyCode.Z) && !NetChat.typing)
-            {
-                ShowQianShouUI = !ShowQianShouUI;
-                if (ShowQianShouUI)
-                {
-                    ShowChuanSongUI = ShowXuanFuUI = false;
-                    if (NetGame.isServer)
+                    ShowSheZhiUI = !ShowSheZhiUI;
+                    if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI || !ShowHuanTuUI)
                     {
-                        UI_QianShou.yuan_humanID = 1;
-                    }
-                    else if (NetGame.isClient)
-                    {
-                        UI_QianShou.yuan_humanID = UI_WanJia.GetClientHumanID();
+                        ShowShuBiao = false;
                     }
                 }
-                if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI)
+                if (Input.GetKeyDown(KeyCode.I) && !NetChat.typing)
                 {
-                    ShowShuBiao = false;
+                    ShowWuTiUI = !ShowWuTiUI;
+                    if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI || !ShowHuanTuUI)
+                    {
+                        ShowShuBiao = false;
+                    }
+                }
+                if (Input.GetKeyDown(KeyCode.K) && !NetChat.typing)
+                {
+                    ShowGongNengUI = !ShowGongNengUI;
+                    if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI || !ShowHuanTuUI)
+                    {
+                        ShowShuBiao = false;
+                    }
+                }
+                if (Input.GetKeyDown(KeyCode.C) && !NetChat.typing)
+                {
+                    ShowChuanSongUI = !ShowChuanSongUI;
+                    if (ShowChuanSongUI)
+                    {
+                        ShowXuanFuUI = ShowQianShouUI = false;
+                        if (NetGame.isServer)
+                        {
+                            UI_ChuanSong.yuan_humanID = 1;
+                        }
+                        else if (NetGame.isClient)
+                        {
+                            UI_ChuanSong.yuan_humanID = UI_WanJia.GetClientHumanID();
+                        }
+                    }
+                    if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI)
+                    {
+                        ShowShuBiao = false;
+                    }
+                }
+                if (Input.GetKeyDown(KeyCode.X) && !NetChat.typing)
+                {
+                    ShowXuanFuUI = !ShowXuanFuUI;
+                    if (ShowXuanFuUI)
+                    {
+                        ShowChuanSongUI = ShowQianShouUI = false;
+                        if (NetGame.isServer)
+                        {
+                            UI_XuanFu.yuan_humanID = 1;
+                        }
+                        else if (NetGame.isClient)
+                        {
+                            UI_XuanFu.yuan_humanID = UI_WanJia.GetClientHumanID();
+                        }
+                    }
+                    if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI)
+                    {
+                        ShowShuBiao = false;
+                    }
+                }
+                if (Input.GetKeyDown(KeyCode.Z) && !NetChat.typing)
+                {
+                    ShowQianShouUI = !ShowQianShouUI;
+                    if (ShowQianShouUI)
+                    {
+                        ShowChuanSongUI = ShowXuanFuUI = false;
+                        if (NetGame.isServer)
+                        {
+                            UI_QianShou.yuan_humanID = 1;
+                        }
+                        else if (NetGame.isClient)
+                        {
+                            UI_QianShou.yuan_humanID = UI_WanJia.GetClientHumanID();
+                        }
+                    }
+                    if (!ShowCaiDanUI && !ShowGongNengUI && !ShowWanJiaUI && !ShowWuTiUI && !ShowSheZhiUI && !ShowChuanSongUI && !ShowXuanFuUI && !ShowQianShouUI)
+                    {
+                        ShowShuBiao = false;
+                    }
                 }
             }
             if ((Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift)) && !NetChat.typing)

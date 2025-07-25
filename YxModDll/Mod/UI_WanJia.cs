@@ -138,6 +138,28 @@ namespace YxModDll.Mod
                     GUILayout.BeginHorizontal();
                     UI.CreatAnNiu_AnXia("超级跳", ref allchaojitiao, false, chaojitiao);
                     GUILayout.EndHorizontal();
+
+                    GUILayout.Space(5);
+                    UI.CreatFenGeXian();//分割线
+                    GUILayout.Space(5);
+
+                    GUILayout.Label(ColorfulSpeek.colorshows("所有人属性>>"));
+                    float gravityY = Physics.gravity.y;
+                    UI.CreatShuZhi("修改重力", ref gravityY, -50f, 0f, 0.5f, () => {
+                        Physics.gravity = new Vector3(0f, gravityY, 0f);
+                    }, yuan: -9.81f);
+
+                    UI.CreatAnNiu_AnXia("修改速度", ref FeatureManager.modifySpeed, false, null, "点按钮切换开关");
+                    if (FeatureManager.modifySpeed)
+                    {
+                        float tempSpeed = 1f;
+                        float.TryParse(FeatureManager.curSpeed, out tempSpeed);
+
+                        UI.CreatShuZhi("倍速", ref tempSpeed, 0f, 5f, 0.1f, () =>
+                        {
+                            FeatureManager.curSpeed = tempSpeed.ToString("0.00");
+                        }, yuan: 1f);
+                    }
                 }
 
                 GUILayout.Space(5);
@@ -241,14 +263,16 @@ namespace YxModDll.Mod
                     GUILayout.BeginHorizontal();
                     UI.CreatAnNiu_AnXia("超级跳", ref human.GetExt().chaojitiao, false, chaojitiao);
                     GUILayout.EndHorizontal();
+
                 }
 
-                GUILayout.Space(5);
-                UI.CreatFenGeXian();//分割线
-                GUILayout.Space(5);
 
                 if (NetGame.isServer || NetGame.isLocal)
                 {
+                    GUILayout.Space(5);
+                    UI.CreatFenGeXian();//分割线
+                    GUILayout.Space(5);
+
                     GUILayout.Label(ColorfulSpeek.colorshows("服务端属性>>"));
                     float drag = human.rigidbodies[0].drag;
                     float mass = human.mass;
@@ -278,26 +302,14 @@ namespace YxModDll.Mod
                     UI.CreatShuZhi("跳跃间距", ref mass, 10f, 200f, 5f, () => {
                         human.mass = mass;
                     }, yuan: 104f);
+
                 }
                 if (NetGame.isServer || NetGame.isLocal || (NetGame.isClient && KeJiZiJi()))
                 {
+                    GUILayout.Space(5);
+                    UI.CreatFenGeXian();//分割线
+                    GUILayout.Space(5);
                     GUILayout.Label(ColorfulSpeek.colorshows("客户端属性>>"));
-                    float gravityY = Physics.gravity.y;
-                    UI.CreatShuZhi("修改重力", ref gravityY, -50f, 0f, 0.5f, () => {
-                        Physics.gravity = new Vector3(0f, gravityY, 0f);
-                    }, yuan: -9.81f);
-
-                    UI.CreatAnNiu_AnXia("修改速度", ref FeatureManager.modifySpeed, false, null, "点按钮切换开关");
-                    if (FeatureManager.modifySpeed)
-                    {
-                        float tempSpeed = 1f;
-                        float.TryParse(FeatureManager.curSpeed, out tempSpeed);
-
-                        UI.CreatShuZhi("速度", ref tempSpeed, 0f, 5f, 0.1f, () =>
-                        {
-                            FeatureManager.curSpeed = tempSpeed.ToString("0.00");
-                        }, yuan: 1f);
-                    }
 
                     UI.CreatAnNiu_AnXia("修改手长", ref FeatureManager.modifyHand, false, null, "点按钮切换开关");
                     if (FeatureManager.modifyHand)
@@ -311,12 +323,12 @@ namespace YxModDll.Mod
                         }, yuan: 0f);
 
                         // 伸手手长
-                        float curExtendedHandVal = 0f;
+                        float curExtendedHandVal = 1f;
                         float.TryParse(FeatureManager.curExtendedHand, out curExtendedHandVal);
                         UI.CreatShuZhi("伸手手长", ref curExtendedHandVal, 0f, 100f, 0.1f, () =>
                         {
                             FeatureManager.curExtendedHand = curExtendedHandVal.ToString("0.00");
-                        }, yuan: 0.25f);
+                        }, yuan: 1f);
                     }
 
                 }

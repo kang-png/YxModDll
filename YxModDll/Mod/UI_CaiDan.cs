@@ -49,8 +49,8 @@ namespace YxModDll.Mod
         {
             gaodu = 0;
             scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.ExpandWidth(true)); //开始滚动视图区域
-            UI.CreatAnNiu("继续", false, JiXu);
-            gaodu += UI.buttonHeight;
+            //UI.CreatAnNiu("继续", false, JiXu);
+            //gaodu += UI.buttonHeight;
 
             if (NetGame.isServer || NetGame.isLocal || (NetGame.isClient))
             {
@@ -149,7 +149,7 @@ namespace YxModDll.Mod
                 UI.CreatAnNiu_AnXia("存档点显示", ref FeatureManager.showZoneVisuals, false, FeatureManager.instance.RenderZoneVisuals, "包括检查点、过关点、死亡点");
                 gaodu += UI.buttonHeight;
 
-                UI.CreatAnNiu_AnXia("解锁Steam成就", ref JieSuoChengJiu, false, JieSuoChengJiu_CaiDan);
+                UI.CreatAnNiu_AnXia("解锁成就", ref JieSuoChengJiu, false, JieSuoChengJiu_CaiDan);
                 gaodu += UI.buttonHeight;
             }
 

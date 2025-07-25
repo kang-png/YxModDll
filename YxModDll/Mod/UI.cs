@@ -199,7 +199,7 @@ namespace YxModDll.Mod
         {
             GUILayout.BeginHorizontal();
             ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
-            GUILayout.Label(ColorfulSpeek.colorshows(name));
+            GUILayout.Label(ColorfulSpeek.colorshows(name), GUILayout.Width(100));
             //GUILayout.Space(5);
             if (GUILayout.Button(ColorfulSpeek.colorshows("-"), UI.styleButton()))
             {
@@ -247,6 +247,7 @@ namespace YxModDll.Mod
                 }
             }
 
+            GUILayout.FlexibleSpace();
             if (yuan.HasValue)
             {
                 if (GUILayout.Button(ColorfulSpeek.colorshows("重置"), UI.styleButton()))
@@ -264,7 +265,7 @@ namespace YxModDll.Mod
         {
             GUILayout.BeginHorizontal();
             ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
-            GUILayout.Label(ColorfulSpeek.colorshows(name));
+            GUILayout.Label(ColorfulSpeek.colorshows(name), GUILayout.Width(100));
             //GUILayout.Space(5);
             if (GUILayout.Button(ColorfulSpeek.colorshows("-"), UI.styleButton()))
             {
@@ -308,6 +309,7 @@ namespace YxModDll.Mod
                 }
             }
 
+            GUILayout.FlexibleSpace();
             if (yuan.HasValue)
             {
                 if (GUILayout.Button(ColorfulSpeek.colorshows("重置"), UI.styleButton()))
