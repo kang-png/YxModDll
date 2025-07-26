@@ -60,7 +60,7 @@ namespace YxModDll.Mod
                     
                     if (wuti == null)
                     {
-                        Chat.TiShi(NetGame.instance.local, "物体无法设置为挂件，请更换物体");
+                        Chat.TiShi(human.player.host, "物体无法设置为挂件，请更换物体");
                         return ;
                     }
                     QuXiaoWuTiGuaJian(human);
@@ -77,7 +77,7 @@ namespace YxModDll.Mod
                 }
                 else
                 {
-                    Chat.TiShi(NetGame.instance.local,"左手没有抓住物体");
+                    Chat.TiShi(human.player.host, "左手没有抓住物体");
                 }
             }
             else if(NetGame.isClient && YxMod.YxModServer && YxMod.KeJiQuanXian)
