@@ -188,6 +188,7 @@
     <Compile Include="Mod\Features\Utils.cs" />
     <Compile Include="Mod\JieMiMoShi.cs" />
     <Compile Include="Mod\UI_HuanTu.cs" />
+    <Compile Include="Mod\WuTiGuaJian.cs" />
     <Compile Include="Patches\Patcher_Human.cs" />
     <Compile Include="Patches\Patcher_NetGame.cs" />
     <Compile Include="Patches\Patcher_NetPlayer.cs" />

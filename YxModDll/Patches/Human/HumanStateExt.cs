@@ -128,6 +128,8 @@ namespace YxModDll.Patches
         internal HumanReflectionAccessor accessor;
         internal bool shouhua;
 
+        public bool wutiguajian;//物体挂件
+        public Rigidbody ntp_wuti;
         public HumanStateExt(Human human)
         {
             this.human = human;

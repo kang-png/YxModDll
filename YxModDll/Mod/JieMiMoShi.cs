@@ -14,8 +14,7 @@ namespace YxModDll.Mod
     public class JieMi_ZhaoBuTong : MonoBehaviour
     {
 
-        [CompilerGenerated]
-        private Action action_0;
+        //[CompilerGenerated]
 
         private GameObject gameObject_0;
 
@@ -24,10 +23,6 @@ namespace YxModDll.Mod
         private List<GameObject> list_1 = new List<GameObject>();
 
         private List<GameObject> list_2 = new List<GameObject>();
-
-        private float float_1;
-
-        private bool bool_6;
 
         public static bool IsDecrypt;
 
@@ -168,129 +163,7 @@ namespace YxModDll.Mod
                 IsDecrypt = false;
             }
             this.UpdateObj2();
-            if (Input.GetKey(KeyCode.M) && (NetGame.isServer || NetGame.isClient) && IsDecrypt)
-            {
-                this.float_1 += Time.fixedDeltaTime;
-                if (this.float_1 > 2f && !this.bool_6)
-                {
-                    Human human = NetGame.instance.local.players[NetGame.instance.local.players.Count - 1].human;
-                    this.bool_6 = true;
-                    this.list_2.Clear();
-                    for (int i = 0; i < this.list_1.Count; i++)
-                    {
-                        TriggerVolume component = this.list_1[i].transform.GetComponent<TriggerVolume>();
-                        if (component != null)
-                        {
-                            float num = Vector3.Distance(human.transform.position, component.transform.position);
-                            if (IsInView(component.transform.position) && Math.Round((double)num, 2) < 5.0 && component.colliderToCheckFor != null)
-                            {
-                                this.list_2.Add(component.transform.gameObject);
-                            }
-                        }
-                    }
-                    NetChat.Print("已获取视野内" + this.list_2.Count.ToString() + "个必须配件");
-                    return;
-                }
-            }
-            else
-            {
-                this.float_1 = 0f;
-                this.bool_6 = false;
-            }
         }
-
-
-        //private void UpdateObj()
-        //{
-        //    if (!NetGame.isClient && !NetGame.isServer)
-        //    {
-        //        this.gameObject_0 = null;
-        //        return;
-        //    }
-        //    if (this.gameObject_0 == null)
-        //    {
-        //        this.gameObject_0 = GameObject.Find("Level");
-        //    }
-        //    if (this.gameObject_0 != null && this.bool_4)
-        //    {
-        //        this.list_0 = new List<GameObject>();
-        //        Transform[] componentsInChildren = this.gameObject_0.transform.GetComponentsInChildren<Transform>();
-        //        for (int i = 0; i < componentsInChildren.Length; i++)
-        //        {
-        //            GameObject gameObject = componentsInChildren[i].transform.gameObject;
-        //            Rigidbody componentInChildren = gameObject.transform.GetComponentInChildren<Rigidbody>();
-        //            Collider componentInChildren2 = gameObject.transform.GetComponentInChildren<Collider>();
-        //            NodeGraph componentInChildren3 = gameObject.transform.GetComponentInChildren<NodeGraph>();
-        //            bool flag = true;
-        //            if (this.bool_0 && componentInChildren == null)
-        //            {
-        //                flag = false;
-        //            }
-        //            if (this.bool_1 && componentInChildren2 == null)
-        //            {
-        //                flag = false;
-        //            }
-        //            if (this.bool_2 && componentInChildren != null && componentInChildren.isKinematic)
-        //            {
-        //                flag = false;
-        //            }
-        //            if (this.bool_5 && componentInChildren3 == null)
-        //            {
-        //                flag = false;
-        //            }
-        //            if ((this.string_0 != "" && flag && gameObject.name.Contains(this.string_0, StringComparison.OrdinalIgnoreCase) && flag && Vector3.Distance(NetGame.instance.local.players[0].human.transform.position, gameObject.transform.position) < 8f) || (this.string_0 == "" && flag && Vector3.Distance(NetGame.instance.local.players[0].human.transform.position, gameObject.transform.position) < 8f))
-        //            {
-        //                this.list_0.Add(gameObject.transform.gameObject);
-        //            }
-        //        }
-        //        if (this.bool_3)
-        //        {
-        //            int count = this.list_0.Count;
-        //            for (int j = 0; j < count; j++)
-        //            {
-        //                Transform[] componentsInChildren2 = this.list_0[j].transform.GetComponentsInChildren<Transform>();
-        //                for (int k = 0; k < componentsInChildren2.Length; k++)
-        //                {
-        //                    if (componentsInChildren2[k].transform != this.list_0[j].transform && Vector3.Distance(NetGame.instance.local.players[0].human.transform.position, componentsInChildren2[k].transform.position) < 8f)
-        //                    {
-        //                        this.list_0.Add(componentsInChildren2[k].transform.gameObject);
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-
-
-        //private void Render()
-        //{
-        //    if ((NetGame.isServer || NetGame.isClient) && (this.string_0 != "" || this.bool_5))
-        //    {
-        //        if (this.string_0 != null || this.bool_5)
-        //        {
-        //            this.gameObject_1 = null;
-        //        }
-        //        if (this.list_0.Count != 0)
-        //        {
-        //            Class70.StartDrawing();
-        //            for (int i = 0; i < this.list_0.Count; i++)
-        //            {
-        //                if (DrawPlayer.IsInView(this.list_0[i].transform.position))
-        //                {
-        //                    this.list_0[i].gameObject.Draw();
-        //                }
-        //            }
-        //            Class70.EndDrawing();
-        //            return;
-        //        }
-        //    }
-        //    if ((NetGame.isServer || NetGame.isClient) && this.gameObject_1 != null && this.bool_5 && this.string_0 == "" && DrawPlayer.IsInView(this.gameObject_1.transform.position))
-        //    {
-        //        Class70.StartDrawing();
-        //        this.gameObject_1.gameObject.Draw();
-        //        Class70.EndDrawing();
-        //    }
-        //}
 
 
         private void UpdateObj2()
@@ -344,111 +217,5 @@ namespace YxModDll.Mod
                 }
             }
         }
-
-
-        //private void GUI_()
-        //{
-        //    if (this.bool_5 && this.gameObject_0 != null && this.list_0.Count != 0)
-        //    {
-        //        for (int i = 0; i < this.list_0.Count; i++)
-        //        {
-        //            Component human = NetGame.instance.local.players[NetGame.instance.local.players.Count - 1].human;
-        //            NodeGraph component = this.list_0[i].transform.GetComponent<NodeGraph>();
-        //            if (component != null && component.outputs.Count == 1)
-        //            {
-        //                float num = Vector3.Distance(human.transform.position, component.transform.position);
-        //                if (Class70.IsInView(component.transform.position) && Math.Round((double)num, 2) < 8.0)
-        //                {
-        //                    if (component != null && component.outputs.Count != 0 && component.outputs[0].output.value != 0f)
-        //                    {
-        //                        Vector3 vector = Camera.main.WorldToScreenPoint(component.transform.position);
-        //                        GUI.Label(new Rect(vector.x - 50f, (float)Screen.height - vector.y, 200f, 35f), string.Concat(new object[]
-        //                        {
-        //                            "<size=10><Color=#00EC00>",
-        //                            component.transform.name,
-        //                            " 距离:",
-        //                            Convert.ToInt32(Math.Round((double)num, 2)),
-        //                            "m</Color></size>"
-        //                        }));
-        //                    }
-        //                    else if (component != null && component.outputs.Count != 0 && component.outputs[0].output.value == 0f)
-        //                    {
-        //                        Vector3 vector2 = Camera.main.WorldToScreenPoint(component.transform.position);
-        //                        GUI.Label(new Rect(vector2.x - 50f, (float)Screen.height - vector2.y, 200f, 35f), string.Concat(new object[]
-        //                        {
-        //                            "<size=10><Color=#FF0000>",
-        //                            component.transform.name,
-        //                            " 距离:",
-        //                            Convert.ToInt32(Math.Round((double)num, 2)),
-        //                            "m</Color></size>"
-        //                        }));
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    if (UI.Home && this.gameObject_0 != null)
-        //    {
-        //        GUI.Box(new Rect(10f, (float)Screen.height - 320f, 270f, 320f), "");
-        //        GUILayout.BeginArea(new Rect(20f, (float)Screen.height - 310f, 250f, 300f));
-        //        this.bool_4 = GUILayout.Toggle(this.bool_4, "组件搜索" + ((!this.bool_4) ? " 关闭" : (" 开启 组件数:" + this.list_0.Count.ToString())), Array.Empty<GUILayoutOption>());
-        //        if (this.bool_4)
-        //        {
-        //            string a = this.string_0;
-        //            this.string_0 = GUILayout.TextField(this.string_0, Array.Empty<GUILayoutOption>());
-        //            this.bool_0 = GUILayout.Toggle(this.bool_0, "刚体", Array.Empty<GUILayoutOption>());
-        //            this.bool_1 = GUILayout.Toggle(this.bool_1, "碰撞器", Array.Empty<GUILayoutOption>());
-        //            this.bool_5 = GUILayout.Toggle(this.bool_5, "搜索疑似解密", Array.Empty<GUILayoutOption>());
-        //            if (a != this.string_0 || this.string_0 == "" || (!NetGame.isServer && !NetGame.isClient))
-        //            {
-        //                this.bool_3 = false;
-        //            }
-        //            if (this.string_0 != "" && (NetGame.isServer || NetGame.isClient))
-        //            {
-        //                this.bool_3 = GUILayout.Toggle(this.bool_3, "扫描子组件", Array.Empty<GUILayoutOption>());
-        //            }
-        //            if (this.bool_0)
-        //            {
-        //                this.bool_2 = GUILayout.Toggle(this.bool_2, "非运动", Array.Empty<GUILayoutOption>());
-        //            }
-        //            else
-        //            {
-        //                this.bool_2 = false;
-        //            }
-        //            this.vector2_0 = GUILayout.BeginScrollView(this.vector2_0, Array.Empty<GUILayoutOption>());
-        //            for (int j = 0; j < this.list_0.Count; j++)
-        //            {
-        //                NodeGraph component2 = this.list_0[j].transform.GetComponent<NodeGraph>();
-        //                if (component2 != null && component2.outputs.Count != 0)
-        //                {
-        //                    NetChat.Print(component2.transform.name + "抓到" + component2.outputs[0].output.value);
-        //                }
-        //                if (component2 != null && component2.outputs.Count == 0)
-        //                {
-        //                    NetChat.Print(component2.transform.name + "抓不到" + component2.outputs.Count.ToString());
-        //                }
-        //                if (GUILayout.Button(this.list_0[j].transform.name + ((component2 != null) ? "带Graph" : "空"), new GUILayoutOption[]
-        //                {
-        //                    GUILayout.Width(240f)
-        //                }) && this.string_0 == "")
-        //                {
-        //                    this.gameObject_1 = this.list_0[j];
-        //                }
-        //            }
-        //            GUILayout.EndScrollView();
-        //        }
-        //        else
-        //        {
-        //            this.gameObject_1 = null;
-        //            this.list_0.Clear();
-        //        }
-        //        GUILayout.EndArea();
-        //    }
-        //}
-
-
-
-
-
     }
 }

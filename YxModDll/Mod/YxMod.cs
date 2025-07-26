@@ -205,6 +205,7 @@ namespace YxModDll.Mod
             
             gameObject.AddComponent<DiTuSuoLueTu>();
             gameObject.AddComponent<JieMi_ZhaoBuTong>();
+            gameObject.AddComponent<WuTiGuaJian>(); 
 
             // 启动协程下载并解压
             //StartCoroutine(JianChaGengXin());

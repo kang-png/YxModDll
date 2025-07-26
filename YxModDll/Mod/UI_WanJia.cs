@@ -197,6 +197,13 @@ namespace YxModDll.Mod
                     UI.CreatAnNiu("踢出房间", false, TiChuFangJian);
                 }
                 GUILayout.EndHorizontal();
+                GUILayout.BeginHorizontal();
+                if (NetGame.isServer || (NetGame.isClient && KeJiZiJi())) //是自己
+                {
+                    UI.CreatAnNiu_AnXia("物品挂件", ref human.GetExt().wutiguajian, false, WuTiGuaJian2,"左手抓住物体，按M键设置为挂件，点击按钮取消");
+                    
+                }
+                GUILayout.EndHorizontal();
 
                 GUILayout.BeginHorizontal();
                 if (NetGame.isServer)
@@ -547,6 +554,22 @@ namespace YxModDll.Mod
                 }
             }
         }
+        private static void WuTiGuaJian2()//物体挂件
+        {
+            if (NetGame.isServer)
+            {
+                if (human.GetExt().ntp_wuti == null)
+                {
+                    human.GetExt().wutiguajian = false;
+                    return;
+                }
+                WuTiGuaJian.QuXiaoWuTiGuaJian(human);
+            }
+            else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
+            {
+                Chat.SendYxModMsgClient(Chat.YxModMsgStr("quxiaowutiguajian"), $"{humanID - 1}");
+            }
+        }
         private static void KeJiQuanXian()//客机权限
         {
             if (NetGame.isServer)
@@ -570,8 +593,6 @@ namespace YxModDll.Mod
 
                 }
             }
-
-
         }
 
         private static void AllLiaoTianKuangQuanXian()
