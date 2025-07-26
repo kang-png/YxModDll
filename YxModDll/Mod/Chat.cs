@@ -1197,6 +1197,46 @@ namespace YxModDll.Mod
                 }
                 return;
             }
+            else if (nick == YxModMsgStr("shouhua") && msg.Length != 0)
+            {
+                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                {
+                    TiShi(netHost, $"客机权限系统已关闭");
+                    return;
+                }
+                if (!UI_GongNeng.yulexitong_KaiGuan)
+                {
+                    TiShi(netHost, $"娱乐系统已关闭");
+                    return;
+                }
+
+                int result;
+                if (int.TryParse(msg, out result))
+                {
+                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    {
+                        Chat.TiShi(netHost, $"房主不让你控制他");
+                        return;
+                    }
+                    if (human.GetExt().jinzhibeikong && human != Human.all[result])
+                    {
+                        Chat.TiShi(netHost, $"你禁止其他客机控制你,所以你也无法控制他人");
+                        return;
+                    }
+                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    {
+                        Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
+                        return;
+                    }
+
+                    // 切换目标玩家的“手滑”状态
+                    Human.all[result].GetExt().shouhua = !Human.all[result].GetExt().shouhua;
+
+                    // 聊天提示
+                    Chat.TiShi($"玩家 {netHost.name} 让 {Human.all[result].player.host.name} {(Human.all[result].GetExt().shouhua ? "手滑啦！" : "重新稳住了")}");
+                }
+                return;
+            }
             else if (nick == YxModMsgStr("qianshui") && msg.Length != 0)
             {
                 if (!UI_GongNeng.kejiquanxian_KaiGuan)

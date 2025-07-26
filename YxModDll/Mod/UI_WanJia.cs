@@ -58,6 +58,7 @@ namespace YxModDll.Mod
         public static bool allchaojitiao;
 
         public static Human human;
+        private static bool allshouhua;
 
         public static void CreatUI()//创建菜单功能区
         {
@@ -105,6 +106,8 @@ namespace YxModDll.Mod
                     GUILayout.BeginHorizontal();
                     UI.CreatAnNiu_AnXia("冻结", ref alldongjie, false, DongJie);
                     UI.CreatAnNiu_AnXia("半身不遂", ref allbanshen, false, BanShen);
+                    UI.CreatAnNiu_AnXia("超级跳", ref allchaojitiao, false, chaojitiao);
+                    UI.CreatAnNiu_AnXia("手滑", ref allshouhua, false, ShouHua);
                     GUILayout.EndHorizontal();
 
                     GUILayout.BeginHorizontal();
@@ -136,7 +139,6 @@ namespace YxModDll.Mod
                     GUILayout.EndHorizontal();
 
                     GUILayout.BeginHorizontal();
-                    UI.CreatAnNiu_AnXia("超级跳", ref allchaojitiao, false, chaojitiao);
                     GUILayout.EndHorizontal();
 
                     GUILayout.Space(5);
@@ -230,6 +232,8 @@ namespace YxModDll.Mod
                     GUILayout.BeginHorizontal();
                     UI.CreatAnNiu_AnXia("冻结", ref human.GetExt().dongjie, false, DongJie);
                     UI.CreatAnNiu_AnXia("半身不遂", ref human.GetExt().banshen, false, BanShen);
+                    UI.CreatAnNiu_AnXia("超级跳", ref human.GetExt().chaojitiao, false, chaojitiao);
+                    UI.CreatAnNiu_AnXia("手滑", ref human.GetExt().shouhua, false, ShouHua);
                     GUILayout.EndHorizontal();
 
                     GUILayout.BeginHorizontal();
@@ -261,7 +265,6 @@ namespace YxModDll.Mod
                     GUILayout.EndHorizontal();
 
                     GUILayout.BeginHorizontal();
-                    UI.CreatAnNiu_AnXia("超级跳", ref human.GetExt().chaojitiao, false, chaojitiao);
                     GUILayout.EndHorizontal();
 
                 }
@@ -402,7 +405,9 @@ namespace YxModDll.Mod
                         RagdollPresetMetadata preset = WorkshopRepository.instance.presetRepo[j];
                         if (preset == null) continue;
 
-                        string btnText = $"{j + 1}. {preset.title}";
+                        string title = preset.title;
+                        if (title.Length > 12) title = title.Substring(0, 12) + "...";
+                        string btnText = $"{j + 1}. {title}";
 
                         // 用CreatAnNiu创建按钮，点击调用HuanFu换皮肤
                         UI.CreatAnNiu(btnText, false, () =>
@@ -410,7 +415,7 @@ namespace YxModDll.Mod
                             human.player.skin = preset;
                             HuanFu(human?.player, preset);
                             Chat.TiShi(NetGame.instance.local, $"已切换到皮肤: {preset.title}");
-                        });
+                        }, preset.title);
                     }
                 }
             }
@@ -1137,6 +1142,35 @@ namespace YxModDll.Mod
                 Chat.SendYxModMsgClient(Chat.YxModMsgStr("pangxie"), $"{humanID - 1}");
             }
         }
+        private static void ShouHua()
+        {
+            if (NetGame.isServer || NetGame.isLocal)
+            {
+                if (!UI_GongNeng.yulexitong_KaiGuan)
+                {
+                    UI_GongNeng.yulexitong_KaiGuan = true;
+                    UI_GongNeng.YuLeXiTong();
+                }
+
+                if (humanID == 0)
+                {
+                    for (int i = 0; i < Human.all.Count; i++)
+                    {
+                        Human.all[i].GetExt().shouhua = allshouhua;
+                    }
+                    Chat.TiShi($"所有玩家 都 {(allshouhua ? "手滑了！东西拿不稳" : "恢复了正常抓握")}");
+                }
+                else
+                {
+                    Chat.TiShi($"玩家 {NetGame.instance.local.name} 让 {human.player.host.name} {(human.GetExt().shouhua ? "手滑啦！" : "重新稳住了")}");
+                }
+            }
+            else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
+            {
+                Chat.SendYxModMsgClient(Chat.YxModMsgStr("shouhua"), $"{humanID - 1}");
+            }
+        }
+
         private static void QianShui()
         {
             if (NetGame.isServer || NetGame.isLocal)

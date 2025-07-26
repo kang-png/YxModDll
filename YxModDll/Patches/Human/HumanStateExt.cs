@@ -126,6 +126,7 @@ namespace YxModDll.Patches
 
         public Human human;  // 保存对应Human实例
         internal HumanReflectionAccessor accessor;
+        internal bool shouhua;
 
         public HumanStateExt(Human human)
         {

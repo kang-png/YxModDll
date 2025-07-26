@@ -3147,6 +3147,25 @@ namespace YxModDll.Mod
                 human.ragdoll.partRightFoot.rigidbody.AddForce(a * 1000f * -3f, ForceMode.Force);
             }
         }
+
+        public static void ShouHua_Fun(Human human)
+        {
+            if (human == null)
+            {
+                return;
+            }
+
+            if (!UI_GongNeng.yulexitong_KaiGuan)
+            {
+                return;
+            }
+
+            if (human.GetExt().shouhua)
+            {
+                human.ReleaseGrab(1f); // 释放所有抓取
+            }
+        }
+
         private static GrabManager GetGrabManager(Human human)
         {
             var accessor = human.GetExt().accessor;

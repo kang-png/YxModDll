@@ -328,10 +328,12 @@ namespace YxModDll.Patches
                 if (ext.diantun) { YxMod.DianTun(instance); }
                 if (ext.qiqiu) { YxMod.QiQiu(instance); }
                 if (ext.chaojitiao) { YxMod.chaojitiao(instance); }
+                if (ext.shouhua) { ext.shouhua = false; }
             }
             YxMod.QianShou_Fun(instance);
             YxMod.QianShui_Fun(instance);
             YxMod.PangXie_Fun(instance);
+            YxMod.ShouHua_Fun(instance);
             YxMod.ZhuanQuan_Fun(instance);
             YxMod.TuoLuo_Fun(instance);
             YxMod.KeTouGuai_Fun(instance);
