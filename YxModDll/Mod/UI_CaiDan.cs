@@ -149,6 +149,12 @@ namespace YxModDll.Mod
                 UI.CreatAnNiu_AnXia("存档点显示", ref FeatureManager.showZoneVisuals, false, FeatureManager.instance.RenderZoneVisuals, "包括检查点、过关点、死亡点");
                 gaodu += UI.buttonHeight;
 
+                UI.CreatAnNiu_AnXia("解密模式", ref JieMi_ZhaoBuTong.IsDecrypt, false, null, "自动显示5米内的密码");
+                gaodu += UI.buttonHeight;
+
+                UI.CreatAnNiu_AnXia("找不同模式", ref JieMi_ZhaoBuTong.FindDifferent, false, null, "自动显示8米内的不同处");
+                gaodu += UI.buttonHeight;
+
                 UI.CreatAnNiu_AnXia("解锁成就", ref JieSuoChengJiu, false, JieSuoChengJiu_CaiDan);
                 gaodu += UI.buttonHeight;
             }

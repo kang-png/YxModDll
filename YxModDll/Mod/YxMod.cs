@@ -202,8 +202,9 @@ namespace YxModDll.Mod
             gameObject.AddComponent<Patcher_NetGame>();
             gameObject.AddComponent<Patcher_NetPlayer>();
 
-            //gameObject.AddComponent<DiTu>();
+            
             gameObject.AddComponent<DiTuSuoLueTu>();
+            gameObject.AddComponent<JieMi_ZhaoBuTong>();
 
             // 启动协程下载并解压
             //StartCoroutine(JianChaGengXin());
