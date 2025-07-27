@@ -322,13 +322,15 @@ namespace YxModDll.Mod
                 }
 
             }
-            if (ShowShuBiao || NetChat.typing && !Utils.useMenuInput.Invoke(MenuSystem.instance))
+            bool shouldShowMouse = ShowShuBiao || NetChat.typing;
+            bool isMouseShown = Utils.useMenuInput.Invoke(MenuSystem.instance);
+
+            if (shouldShowMouse != isMouseShown)
             {
-                MenuSystem.instance.EnterMenuInputMode();
-            }
-            else
-            {
-                MenuSystem.instance.ExitMenuInputMode();
+                if (shouldShowMouse)
+                    MenuSystem.instance.EnterMenuInputMode();
+                else
+                    MenuSystem.instance.ExitMenuInputMode();
             }
             UI_CaiDan.Update();//更新头顶灯光跟随
             UI_HuanTu.Update();//
