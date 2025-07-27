@@ -1,6 +1,7 @@
 using HarmonyLib;
 using HarmonyLib.Tools;
 using HumanAPI;
+using Microsoft.Win32;
 using Multiplayer;
 using Steamworks;
 using System;
@@ -11,11 +12,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text.RegularExpressions;
 using System.Windows.Interop;
 using UnityEngine;
 using UnityEngine.Analytics;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 
@@ -2214,8 +2217,446 @@ namespace YxModDll.Mod.Features
     			.Set(OpCodes.Call, (object)Utils.Method<FeatureManager>("GetNewLevel"))
     			.InstructionEnumeration();
     	}
+        public static IEnumerator GetNewLevel(LevelInformationBox instance, NetTransport.LobbyDisplayInfo dispInfo)
+        {
+            bool loaded = false;
+            WorkshopLevelMetadata levelData;
+            Action<WorkshopLevelMetadata> onRead = delegate (WorkshopLevelMetadata l)
+            {
+                levelData = l;
+                loaded = true;
+                NetTransport.LobbyDisplayInfo lobbyDisplayInfo = Utils.prevDispInfo.Invoke(instance);
+                if (levelData != null && (lobbyDisplayInfo.FeaturesMask & 0x20000000) != 0 && lobbyDisplayInfo.LevelID == dispInfo.LevelID)
+                {
+                    instance.LevelText.text = levelData.title;
+                    instance.LevelImage.texture = levelData.thumbnailTexture;
+                    instance.LevelImage.enabled = instance.LevelImage.texture != null;
+                }
+            };
+            //if (previewOnly && App.state == AppSate.Menu)
+            if (UI_SheZhi.guanbidatingxiazai && App.state == AppSate.Menu)
+            {
+                LoadLevelThumbnail(dispInfo.LevelID, onRead);
+            }
+            else
+            {
+                WorkshopRepository.instance.levelRepo.LoadLevel(dispInfo.LevelID, onRead);
+            }
+            while (!loaded)
+            {
+                yield return null;
+            }
+        }
 
-    	public static IEnumerator GetNewLevel(LevelInformationBox instance, NetTransport.LobbyDisplayInfo dispInfo)
+
+        // 保存回调
+        private static CallResult<SteamUGCQueryCompleted_t> _queryUGCCallback;
+        // 保存缩略图下载回调
+        private static CallResult<RemoteStorageDownloadUGCResult_t> _downloadThumbnailCallResult;
+        private static FieldInfo _LevelText;
+        private static FieldInfo _LevelImage;
+        public static void LoadLevelThumbnail(ulong levelId, Action<WorkshopLevelMetadata> callback)
+        {
+            //UnityEngine.Debug.Log("开始轻量级加载缩略图，LevelId: " + levelId);
+            string cacheKey = "ws:" + levelId + "/";
+
+            // 查缓存
+            WorkshopLevelMetadata cachedMetadata = WorkshopRepository.instance.levelRepo.GetItem(cacheKey);
+            if (cachedMetadata != null && cachedMetadata.cachedThumbnailBytes != null)
+            {
+                //UnityEngine.Debug.Log("缓存命中，直接返回");
+                callback?.Invoke(cachedMetadata);
+                return;
+            }
+            // 检查本地缓存
+            string name = LoadFromSteamWorkshopDir_Name(levelId);
+            if (name != null)
+            {
+                //UnityEngine.Debug.Log("【1】：从本地缓存加载成功，直接返回");
+                LevelInformationBox instance = FindObjectOfType<LevelInformationBox>();
+                _LevelText = typeof(LevelInformationBox).GetField("LevelText", BindingFlags.Public | BindingFlags.Instance);
+                _LevelImage = typeof(LevelInformationBox).GetField("LevelImage", BindingFlags.Public | BindingFlags.Instance);
+                var LevelText = (Text)_LevelText.GetValue(instance);
+                LevelText.text= name;
+                _LevelText.SetValue(instance, LevelText);
+
+                Texture2D tu = LoadFromSteamWorkshopDir_Tu(levelId);
+                //if (tu != null)
+                //{
+                    var LevelImage = (RawImage)_LevelImage.GetValue(instance);
+                    LevelImage.texture = tu;///////
+                    LevelImage.enabled = LevelImage.texture != null;
+                _LevelImage.SetValue(instance, LevelImage);
+                //}
+                callback?.Invoke(cachedMetadata);
+                return;
+            }
+            // 创建查询请求
+            PublishedFileId_t fileId = new PublishedFileId_t(levelId);
+            UGCQueryHandle_t queryHandle = SteamUGC.CreateQueryUGCDetailsRequest(
+                new PublishedFileId_t[] { fileId }, 1u);
+
+            // 发送查询请求
+            SteamAPICall_t apiCall = SteamUGC.SendQueryUGCRequest(queryHandle);
+            //UnityEngine.Debug.Log("发送UGC查询请求，fileId: " + fileId);
+
+            // 保存回调
+            _queryUGCCallback = CallResult<SteamUGCQueryCompleted_t>.Create((result, failure) =>
+            {
+                //UnityEngine.Debug.Log("【1】：进入查询回调，failure: " + failure + "，结果: " + result.m_eResult);
+
+                if (failure || result.m_eResult != EResult.k_EResultOK)
+                {
+                    //UnityEngine.Debug.LogError("【1】：UGC查询失败，结果: " + result.m_eResult);
+                    SteamUGC.ReleaseQueryUGCRequest(queryHandle);
+                    callback?.Invoke(null);
+                    return;
+                }
+
+                //UnityEngine.Debug.Log("【1】：查询返回结果数量: " + result.m_unNumResultsReturned);
+                if (result.m_unNumResultsReturned == 0)
+                {
+                    //UnityEngine.Debug.LogError("【1】：查询成功但无结果，无法获取详情");
+                    SteamUGC.ReleaseQueryUGCRequest(queryHandle);
+                    callback?.Invoke(null);
+                    return;
+                }
+
+                SteamUGCDetails_t details;
+                bool gotDetails = SteamUGC.GetQueryUGCResult(result.m_handle, 0u, out details);
+                SteamUGC.ReleaseQueryUGCRequest(queryHandle);
+
+                if (!gotDetails)
+                {
+                    //UnityEngine.Debug.LogError("【1】：无法获取UGC详情，可能索引或句柄无效");
+                    callback?.Invoke(null);
+                    return;
+                }
+
+                // 创建元数据对象
+                WorkshopLevelMetadata metadata = new WorkshopLevelMetadata
+                {
+                    workshopId = details.m_nPublishedFileId.m_PublishedFileId,
+                    title = details.m_rgchTitle,
+                    description = details.m_rgchDescription,
+                    itemType = WorkshopItemType.Level,
+                    folder = "workshop/" + details.m_nPublishedFileId.m_PublishedFileId
+                };
+                //UnityEngine.Debug.Log("【1】：成功获取UGC详情，标题: " + metadata.title);
+
+                // 处理缩略图
+                if (details.m_hPreviewFile != default(UGCHandle_t))
+                {
+                    //UnityEngine.Debug.Log("【1】：开始下载缩略图，句柄: " + details.m_hPreviewFile);
+
+                    // 创建并保存缩略图下载回调
+                    _downloadThumbnailCallResult = CallResult<RemoteStorageDownloadUGCResult_t>.Create((downloadResult, downloadFailure) =>
+                    {
+                        //UnityEngine.Debug.Log("【1】：进入缩略图下载回调，failure: " + downloadFailure + "，结果: " + downloadResult.m_eResult);
+
+                        if (downloadFailure || downloadResult.m_eResult != EResult.k_EResultOK)
+                        {
+                            //UnityEngine.Debug.LogError("【1】：缩略图下载失败: " + downloadResult.m_eResult);
+                            CacheMetadataToMemory(metadata);//缓存
+                            SaveMetadataToCache(metadata); // 即使缩略图下载失败，也保存元数据
+                            callback?.Invoke(metadata); // 至少返回地图名
+                            return;
+                        }
+
+                        //UnityEngine.Debug.Log("【1】：缩略图下载成功，大小: " + downloadResult.m_nSizeInBytes);
+
+                        // 读取缩略图字节
+                        byte[] thumbnailBytes = new byte[downloadResult.m_nSizeInBytes];
+                        int bytesRead = SteamRemoteStorage.UGCRead(details.m_hPreviewFile, thumbnailBytes, thumbnailBytes.Length, 0u, EUGCReadAction.k_EUGCRead_Close);
+
+                        if (bytesRead == downloadResult.m_nSizeInBytes)
+                        {
+                            metadata.cachedThumbnailBytes = thumbnailBytes;
+                            //UnityEngine.Debug.Log("【1】：成功读取缩略图，大小: " + bytesRead);
+                        }
+                        else
+                        {
+                            //UnityEngine.Debug.LogWarning("【1】：缩略图读取不完整，预期: " + downloadResult.m_nSizeInBytes + "，实际: " + bytesRead);
+                        }
+                        // 2. 下载完成后存入内存缓存
+                        CacheMetadataToMemory(metadata);
+                        // 保存元数据和缩略图到本地缓存
+                        SaveMetadataToCache(metadata);
+                        SaveThumbnailToCache(levelId, thumbnailBytes);
+                        callback?.Invoke(metadata);
+                    });
+
+                    // 发起缩略图下载
+                    SteamAPICall_t downloadApiCall = SteamRemoteStorage.UGCDownload(details.m_hPreviewFile, 0u);
+
+                    // 检查下载请求是否成功
+                    if (downloadApiCall == default(SteamAPICall_t))
+                    {
+                        //UnityEngine.Debug.LogError("【1】：缩略图下载请求失败，可能预览图句柄无效");
+                        CacheMetadataToMemory(metadata); // 缓存地图名
+                        SaveMetadataToCache(metadata); // 保存元数据（没有缩略图）
+                        callback?.Invoke(metadata);
+                        return;
+                    }
+
+                    _downloadThumbnailCallResult.Set(downloadApiCall);
+                    //UnityEngine.Debug.Log("【1】：已发起缩略图下载请求，等待回调...");
+                }
+                else
+                {
+                    //UnityEngine.Debug.LogWarning("【1】：无预览图句柄，仅返回地图名");
+                    // 无缩略图时，仅缓存地图名
+                    CacheMetadataToMemory(metadata);
+                    SaveMetadataToCache(metadata); // 保存元数据（没有缩略图）
+                    callback?.Invoke(metadata);
+                }
+            });
+
+            _queryUGCCallback.Set(apiCall);
+        }
+        // 获取Steam工坊内容目录（F:\SteamLibrary\steamapps\workshop\content\[APPID]\）
+        // 获取Steam Workshop内容目录
+        public static string GetWorkshopContentPath(uint gameId = 477160)
+        {
+            try
+            {
+                // 获取Unity应用程序的数据路径
+                string dataPath = Application.dataPath;
+
+                // 向上三级目录
+                DirectoryInfo currentDir = new DirectoryInfo(dataPath);
+                DirectoryInfo parentDir = currentDir.Parent?.Parent?.Parent;
+
+                if (parentDir == null)
+                {
+                    //UnityEngine. Debug.LogError("无法向上导航三级目录");
+                    return null;
+                }
+
+                // 拼接Workshop内容路径
+                string workshopPath = Path.Combine(
+                    parentDir.FullName,
+                    "workshop",
+                    "content",
+                    gameId.ToString());
+
+                //UnityEngine.Debug.Log($"计算得到的Workshop路径: {workshopPath}");
+                return workshopPath;
+            }
+            catch (System.Exception ex)
+            {
+                //UnityEngine.Debug.LogError($"获取Workshop路径时出错: {ex.Message}");
+                return null;
+            }
+        }
+
+        // 生成指定UGC的缓存路径（如 F:\SteamLibrary\steamapps\workshop\content\420720\3336459400\）
+        private static string GetUGCCachePath(ulong levelId, string fileName = null)
+        {
+            // 1. 获取Steam工坊内容根目录
+            string workshopContentDir = GetWorkshopContentPath();
+            if (string.IsNullOrEmpty(workshopContentDir))
+            {
+                throw new Exception("无法获取有效的Steam工坊目录");
+            }
+
+            // 2. 拼接指定UGC的目录（content\[APPID]\[UGC ID]）
+            string ugcDir = Path.Combine(workshopContentDir, levelId.ToString());
+
+            // 3. 若需要文件名（如metadata.json），继续拼接
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                ugcDir = Path.Combine(ugcDir, fileName);
+            }
+
+            // 4. 标准化路径（处理斜杠/反斜杠问题）
+            return Path.GetFullPath(ugcDir);
+        }
+        //// 从Steam工坊目录加载缓存
+        //public static WorkshopLevelMetadata LoadFromSteamWorkshopDir(ulong levelId)
+        //{
+        //    try
+        //    {
+        //        string metadataPath = GetUGCCachePath(levelId, "metadata.json");
+        //        if (string.IsNullOrEmpty(metadataPath) || !File.Exists(metadataPath))
+        //        {
+        //            UnityEngine.Debug.Log("【缓存】Steam目录中无此元数据: " + metadataPath);
+        //            return null;
+        //        }
+
+        //        // 读取元数据
+        //        string json = File.ReadAllText(metadataPath);
+        //        WorkshopLevelMetadata metadata = JsonUtility.FromJson<WorkshopLevelMetadata>(json);
+
+        //        // 读取缩略图
+        //        string thumbnailPath = GetUGCCachePath(levelId, "thumbnail.jpg");
+        //        if (File.Exists(thumbnailPath))
+        //        {
+        //            metadata.cachedThumbnailBytes = File.ReadAllBytes(thumbnailPath);
+        //            // 新增：将字节数据转换为纹理
+        //            metadata.thumbnailTexture = ConvertBytesToTexture(metadata.cachedThumbnailBytes);
+        //        }
+
+        //        return metadata;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        UnityEngine.Debug.LogError("【缓存】加载失败: " + e.Message);
+        //        return null;
+        //    }
+        //}
+        // 从Steam工坊目录加载缓存
+        public static string LoadFromSteamWorkshopDir_Name(ulong levelId)
+        {
+            try
+            {
+                string metadataPath = GetUGCCachePath(levelId, "metadata.json");
+                if (string.IsNullOrEmpty(metadataPath) || !File.Exists(metadataPath))
+                {
+                    //UnityEngine.Debug.Log("【缓存】Steam目录中无此元数据: " + metadataPath);
+                    return null;
+                }
+
+                // 读取元数据
+                string json = File.ReadAllText(metadataPath);
+                WorkshopLevelMetadata metadata = JsonUtility.FromJson<WorkshopLevelMetadata>(json);
+
+                return metadata.title;
+
+            }
+            catch (Exception e)
+            {
+                //UnityEngine.Debug.LogError("【缓存】加载失败: " + e.Message);
+                return null;
+            }
+        }
+
+        //public static Texture2D LoadFromSteamWorkshopDir_Tu(ulong levelId)
+        //{
+        //    try
+        //    {
+        //        // 读取缩略图
+        //        string thumbnailPath = GetUGCCachePath(levelId, "thumbnail.jpg");
+
+        //        if (File.Exists(thumbnailPath))
+        //        {
+        //            byte[] cachedThumbnailBytes = File.ReadAllBytes(thumbnailPath);
+        //            // 新增：将字节数据转换为纹理
+        //            return ConvertBytesToTexture(cachedThumbnailBytes);
+        //        }
+
+        //        return null;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        UnityEngine.Debug.LogError("【缓存】加载失败: " + e.Message);
+        //        return null;
+        //    }
+        //}
+        public static Texture2D LoadFromSteamWorkshopDir_Tu(ulong levelId)
+        {
+            try
+            {
+                string thumbnailPath = GetUGCCachePath(levelId, "thumbnail.png");
+
+                return GetTuPian(thumbnailPath);
+            }
+            catch (Exception e)
+            {
+                //UnityEngine.Debug.LogError($"加载缩略图时出错: {e.Message}");
+                return null;
+            }
+        }
+        private static Texture2D GetTuPian(string imagePath)
+        {
+            Texture2D Texture;
+            //string imagePath = yxmodPath + "\\res\\" + imagePath;
+            if (File.Exists(imagePath))
+            {
+                byte[] imageData = File.ReadAllBytes(imagePath);
+                Texture = new Texture2D(1, 1);
+
+                if (Texture.LoadImage(imageData))
+                {
+                    return Texture;
+                }
+                imageData = null;
+                return null;
+            }
+            else
+            {
+                UnityEngine.Debug.LogError(imagePath);
+                return null;
+            }
+        }
+
+
+        // 保存元数据到本地缓存
+        private static void SaveMetadataToCache(WorkshopLevelMetadata metadata)
+        {
+            try
+            {
+                string ugcDir = GetUGCCachePath(metadata.workshopId);
+                if (string.IsNullOrEmpty(ugcDir))
+                    return;
+
+                // 创建目录（如果不存在）
+                if (!Directory.Exists(ugcDir))
+                {
+                    Directory.CreateDirectory(ugcDir);
+                }
+
+                // 保存元数据
+                string metadataPath = GetUGCCachePath(metadata.workshopId, "metadata.json");
+                File.WriteAllText(metadataPath, JsonUtility.ToJson(metadata));
+                //UnityEngine.Debug.Log("【1】：元数据已保存到缓存: " + metadataPath);
+            }
+            catch (Exception e)
+            {
+                //UnityEngine.Debug.LogError("【1】：保存元数据到缓存失败: " + e.Message);
+            }
+        }
+
+        // 保存缩略图到本地缓存
+        private static void SaveThumbnailToCache(ulong levelId, byte[] thumbnailBytes)
+        {
+            try
+            {
+                string ugcDir = GetUGCCachePath(levelId);
+                if (string.IsNullOrEmpty(ugcDir))
+                    return;
+
+                // 创建目录（如果不存在）
+                if (!Directory.Exists(ugcDir))
+                {
+                    Directory.CreateDirectory(ugcDir);
+                }
+
+                // 保存缩略图
+                if (thumbnailBytes != null)
+                {
+                    string thumbnailPath = GetUGCCachePath(levelId, "thumbnail.png");
+                    File.WriteAllBytes(thumbnailPath, thumbnailBytes);
+                    //UnityEngine.Debug.Log("【1】：缩略图已保存到缓存: " + thumbnailPath);
+                }
+
+                
+            }
+            catch (Exception e)
+            {
+                //UnityEngine.Debug.LogError("【1】：保存缩略图到缓存失败: " + e.Message);
+            }
+        }
+        //// 辅助方法：将元数据存入内存缓存（调用AddItem）
+        private static void CacheMetadataToMemory(WorkshopLevelMetadata metadata)
+        {
+            // 按UGC来源分类（订阅的工坊内容，使用Subscription来源）
+            WorkshopItemSource source = WorkshopItemSource.Subscription;
+            // 调用AddItem存入缓存（自动去重，已存在则更新）
+            WorkshopRepository.instance.levelRepo.AddItem(source, metadata);
+        }
+
+        public static IEnumerator GetNewLevel2(LevelInformationBox instance, NetTransport.LobbyDisplayInfo dispInfo)
     	{
     		bool loaded = false;
     		WorkshopLevelMetadata levelData;
