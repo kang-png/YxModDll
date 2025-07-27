@@ -176,6 +176,8 @@
     <Compile Include="Mod\Features\AutomaticHand.cs" />
     <Compile Include="Mod\Features\ChildrenEnumerable.cs" />
     <Compile Include="Mod\Features\AI.cs" />
+    <Compile Include="Mod\Features\LevelRepository2.cs" />
+    <Compile Include="Mod\Features\ThumbnailDownload.cs" />
     <Compile Include="Mod\Features\HumanAttribute.cs" />
     <Compile Include="Mod\Features\INodeDisplay.cs" />
     <Compile Include="Mod\Features\FeatureManager.cs" />

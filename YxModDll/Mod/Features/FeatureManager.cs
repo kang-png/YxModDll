@@ -1,6 +1,7 @@
 using HarmonyLib;
 using HarmonyLib.Tools;
 using HumanAPI;
+using Microsoft.Win32;
 using Multiplayer;
 using Steamworks;
 using System;
@@ -12,11 +13,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text.RegularExpressions;
 using System.Windows.Interop;
 using UnityEngine;
 using UnityEngine.Analytics;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 using static FileTools;
@@ -2201,27 +2204,26 @@ namespace YxModDll.Mod.Features
             }
         }
 
-        [HarmonyPatch(typeof(LevelInformationBox), "UpdateDisplay", new Type[] { typeof(NetTransport.LobbyDisplayInfo) })]
-        [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> UpdateDisplay(IEnumerable<CodeInstruction> instructions)
-        {
-            //IL_0002: Unknown result type (might be due to invalid IL or missing references)
-            //IL_0038: Unknown result type (might be due to invalid IL or missing references)
-            //IL_003e: Expected O, but got Unknown
-            return new CodeMatcher(instructions, (ILGenerator)null).MatchForward(false, (CodeMatch[])(object)new CodeMatch[1]
-            {
-                new CodeMatch((OpCode?)OpCodes.Call, (object)Utils.Method<LevelInformationBox>("GetNewLevel", new Type[1] { typeof(ulong) }), (string)null)
-            }).Advance(-2).SetAndAdvance(OpCodes.Ldarg_1, (object)null)
-                .RemoveInstruction()
-                .Set(OpCodes.Call, (object)Utils.Method<FeatureManager>("GetNewLevel"))
-                .InstructionEnumeration();
-        }
-
+    	[HarmonyPatch(typeof(LevelInformationBox), "UpdateDisplay", new Type[] { typeof(NetTransport.LobbyDisplayInfo) })]
+    	[HarmonyTranspiler]
+    	public static IEnumerable<CodeInstruction> UpdateDisplay(IEnumerable<CodeInstruction> instructions)
+    	{
+    		//IL_0002: Unknown result type (might be due to invalid IL or missing references)
+    		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
+    		//IL_003e: Expected O, but got Unknown
+    		return new CodeMatcher(instructions, (ILGenerator)null).MatchForward(false, (CodeMatch[])(object)new CodeMatch[1]
+    		{
+    			new CodeMatch((OpCode?)OpCodes.Call, (object)Utils.Method<LevelInformationBox>("GetNewLevel", new Type[1] { typeof(ulong) }), (string)null)
+    		}).Advance(-2).SetAndAdvance(OpCodes.Ldarg_1, (object)null)
+    			.RemoveInstruction()
+    			.Set(OpCodes.Call, (object)Utils.Method<FeatureManager>("GetNewLevel"))
+    			.InstructionEnumeration();
+    	}
         public static IEnumerator GetNewLevel(LevelInformationBox instance, NetTransport.LobbyDisplayInfo dispInfo)
         {
             bool loaded = false;
             WorkshopLevelMetadata levelData;
-            Action<WorkshopLevelMetadata> onRead = delegate(WorkshopLevelMetadata l)
+            Action<WorkshopLevelMetadata> onRead = delegate (WorkshopLevelMetadata l)
             {
                 levelData = l;
                 loaded = true;
@@ -2236,7 +2238,9 @@ namespace YxModDll.Mod.Features
             //if (previewOnly && App.state == AppSate.Menu)
             if (UI_SheZhi.guanbidatingxiazai && App.state == AppSate.Menu)
             {
-                WorkshopRepository.instance.levelRepo.GetLevel(dispInfo.LevelID, dispInfo.LevelType, onRead);
+                //只获取图名和图片
+                LevelRepository2.instance.GetLevelNameAndThumbnail(dispInfo.LevelID, dispInfo.LevelType, onRead);
+                //WorkshopRepository.instance.levelRepo.GetLevel(dispInfo.LevelID, dispInfo.LevelType, onRead);
             }
             else
             {
