@@ -544,7 +544,7 @@ namespace YxModDll.Mod
                     UI.CreatAnNiu_AnXia("修改贴图格式", ref skinUseRGB24Format, false, () =>
                     {
                         PlayerPrefs.SetInt("skinUseRGB24Format", skinUseRGB24Format ? 1 : 0);
-                    },"将贴图格式更改为 RGB24（不支持透明像素），可减少约 25% 的内存占用。可与分辨率压缩叠加，总体节省约 81.25%");
+                    },"将贴图格式更改为 RGB24（不支持透明像素），可减少约 25% 的内存占用。可与分辨率压缩叠加，总体节省约 81.25%。重启生效");
 
                     GUILayout.Space(5);
                     UI.CreatFenGeXian();
