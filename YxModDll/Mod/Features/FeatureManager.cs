@@ -2908,24 +2908,39 @@ namespace YxModDll.Mod.Features
             int newW = Mathf.RoundToInt(__result.width * scale);
             int newH = Mathf.RoundToInt(__result.height * scale);
 
-            RenderTexture rt = RenderTexture.GetTemporary(newW, newH);
-            RenderTexture.active = rt;
-            Graphics.Blit(__result, rt);
+            RenderTexture rt = null;
+            RenderTexture oldRT = RenderTexture.active;
 
-            //Texture2D resized = new Texture2D(newW, newH, TextureFormat.RGBA32, false);
-            Texture2D resized = new Texture2D(newW, newH);
-            resized.ReadPixels(new Rect(0, 0, newW, newH), 0, 0);
-            resized.Apply();
+            try
+            {
+                rt = RenderTexture.GetTemporary(newW, newH, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
+                Graphics.Blit(__result, rt);
 
-            RenderTexture.active = null;
-            RenderTexture.ReleaseTemporary(rt);
-            UnityEngine.Object.Destroy(__result); // 销毁旧图
+                RenderTexture.active = rt;
 
-            resized.name = name;
-            __result = resized;
+                Texture2D resized = new Texture2D(newW, newH);
+                resized.ReadPixels(new Rect(0, 0, newW, newH), 0, 0);
+                resized.Apply();
 
-            UnityEngine.Debug.Log($"[TextureFromBytes缩放] {name} => {newW}x{newH}");
-            //Chat.TiShi(NetGame.instance.local, $"[TextureFromBytes缩放] {name} 缩放为 {newW}x{newH}");
+                UnityEngine.Object.Destroy(__result); // 销毁旧图
+
+                resized.name = name;
+                __result = resized;
+
+                UnityEngine.Debug.Log($"[TextureFromBytes缩放] {name} => {newW}x{newH}");
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogError($"[TextureFromBytes缩放] 出错: {e}");
+            }
+            finally
+            {
+                RenderTexture.active = oldRT;
+                if (rt != null)
+                {
+                    RenderTexture.ReleaseTemporary(rt);
+                }
+            }
         }
         //[HarmonyPatch(typeof(Game), "UnloadBundle")]
         //[HarmonyPostfix]

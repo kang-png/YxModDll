@@ -1,11 +1,12 @@
-﻿using Multiplayer;
+﻿using I2.Loc;
+using Multiplayer;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking;
 
 
 
@@ -35,7 +36,7 @@ namespace YxModDll.Mod
             anniuTexture3.SetPixel(0, 0, new Color32(0, 0x70, 0xd7, 255));//按钮按下
             anniuTexture3.Apply();
 
-        
+            LoadCacheFromFile(); // 加载翻译缓存
             //Debug.Log("buttonHeight : " + buttonHeight);
         }
         public static GUIStyle styleSelectionGrid()  ///按下松开效果
@@ -199,6 +200,7 @@ namespace YxModDll.Mod
         {
             GUILayout.BeginHorizontal();
             ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
+            name = TranslateButtonText(name); // 确保按钮名称翻译
             GUILayout.Label(ColorfulSpeek.colorshows(name), GUILayout.Width(100));
             //GUILayout.Space(5);
             if (GUILayout.Button(ColorfulSpeek.colorshows("-"), UI.styleButton()))
@@ -265,6 +267,7 @@ namespace YxModDll.Mod
         {
             GUILayout.BeginHorizontal();
             ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
+            name = TranslateButtonText(name); // 确保按钮名称翻译
             GUILayout.Label(ColorfulSpeek.colorshows(name), GUILayout.Width(100));
             //GUILayout.Space(5);
             if (GUILayout.Button(ColorfulSpeek.colorshows("-"), UI.styleButton()))
@@ -329,6 +332,7 @@ namespace YxModDll.Mod
             ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
             if (name != null)
             {
+                name = TranslateButtonText(name); // 确保按钮名称翻译
                 GUILayout.Label(ColorfulSpeek.colorshows(name));
             }
       
@@ -354,6 +358,7 @@ namespace YxModDll.Mod
             ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
             if (name != null)
             {
+                name = TranslateButtonText(name); // 确保按钮名称翻译
                 GUILayout.Label(ColorfulSpeek.colorshows(name));
             }
 
@@ -411,6 +416,7 @@ namespace YxModDll.Mod
                 GUILayout.FlexibleSpace();
             }
 
+            name = TranslateButtonText(name); // 确保按钮名称翻译
             GUIContent content = new GUIContent(ColorfulSpeek.colorshows(name));
             Rect buttonRect = GUILayoutUtility.GetRect(content, styleButton());
 
@@ -422,6 +428,7 @@ namespace YxModDll.Mod
             // 设置提示文字
             if (!string.IsNullOrEmpty(tooltip) && buttonRect.Contains(Event.current.mousePosition))
             {
+                tooltip = TranslateButtonText(tooltip); // 确保提示文字也翻译
                 currentTooltip = tooltip;
             }
             //int topBottomPadding = (GUI.skin.button.padding.top + GUI.skin.button.padding.bottom); // 这是按钮样式自带的上下内边距之和
@@ -447,6 +454,7 @@ namespace YxModDll.Mod
             //    tab = !tab;
             //    callback?.Invoke(); // 如果callback不为null，则调用它
             //}
+            name = TranslateButtonText(name);
             Rect buttonRect = GUILayoutUtility.GetRect(new GUIContent(ColorfulSpeek.colorshows(name)), styleButton_Tab(tab));
             if (GUI.Button(buttonRect, ColorfulSpeek.colorshows(name), styleButton_Tab(tab)))
             {
@@ -455,6 +463,7 @@ namespace YxModDll.Mod
             }
             if (!string.IsNullOrEmpty(tooltip) && buttonRect.Contains(Event.current.mousePosition))
             {
+                tooltip = TranslateButtonText(tooltip); // 确保提示文字也翻译
                 currentTooltip = tooltip;
             }
             if (chuizhijuzhong)
@@ -497,6 +506,206 @@ namespace YxModDll.Mod
                 GUI.Box(rect, coloredText, tooltipStyle);
             }
         }
+        // 正在翻译的记录（防止重复请求）
+        private static HashSet<Tuple<string, string>> pendingTranslations = new();
 
+        // 调用方只用这个：返回已知翻译，没翻译就先返回原文，后台自动补全
+        public static string TranslateButtonText(string originalText)
+        {
+            string targetLang = LocalizationManager.CurrentLanguage;
+            //UnityEngine.Debug.Log($"当前语言: {targetLang}");
+            if (targetLang == "Chinese Simplified")
+                return originalText;
+            // 查缓存
+            if (buttonTranslations.TryGetValue(originalText, out var langDict))
+            {
+                if (langDict.TryGetValue(targetLang, out var result))
+                {
+                    return result;
+                }
+            }
+
+            // 没翻译，触发后台翻译（不等待）
+            StartTranslationAsync(originalText, targetLang);
+
+            // 返回原文（下次再回来会看到翻译结果）
+            return originalText;
+        }
+        private static string LanguageNameToCode(string name)
+        {
+            return name switch
+            {
+                "English" => "en",
+                "French" => "fra",
+                "Spanish" => "spa",
+                "German" => "de",
+                "Russian" => "ru",
+                "Italian" => "it",
+                "Chinese" => "zh",
+                "Chinese Simplified" => "zh",
+                "ChineseTraditional" => "cht",
+                "Japanese" => "jp",
+                "Korean" => "kor",
+                "Brazilian" => "pt", // 可选写 pt-BR，但通常 pt 足够
+                "Portuguese" => "pt",
+                "Turkish" => "tr",
+                "Thai" => "th",
+                "Indonesian" => "id",
+                "Polish" => "pl",
+                "Ukrainian" => "uk",
+                "Arabic" => "ara",
+                "Lithuanian" => "lt",
+                _ => "en" // fallback
+            };
+        }
+
+        // 异步翻译，并更新缓存（不重复请求）
+        private static DateTime lastTranslateTime = DateTime.MinValue;
+
+        private static async void StartTranslationAsync(string originalText, string targetLang)
+        {
+            var key = Tuple.Create(originalText, targetLang);
+            if (pendingTranslations.Contains(key)) return;
+
+            pendingTranslations.Add(key);
+
+            // ✅ 频率限制：与上次翻译间隔 < 600ms，则等待
+            TimeSpan delay = TimeSpan.FromMilliseconds(600);
+            var timeSinceLast = DateTime.UtcNow - lastTranslateTime;
+            if (timeSinceLast < delay)
+                await Task.Delay(delay - timeSinceLast);
+
+            lastTranslateTime = DateTime.UtcNow;
+
+            // ✅ 语言名称 -> 语言代码
+            string langCode = LanguageNameToCode(targetLang);
+
+            string translated = await TranslateViaApi(originalText, langCode);
+            pendingTranslations.Remove(key);
+
+            if (!string.IsNullOrEmpty(translated))
+            {
+                if (!buttonTranslations.ContainsKey(originalText))
+                    buttonTranslations[originalText] = new Dictionary<string, string>();
+
+                buttonTranslations[originalText][targetLang] = translated;
+                SaveCacheToFile(); // ✅ 保存到本地
+            }
+        }
+
+
+        private static async Task<string> TranslateViaApi(string text, string toLang)
+        {
+            try
+            {
+                WWWForm form = new WWWForm();
+                form.AddField("text", text);
+                form.AddField("from", "auto");
+                form.AddField("to", toLang);
+
+                using (UnityWebRequest www = UnityWebRequest.Post("https://tools.mgtv100.com/external/v1/baidu_translate", form))
+                {
+                    var request = www.SendWebRequest();
+                    while (!request.isDone)
+                        await Task.Yield();
+
+                    if (www.isNetworkError || www.isHttpError)
+                    {
+                        Debug.LogWarning($"翻译失败: {www.error}");
+                        return null;
+                    }
+
+                    string json = www.downloadHandler.text;
+                    Debug.Log($"翻译返回: {json}");
+
+                    // ✅ 手动提取 "trans_result":["xxx"]
+                    string key = "\"trans_result\":[\"";
+                    int start = json.IndexOf(key);
+                    if (start >= 0)
+                    {
+                        start += key.Length;
+                        int end = json.IndexOf("\"", start);
+                        if (end > start)
+                        {
+                            string translated = json.Substring(start, end - start);
+                            return translated;
+                        }
+                    }
+
+                    Debug.LogWarning("翻译失败: 无法从 JSON 中提取结果");
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"翻译失败: {e.Message}");
+            }
+
+            return null;
+        }
+
+
+        static Dictionary<string, Dictionary<string, string>> buttonTranslations = new()
+        {
+            ["个人定点"] = new()
+            {
+                ["English"] = "Personal Point",
+                ["Chinese"] = "个人定点",
+                ["French"] = "Point Personnel",
+                ["Japanese"] = "個人ポイント",
+            },
+            ["无碰撞"] = new()
+            {
+                ["English"] = "No Collision",
+                ["Chinese"] = "无碰撞",
+                ["French"] = "Sans Collision",
+                ["Japanese"] = "衝突なし",
+            },
+            ["无假死"] = new()
+            {
+                ["English"] = "No Ragdoll",
+                ["Chinese"] = "无假死",
+                ["French"] = "Pas de Ragdoll",
+                ["Japanese"] = "ラグドール無効",
+            },
+        };
+        private static readonly string translationCachePath = Path.Combine(Application.persistentDataPath, "button_translations.bin");
+
+        private static void SaveCacheToFile()
+        {
+            try
+            {
+                using (FileStream fs = new FileStream(translationCachePath, FileMode.Create))
+                {
+                    BinaryFormatter bf = new BinaryFormatter();
+                    bf.Serialize(fs, buttonTranslations);
+                }
+                Debug.Log("翻译缓存二进制保存成功");
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("保存失败: " + e.Message);
+            }
+        }
+
+        private static void LoadCacheFromFile()
+        {
+            try
+            {
+                if (!File.Exists(translationCachePath))
+                    return;
+
+                using (FileStream fs = new FileStream(translationCachePath, FileMode.Open))
+                {
+                    BinaryFormatter bf = new BinaryFormatter();
+                    buttonTranslations = (Dictionary<string, Dictionary<string, string>>)bf.Deserialize(fs);
+                }
+                Debug.Log("翻译缓存二进制加载成功");
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("加载失败: " + e.Message);
+                buttonTranslations = new Dictionary<string, Dictionary<string, string>>();
+            }
+        }
     }
 }

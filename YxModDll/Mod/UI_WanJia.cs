@@ -417,7 +417,7 @@ namespace YxModDll.Mod
                         string btnText = $"{j + 1}. {title}";
 
                         // 用CreatAnNiu创建按钮，点击调用HuanFu换皮肤
-                        UI.CreatAnNiu(btnText, false, () =>
+                        UI.CreatAnNiu_Left(btnText, false, () =>
                         {
                             human.player.skin = preset;
                             HuanFu(human?.player, preset);

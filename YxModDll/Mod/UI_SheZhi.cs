@@ -701,7 +701,7 @@ namespace YxModDll.Mod
             yaoqing = PlayerPrefs.GetInt("yaoqing", 0) > 0;
             suodingguanqia = PlayerPrefs.GetInt("suodingguanqia", 0) > 0;
             jinzhijiaru = PlayerPrefs.GetInt("jinzhijiaru", 0) > 0;
-            pingbizhafang = PlayerPrefs.GetInt("pingbizhafang", 1) > 0;
+            pingbizhafang = PlayerPrefs.GetInt("pingbizhafang", 0) > 0;
             pingbici = PlayerPrefs.GetString("pingbici", "大佬炸房|闲人速退|■");
             pingbizishu = PlayerPrefs.GetInt("pingbizishu", 150);
             pingbicishu = PlayerPrefs.GetInt("pingbicishu", 5);
