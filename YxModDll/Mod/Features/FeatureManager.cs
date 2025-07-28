@@ -2454,7 +2454,6 @@ namespace YxModDll.Mod.Features
                 Chat.TiShi(NetGame.instance.local, "[YxMod] 已将 NativeTextureHeader.format 从 RGBA32 替换为 RGB24");
             }
         }
-
         [HarmonyPatch(typeof(FileTools), "TextureFromBytes")]
         [HarmonyPostfix]
         public static void Patch_TextureFromBytes(ref Texture2D __result, string name, byte[] bytes)
@@ -2471,40 +2470,83 @@ namespace YxModDll.Mod.Features
             int newW = Mathf.RoundToInt(__result.width * scale);
             int newH = Mathf.RoundToInt(__result.height * scale);
 
-            RenderTexture rt = null;
-            RenderTexture oldRT = RenderTexture.active;
+            RenderTexture rt = RenderTexture.GetTemporary(newW, newH);
+            RenderTexture.active = rt;
+            Graphics.Blit(__result, rt);
 
-            try
-            {
-                rt = RenderTexture.GetTemporary(newW, newH, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
-                Graphics.Blit(__result, rt);
+            //Texture2D resized = new Texture2D(newW, newH, TextureFormat.RGBA32, false);
+            Texture2D resized = new Texture2D(newW, newH);
+            resized.ReadPixels(new Rect(0, 0, newW, newH), 0, 0);
+            resized.Apply();
 
-                RenderTexture.active = rt;
+            RenderTexture.active = null;
+            RenderTexture.ReleaseTemporary(rt);
+            UnityEngine.Object.Destroy(__result); // 销毁旧图
 
-                Texture2D resized = new Texture2D(newW, newH);
-                resized.ReadPixels(new Rect(0, 0, newW, newH), 0, 0);
-                resized.Apply();
+            resized.name = name;
+            __result = resized;
 
-                UnityEngine.Object.Destroy(__result); // 销毁旧图
-
-                resized.name = name;
-                __result = resized;
-
-                UnityEngine.Debug.Log($"[TextureFromBytes缩放] {name} => {newW}x{newH}");
-            }
-            catch (Exception e)
-            {
-                UnityEngine.Debug.LogError($"[TextureFromBytes缩放] 出错: {e}");
-            }
-            finally
-            {
-                RenderTexture.active = oldRT;
-                if (rt != null)
-                {
-                    RenderTexture.ReleaseTemporary(rt);
-                }
-            }
+            UnityEngine.Debug.Log($"[TextureFromBytes缩放] {name} => {newW}x{newH}");
+            //Chat.TiShi(NetGame.instance.local, $"[TextureFromBytes缩放] {name} 缩放为 {newW}x{newH}");
         }
+        //[HarmonyPatch(typeof(FileTools), "TextureFromBytes")]
+        //[HarmonyPostfix]
+        //public static void Patch_TextureFromBytes(ref Texture2D __result, string name, byte[] bytes)
+        //{
+        //    //UnityEngine.Debug.Log("TextureFromBytes 补丁触发");
+        //    if (!UI_SheZhi.skinCheckEnabled || __result == null)
+        //        return;
+
+        //    int max = Mathf.Max(__result.width, __result.height);
+        //    if (max <= 1024)
+        //        return;
+
+        //    float scale = 1024f / max;
+        //    int newW = Mathf.RoundToInt(__result.width * scale);
+        //    int newH = Mathf.RoundToInt(__result.height * scale);
+
+        //    RenderTexture rt = null;
+        //    RenderTexture oldRT = RenderTexture.active;
+
+        //    try
+        //    {
+        //        rt = new RenderTexture(newW, newH, 0, RenderTextureFormat.ARGB32);
+        //        rt.Create();
+
+        //        Graphics.Blit(__result, rt);
+        //        RenderTexture.active = rt;
+
+        //        Texture2D resized = new Texture2D(newW, newH, TextureFormat.RGBA32, false);
+        //        resized.ReadPixels(new Rect(0, 0, newW, newH), 0, 0);
+        //        resized.Apply();
+
+        //        UnityEngine.Object.Destroy(__result);
+        //        resized.name = name;
+        //        __result = resized;
+
+        //        UnityEngine.Debug.Log($"[TextureFromBytes缩放] {name} => {newW}x{newH}");
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        UnityEngine.Debug.LogError($"[TextureFromBytes缩放] 出错: {e}");
+        //    }
+        //    finally
+        //    {
+        //        if (RenderTexture.active != oldRT)
+        //        {
+        //            UnityEngine.Debug.LogWarning("[TextureFromBytes] RenderTexture.active 被修改过，恢复");
+        //            RenderTexture.active = oldRT;
+        //        }
+
+        //        if (rt != null)
+        //        {
+        //            rt.Release();
+        //            UnityEngine.Object.Destroy(rt);
+        //        }
+        //    }
+
+
+        //}
         //[HarmonyPatch(typeof(Game), "UnloadBundle")]
         //[HarmonyPostfix]
         //static IEnumerator Patch_UnloadBundle(IEnumerator __result)
