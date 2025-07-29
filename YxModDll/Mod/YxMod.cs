@@ -1276,11 +1276,16 @@ namespace YxModDll.Mod
             float angle = -human.GetExt().naosini_zhuanquanTime * 8; // 右臂旋转角度（负号控制初始方向）
             float leftAngle = angle + Mathf.PI; // 左臂角度：与右臂相差180度（π弧度），实现反向
 
-            // 基础方向参考
-            Vector3 up = human.ragdoll.partHead.transform.up;
-            //Vector3 forward = human.ragdoll.partHead.transform.forward;
-            Vector3 forward = NetGame.instance.local.players[0].cameraController.gameCam.transform.forward;
-            Vector3 rightDir = NetGame.instance.local.players[0].cameraController.gameCam.transform.right; // 相机右侧方向（水平）
+            //// 基础方向参考
+            //Vector3 up = human.ragdoll.partHead.transform.up;
+            ////Vector3 forward = human.ragdoll.partHead.transform.forward;
+            //Vector3 forward = NetGame.instance.local.players[0].cameraController.gameCam.transform.forward;
+            //Vector3 rightDir = NetGame.instance.local.players[0].cameraController.gameCam.transform.right; // 相机右侧方向（水平）
+            // 使用摄像机方向作为前进基准
+            float cameraYaw = human.controls.cameraYawAngle;
+            Vector3 forward = Quaternion.Euler(0f, cameraYaw, 0f) * Vector3.forward;
+            Vector3 rightDir = Quaternion.Euler(0f, cameraYaw, 0f) * Vector3.right; // 相机右侧方向（水平）
+            Vector3 up = Vector3.up;
 
             // 圆心：右肩向右0.5米，左肩向左0.5米（基于相机水平方向）
             Vector3 rightShoulderPos = human.ragdoll.partRightArm.rigidbody.worldCenterOfMass + rightDir * 0.5f; // 右移0.5米
