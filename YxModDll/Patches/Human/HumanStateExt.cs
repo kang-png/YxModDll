@@ -53,6 +53,8 @@ namespace YxModDll.Patches
         public float baibiTime;
         public Vector3 shengkongGaoDu = Vector3.zero;
         public bool ninjarun; //忍者跑
+        public bool naosini;
+        public float naosini_zhuanquanTime;
         public int numY;//Y   0 晕倒    1 坐下     2 跪下    3 一字马   4 踢腿   5拳王
 
         public Human ntp_human;

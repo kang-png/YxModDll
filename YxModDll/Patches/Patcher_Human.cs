@@ -302,7 +302,7 @@ namespace YxModDll.Patches
             YxMod.FanChiBang_Fun(instance);
             YxMod.NinjaRunPose_Fun(instance);
             YxMod.FanChiBangY8_Fun(instance);
-
+            YxMod.NaoSiNi_Fun(instance);
             instance.GetExt().dingdian.DingDian_Fun(instance);
             YxMod.WuPengZhuang_Fun(instance);
             YxMod.GuaJian_Fun(instance);
@@ -441,8 +441,11 @@ namespace YxModDll.Patches
                             YxMod.NinjaRunPose(instance);
                             break;
 
-                        case 8: 
+                        case 8:
                             YxMod.FanChiBangY8(instance);
+                            break;
+                        case 9:
+                            YxMod.NaoSiNi(instance);
                             break;
                     }
                 }
@@ -461,6 +464,10 @@ namespace YxModDll.Patches
                     if (ext.fanchibangY8)
                     {
                         YxMod.EndFanChiBangY8(instance);
+                    }
+                    if(ext.naosini)
+                    {
+                        YxMod.EndNaoSiNi(instance);
                     }
                 }
 

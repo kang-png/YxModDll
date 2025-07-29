@@ -1253,8 +1253,78 @@ namespace YxModDll.Mod
             human.ragdoll.partRightForearm.rigidbody.useGravity = true;
             human.ragdoll.partRightHand.rigidbody.useGravity = true;
         }
+        public static void NaoSiNi(Human human)
+        {
+
+            human.GetExt().naosini = true;
+
+            //// 禁用左右臂重力
+            // 右臂
+            human.ragdoll.partRightHand.rigidbody.useGravity = false;
+            human.ragdoll.partRightForearm.rigidbody.useGravity = false;
+            human.ragdoll.partRightArm.rigidbody.useGravity = false;
+            // 左臂
+            human.ragdoll.partLeftHand.rigidbody.useGravity = false;
+            human.ragdoll.partLeftForearm.rigidbody.useGravity = false;
+            human.ragdoll.partLeftArm.rigidbody.useGravity = false;
+        }
+        public static void NaoSiNi_Fun(Human human)//Y9动作：挠死你
+        {
+            if (!human.GetExt().naosini) return;
+
+            human.GetExt().naosini_zhuanquanTime += Time.deltaTime;
+            float angle = -human.GetExt().naosini_zhuanquanTime * 8; // 右臂旋转角度（负号控制初始方向）
+            float leftAngle = angle + Mathf.PI; // 左臂角度：与右臂相差180度（π弧度），实现反向
+
+            // 基础方向参考
+            Vector3 up = human.ragdoll.partHead.transform.up;
+            //Vector3 forward = human.ragdoll.partHead.transform.forward;
+            Vector3 forward = NetGame.instance.local.players[0].cameraController.gameCam.transform.forward;
+            Vector3 rightDir = NetGame.instance.local.players[0].cameraController.gameCam.transform.right; // 相机右侧方向（水平）
+
+            // 圆心：右肩向右0.5米，左肩向左0.5米（基于相机水平方向）
+            Vector3 rightShoulderPos = human.ragdoll.partRightArm.rigidbody.worldCenterOfMass + rightDir * 0.5f; // 右移0.5米
+            Vector3 leftShoulderPos = human.ragdoll.partLeftArm.rigidbody.worldCenterOfMass - rightDir * 0.5f;   // 左移0.5米（-rightDir即左侧）
 
 
+            float armLength = 1f; // 手臂长度（半径）
+
+
+            // ===== 右臂转圈（原逻辑）=====
+            Vector3 rightHandTargetPos = rightShoulderPos +
+                                       forward * Mathf.Cos(angle) * armLength +
+                                       up * Mathf.Sin(angle) * armLength;
+
+            Vector3 rightToTarget = rightHandTargetPos - human.ragdoll.partRightHand.rigidbody.worldCenterOfMass;
+            float forceMagnitude = 300f;
+            human.ragdoll.partRightHand.rigidbody.SafeAddForce(rightToTarget.normalized * forceMagnitude);
+            human.ragdoll.partRightHand.rigidbody.MoveRotation(Quaternion.LookRotation(forward, up));
+
+
+            // ===== 左臂转圈（反向逻辑）=====
+            Vector3 leftHandTargetPos = leftShoulderPos +
+                                      forward * Mathf.Cos(leftAngle) * armLength + // 使用leftAngle实现反向
+                                      up * Mathf.Sin(leftAngle) * armLength;
+
+            Vector3 leftToTarget = leftHandTargetPos - human.ragdoll.partLeftHand.rigidbody.worldCenterOfMass;
+            human.ragdoll.partLeftHand.rigidbody.SafeAddForce(leftToTarget.normalized * forceMagnitude);
+            human.ragdoll.partLeftHand.rigidbody.MoveRotation(Quaternion.LookRotation(-forward, up)); // 左手朝向微调
+
+        }
+        public static void EndNaoSiNi(Human human)
+        {
+            human.GetExt().naosini=false;
+            // 重置状态（恢复重力）
+            human.GetExt().naosini_zhuanquanTime = 0f;
+            // 右臂
+            human.ragdoll.partRightHand.rigidbody.useGravity = true;
+            human.ragdoll.partRightForearm.rigidbody.useGravity = true;
+            human.ragdoll.partRightArm.rigidbody.useGravity = true;
+            // 左臂
+            human.ragdoll.partLeftHand.rigidbody.useGravity = true;
+            human.ragdoll.partLeftForearm.rigidbody.useGravity = true;
+            human.ragdoll.partLeftArm.rigidbody.useGravity = true;
+        }
         public static void TiTui(Human human)
         {
             if (!human.GetExt().yititui)
