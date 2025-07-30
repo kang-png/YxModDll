@@ -2572,30 +2572,29 @@ namespace YxModDll.Mod.Features
             // 克隆 NetStream
             NetStream clone = NetStream.AllocStream(stream);
             NetMsgId netMsgId = clone.ReadMsgId();
-            clone.Release();
-
-            string playerId = connection.ToString();
-
             if (netMsgId == NetMsgId.RemoveHost)
             {
-                if (playerId != Human.all[0].player.skinUserId)
-                {
-                    Chat.TiShi(NetGame.instance.local, $"玩家 {playerId} 在踢你！");
-                    return false;
-                }
-                return true;
-            }
+                uint hostId = clone.ReadNetId();
+                NetHost netHost = NetGame.instance.FindAnyHost(hostId);
 
-            //if (netMsgId == NetMsgId.SendSkin)
-            //{
-            //    if (playerId != Human.all[0].player.skinUserId && lastSkinReceiveTime.TryGetValue(playerId, out DateTime lastTime) &&
-            //        (DateTime.Now - lastTime).TotalMinutes < 5)
-            //    {
-            //        UnityEngine.Debug.Log($"玩家 {playerId} 5分钟内只能换一次皮肤！");
-            //        return false;
-            //    }
-            //    lastSkinReceiveTime[playerId] = DateTime.Now;
-            //}
+                if (netHost != null)
+                {
+                    string playerId = connection.ToString();
+                    ulong ulSteamID = ulong.Parse(playerId);
+                    CSteamID steamIDFriend = new CSteamID(ulSteamID);
+                    string playername = SteamFriends.GetFriendPersonaName(steamIDFriend);
+                    UnityEngine.Debug.Log($"connection:{playername} - 房主：{Human.all[0].player.host.name} - 被移除的是：{netHost.name}");
+
+                    if (playerId != Human.all[0].player.skinUserId)
+                    {
+                        Chat.TiShi(NetGame.instance.local, $"玩家 {playername} 在强踢你！");
+                        UnityEngine.Debug.Log($"玩家 {playername} 在强踢你！");
+                        return false;
+                    }
+
+                }
+            }
+            clone.Release();
             return true;
         }
         //[HarmonyPatch(typeof(NetGame), "OnServerReceive")]
