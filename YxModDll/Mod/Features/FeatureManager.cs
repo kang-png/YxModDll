@@ -2585,7 +2585,7 @@ namespace YxModDll.Mod.Features
                     string playername = SteamFriends.GetFriendPersonaName(steamIDFriend);
                     UnityEngine.Debug.Log($"connection:{playername} - 房主：{Human.all[0].player.host.name} - 被移除的是：{netHost.name}");
 
-                    if (playerId != Human.all[0].player.skinUserId)
+                    if (playerId != NetGame.instance.server.players[NetGame.instance.server.players.Count-1].skinUserId)
                     {
                         Chat.TiShi(NetGame.instance.local, $"玩家 {playername} 在强踢你！");
                         UnityEngine.Debug.Log($"玩家 {playername} 在强踢你！");
