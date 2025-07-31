@@ -51,34 +51,18 @@ namespace YxModDll.Patches
             {
                 try
                 {
-                    if (ShouldDisplay(instance))
+                    if (!player.isLocalPlayer && MenuSystem.instance.activeMenu == null)
                     {
                         forceShow = true;
                         _forceShow.SetValue(instance, forceShow);
                         currentWaitTime = 5f;
                         _currentWaitTime.SetValue(instance, currentWaitTime);
 
-                        if (player.isLocalPlayer)
-                        {
-                            instance.transform.forward = FeatureManager.MainCamera.transform.forward;
-                            //instance.textMesh.transform.localScale = Vector3.one * 1.2f;
-                            Transform humanTransform = player?.human?.ragdoll?.transform;
-                            Camera camera = FeatureManager.MainCamera;
-                            if (humanTransform != null && camera != null)
-                            {
-                                float distance = Vector3.Distance(humanTransform.position, camera.transform.position);
-                                float fovRadians = camera.fieldOfView * 0.5f * Mathf.Deg2Rad;
-                                float scaleBase = Mathf.Tan(fovRadians);
-                                float scale = distance * scaleBase * Mathf.Lerp(instance.maxScale, instance.minScale, distance / instance.maxScaleDistance);
-                                instance.transform.localScale = Vector3.one * scale;
-                            }
-
-                        }
                         EnableRenderers(instance, enable: true);
                     }
                 }
                 catch { }
-                return;
+                //return;
             }
             if (currentWaitTime > 0f)
             {

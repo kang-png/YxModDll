@@ -1,13 +1,14 @@
-﻿using Multiplayer;
+﻿using HumanAPI;
+using Multiplayer;
+using Steamworks;
 using System;
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using Steamworks;
-using HumanAPI;
-using System.Security.Cryptography;
+using System.Windows.Interop;
+using UnityEngine;
 using YxModDll.Patches;
 
 namespace YxModDll.Mod
@@ -156,6 +157,10 @@ namespace YxModDll.Mod
                     nick = QuDiaoDaiMa(nick, "");
                 }
                 NetChat.OnReceive(clientId, nick, msg);
+
+                string msg1 = QuDiaoDaiMa($"{nick} : {msg}", "");
+                string time = DateTime.Now.ToString("HH:mm:ss");
+                Debug.Log($"[{time}] [消息]{clientId}.{msg1}");
             }
 
 
@@ -2852,6 +2857,10 @@ namespace YxModDll.Mod
                     //Debug.Log(msg);
                     MsgSetGongNeng(msg, NetGame.instance.server, NetGame.instance.server.players[0].human);
                 }
+
+                string msg1 = QuDiaoDaiMa(msg,"");
+                string time = DateTime.Now.ToString("HH:mm:ss");
+                Debug.Log($"[{time}] [消息]我 : {msg1}");
             }
         }
         public static void FaYan(string msg, bool formatMsg = true)
