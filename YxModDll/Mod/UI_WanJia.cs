@@ -405,7 +405,7 @@ namespace YxModDll.Mod
                         string charName = slot == 0 ? "MainCharacter" : "CoopCharacter";
                         Chat.TiShi(NetGame.instance.local, $"皮肤已保存到 {charName}，下次启动游戏会自动应用");
 
-                    }, "注意：此操作会覆盖本地皮肤！工坊皮肤仅临时生效，想要永久生效请点击保存按钮。");
+                    }, "注意：此操作会覆盖本地皮肤！工坊皮肤仅临时生效，想要永久生效请点击保存按钮。为了避免矛盾，不许保存别人皮肤。");
                     //GUILayout.Label(ColorfulSpeek.colorshows("订阅皮肤列表"), UI.SetLabelStyle_JuZhong());
                     for (int j = 0; j < WorkshopRepository.instance.presetRepo.Count; j++)
                     {

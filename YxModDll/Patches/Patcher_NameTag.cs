@@ -3,6 +3,7 @@ using System;
 using System.Reflection;
 using UnityEngine;
 using YxModDll.Mod;
+using YxModDll.Mod.Features;
 using YxModDll.Patches;
 using static NameTag;
 
@@ -45,6 +46,7 @@ namespace YxModDll.Patches
         {
             var forceShow = (bool)_forceShow.GetValue(instance);
             var currentWaitTime = (float)_currentWaitTime.GetValue(instance);
+            var player = (NetPlayer)_player.GetValue(instance);
             if (UI_SheZhi.xianshimingzi)/////修改
             {
                 try
@@ -56,6 +58,22 @@ namespace YxModDll.Patches
                         currentWaitTime = 5f;
                         _currentWaitTime.SetValue(instance, currentWaitTime);
 
+                        if (player.isLocalPlayer)
+                        {
+                            instance.transform.forward = FeatureManager.MainCamera.transform.forward;
+                            //instance.textMesh.transform.localScale = Vector3.one * 1.2f;
+                            Transform humanTransform = player?.human?.ragdoll?.transform;
+                            Camera camera = FeatureManager.MainCamera;
+                            if (humanTransform != null && camera != null)
+                            {
+                                float distance = Vector3.Distance(humanTransform.position, camera.transform.position);
+                                float fovRadians = camera.fieldOfView * 0.5f * Mathf.Deg2Rad;
+                                float scaleBase = Mathf.Tan(fovRadians);
+                                float scale = distance * scaleBase * Mathf.Lerp(instance.maxScale, instance.minScale, distance / instance.maxScaleDistance);
+                                instance.transform.localScale = Vector3.one * scale;
+                            }
+
+                        }
                         EnableRenderers(instance, enable: true);
                     }
                 }
@@ -66,6 +84,22 @@ namespace YxModDll.Patches
             {
                 currentWaitTime -= Time.deltaTime;
                 _currentWaitTime.SetValue(instance, currentWaitTime);
+                if (player.isLocalPlayer)
+                {
+                    instance.transform.forward = FeatureManager.MainCamera.transform.forward;
+                    //instance.textMesh.transform.localScale = Vector3.one * 1.2f;
+                    Transform humanTransform = player?.human?.ragdoll?.transform;
+                    Camera camera = FeatureManager.MainCamera;
+                    if (humanTransform != null && camera != null)
+                    {
+                        float distance = Vector3.Distance(humanTransform.position, camera.transform.position);
+                        float fovRadians = camera.fieldOfView * 0.5f * Mathf.Deg2Rad;
+                        float scaleBase = Mathf.Tan(fovRadians);
+                        float scale = distance * scaleBase * Mathf.Lerp(instance.maxScale, instance.minScale, distance / instance.maxScaleDistance);
+                        instance.transform.localScale = Vector3.one * scale;
+                    }
+
+                }
                 if (currentWaitTime < 0f)
                 {
                     EnableRenderers(instance, enable: false);
@@ -90,7 +124,8 @@ namespace YxModDll.Patches
         {
             var player = (NetPlayer)_player.GetValue(instance);
 
-            return !player.isLocalPlayer && MenuSystem.instance.activeMenu == null;
+            //return !player.isLocalPlayer && MenuSystem.instance.activeMenu == null;
+            return MenuSystem.instance.activeMenu == null;
         }
         private static void EnableRenderers(NameTag instance, bool enable)
         {

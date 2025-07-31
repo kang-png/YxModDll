@@ -172,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntryPoint.cs" />
+    <Compile Include="Mod\YxModEffectRegistry.cs" />
     <Compile Include="Mod\DiTuSuoLueTu.cs" />
     <Compile Include="Mod\Features\AutomaticHand.cs" />
     <Compile Include="Mod\Features\ChildrenEnumerable.cs" />

@@ -47,7 +47,9 @@ namespace YxModDll.Mod
                 GameObject grabObject = human.ragdoll.partLeftHand.sensor.grabObject;
                 if (grabObject != null)
                 {
-                    wuti = grabObject.GetComponent<Rigidbody>();
+                    //wuti = grabObject.GetComponent<Rigidbody>();
+                    wuti = grabObject.GetComponentInParent<Rigidbody>();
+
                     // 检查抓取物体的父级是否有 Human 组件
                     Human componentInParent = grabObject.GetComponentInParent<Human>();
                     if (componentInParent != null)

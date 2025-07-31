@@ -281,7 +281,7 @@ namespace YxModDll.Mod
                     }
                     if (human.GetExt().jinzhibeikong && human != Human.all[result1])
                     {
-                        Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
+                        Chat.TiShi(netHost, $"你禁止其他客机控制你,所以你也无法控制他人");
                         return;
                     }
                     if (Human.all[result1].GetExt().jinzhibeikong && human != Human.all[0])
