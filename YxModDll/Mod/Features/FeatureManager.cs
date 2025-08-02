@@ -528,7 +528,8 @@ namespace YxModDll.Mod.Features
                         Human.Localplayer.controls.cameraYawAngle = (((Human.Localplayer.controls.cameraYawAngle - num) % 360f < 180f) ? (num + 90f) : (num - 90f));
                     }
                 }
-                if (Input.GetKeyDown(KeyCode.R) && !Input.GetKey(KeyCode.LeftControl))
+                //if (Input.GetKeyDown(KeyCode.R) && !Input.GetKey(KeyCode.LeftControl))
+                if (HotKey.Is(HotKey.QuanJiZiShi) && !Input.GetKey(KeyCode.LeftControl))
                 {
                     modifyHand = !modifyHand;
                     if (modifyHand)

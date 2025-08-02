@@ -111,7 +111,19 @@ namespace YxModDll.Mod
                 }
                 else if (NetGame.isClient)
                 {
-                    if (UI_SheZhi.faq) { Chat.Send("q", false);return; }
+                    if (UI_SheZhi.faq) 
+                    { 
+                        if(!YxMod.YxModServer)
+                        {
+                            Chat.Send("q", false);
+                            
+                        }
+                        else
+                        {
+                            Chat.SendYxModMsgClient(Chat.YxModMsgStr("q"));
+                        }
+                        return;
+                    }
                     Human human2 = NetGame.instance.local.players[0].human;
                     human2.player.SendMove(-1f, human2.controls.walkLocalDirection.x, human2.controls.cameraPitchAngle, human2.controls.cameraYawAngle, human2.controls.leftExtend, human2.controls.rightExtend, human2.controls.jump, false, false);
                     human2.player.SendMove(-1f, human2.controls.walkLocalDirection.x, human2.controls.cameraPitchAngle, human2.controls.cameraYawAngle, human2.controls.leftExtend, human2.controls.rightExtend, human2.controls.jump, false, true);

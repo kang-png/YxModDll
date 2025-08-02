@@ -21,6 +21,7 @@ namespace YxModDll.Mod
         public static KuaiJieJian_Type QuanYuanFeiTian = new KuaiJieJian_Type();
         public static KuaiJieJian_Type QuanYuanChaoRen = new KuaiJieJian_Type();
         public static KuaiJieJian_Type QuanYuanShanXian = new KuaiJieJian_Type();
+        public static KuaiJieJian_Type QuanJiZiShi = new KuaiJieJian_Type();
         public static KuaiJieJian_Type WuPinGuaJian = new KuaiJieJian_Type();
         
         //一个数字键
@@ -52,12 +53,13 @@ namespace YxModDll.Mod
             QuanYuanFeiTian = INI.GetKuaiJieJian("全员飞天", new KuaiJieJian_Type(KeyCode.F4));
             QuanYuanChaoRen = INI.GetKuaiJieJian("全员超人", new KuaiJieJian_Type(KeyCode.F5));
             QuanYuanShanXian = INI.GetKuaiJieJian("全员闪现", new KuaiJieJian_Type(KeyCode.F6));
+            QuanJiZiShi = INI.GetKuaiJieJian("拳击姿势", new KuaiJieJian_Type(KeyCode.R));
             WuPinGuaJian = INI.GetKuaiJieJian("物品挂件", new KuaiJieJian_Type(KeyCode.M));
 
 
             //一个数字键
-            KongZhiFenShen = INI.GetKuaiJieJian("控制分数", new KuaiJieJian_Type(KeyCode.LeftAlt));
-            QieHuanFenShen = INI.GetKuaiJieJian("切换分数", new KuaiJieJian_Type(KeyCode.LeftControl));
+            KongZhiFenShen = INI.GetKuaiJieJian("控制分身", new KuaiJieJian_Type(KeyCode.LeftAlt));
+            QieHuanFenShen = INI.GetKuaiJieJian("切换分身", new KuaiJieJian_Type(KeyCode.LeftControl));
             ZhiDingFeiTian = INI.GetKuaiJieJian("指定飞", new KuaiJieJian_Type(KeyCode.F));
             ZhiDingChaoRen = INI.GetKuaiJieJian("指定超人", new KuaiJieJian_Type(KeyCode.C));
             ZhiDingShanXian = INI.GetKuaiJieJian("指定闪现", new KuaiJieJian_Type(KeyCode.B));
@@ -209,11 +211,12 @@ namespace YxModDll.Mod
                 UI.CreateHotKey("全员闪现：", ref QuanYuanShanXian);
                 UI.CreateHotKey("上一关：", ref ShangYiGuan);
                 UI.CreateHotKey("下一关：", ref XiaYiGuan);
-                UI.CreateHotKey("物品挂件：", ref WuPinGuaJian);
+                UI.CreateHotKey("拳击姿势：", ref QuanJiZiShi);
+                UI.CreateHotKey("物体挂件：", ref WuPinGuaJian);
 
                 //一个数字键
-                UI.CreateHotKey("控制分数：", ref KongZhiFenShen, 1);
-                UI.CreateHotKey("切换分数：", ref QieHuanFenShen, 1);
+                UI.CreateHotKey("控制分身：", ref KongZhiFenShen, 1);
+                UI.CreateHotKey("切换分身：", ref QieHuanFenShen, 1);
                 UI.CreateHotKey("指定飞天：", ref ZhiDingFeiTian, 1);
                 UI.CreateHotKey("指定超人：", ref ZhiDingChaoRen, 1);
                 UI.CreateHotKey("指定闪现：", ref ZhiDingShanXian, 1);
