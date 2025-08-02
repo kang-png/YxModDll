@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using YxModDll.Mod.Features;
 using YxModDll.Patches;
 
 
@@ -152,8 +153,9 @@ namespace YxModDll.Mod
         public static bool dangqianrenshupaixu;
         public static bool skinCheckEnabled;
         public static bool skinUseRGB24Format;
-        public static bool fixWhiteHumanEnabled;
 
+        public static float playerCamDistance = 300f;
+        public static float freeRoamCamDistance = 300f;
         public static void CreatUI()//创建菜单功能区
         {
             float kehuquHeight = UI_Main.shezhiUI_gao - UI_Windows.biaotiUiheight;
@@ -545,7 +547,20 @@ namespace YxModDll.Mod
                     {
                         PlayerPrefs.SetInt("skinUseRGB24Format", skinUseRGB24Format ? 1 : 0);
                     },"将贴图格式更改为 RGB24（不支持透明像素），可减少约 25% 的内存占用。可与分辨率压缩叠加，总体节省约 81.25%。重启生效");
+                    UI.CreatAnNiu_AnXia("清除Bug玩家", ref FeatureManager.removeBugHuman, false, () =>
+                    {
+                        PlayerPrefs.SetInt("removeBugHuman", FeatureManager.removeBugHuman ? 1 : 0);
+                    },"移除异常玩家对象。通常因为网络问题没有正确加入房间，导致主机信息和玩家信息对不上。比如头顶ID不一致，同时接收两个房间的消息。");
 
+                    UI.CreatAnNiu_AnXia("显示目标距离", ref FeatureManager.xrayPlayers, false, null, "显示玩家距离、存档点距离");
+                    UI.CreatShuZhi("玩家视距", ref playerCamDistance, 100f, 20000f, 100f, () =>
+                    {
+                        FeatureManager.MainCamera.farClipPlane = UI_SheZhi.playerCamDistance;
+                    }, yuan: 300f);
+                    UI.CreatShuZhi("自由视角视距", ref freeRoamCamDistance, 100f, 20000f, 100f, () =>
+                    {
+                        PlayerPrefs.SetFloat("freeRoamCamDistance", freeRoamCamDistance);
+                    }, yuan: 300f);
                     GUILayout.Space(5);
                     UI.CreatFenGeXian();
                     GUILayout.Space(5);
@@ -722,7 +737,7 @@ namespace YxModDll.Mod
             haoyoufangjian = PlayerPrefs.GetInt("haoyoufangjian", 1) > 0;
             skinCheckEnabled = PlayerPrefs.GetInt("skinCheckEnabled", 1) > 0;
             skinUseRGB24Format = PlayerPrefs.GetInt("skinUseRGB24Format", 1) > 0;
-            fixWhiteHumanEnabled = PlayerPrefs.GetInt("fixWhiteHumanEnabled", 1) > 0;
+            freeRoamCamDistance = PlayerPrefs.GetFloat("freeRoamCamDistance", 300f);
 
             //显示设置
             KeyDisplayUI.showKeys = PlayerPrefs.GetInt("showKeys", 0) > 0;
@@ -832,10 +847,6 @@ namespace YxModDll.Mod
         public static void SaveSkinCheckSetting()
         {
             PlayerPrefs.SetInt("skinCheckEnabled", skinCheckEnabled ? 1 : 0);
-        }
-        public static void SaveFixWhiteHumanSetting()
-        {
-            PlayerPrefs.SetInt("fixWhiteHumanEnabled", fixWhiteHumanEnabled ? 1 : 0);
         }
 
         public static void Skip_Start()

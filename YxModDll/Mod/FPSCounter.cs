@@ -130,7 +130,7 @@ namespace YxModDll.Mod
 
         private void OnGUI()
         {
-            if (!showFPS) return;
+            if (!showFPS || FreeRoamCam.allowFreeRoam) return;
             if (style == null)
             {
                 style = new GUIStyle

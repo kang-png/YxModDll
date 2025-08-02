@@ -381,6 +381,8 @@ namespace YxModDll.Mod.Features
 
         public static int receiveCount;
 
+        private bool cameraAdjusted;
+
         public static Camera MainCamera
         {
             get
@@ -400,7 +402,8 @@ namespace YxModDll.Mod.Features
         public void Start()
         {
             instance = this;
-            xrayPlayers = true;
+            xrayPlayers = false;
+            removeBugHuman = PlayerPrefs.GetInt("removeBugHuman", 0) > 0;
             previewOnly = true;
             noWorkshopReload = false;
             noDelay = true;
@@ -541,6 +544,19 @@ namespace YxModDll.Mod.Features
                         curExtendedHand = "1.0";
                     }
                 }
+
+                if (FreeRoamCam.allowFreeRoam && !cameraAdjusted)
+                {
+                    MainCamera.farClipPlane = UI_SheZhi.freeRoamCamDistance;
+                    UI_Main.ShowUI = false;
+                    cameraAdjusted = true;
+                    //UnityEngine.Debug.Log("[YxMod] FreeRoamCam 视距调整为 " + MainCamera.farClipPlane);
+                }
+                if (!FreeRoamCam.allowFreeRoam)
+                {
+                    UI_Main.ShowUI = true;
+                    cameraAdjusted = false;
+                }
             }
             if (gameLevel != Game.instance.currentLevelNumber)
             {
@@ -658,6 +674,10 @@ namespace YxModDll.Mod.Features
 
         public void OnGUI()
         {
+            if (xrayPlayers)
+            {
+                XrayPlayers();
+            }
         }
 
         private int CalcSize(float distance)
@@ -665,6 +685,167 @@ namespace YxModDll.Mod.Features
             return (int)Mathf.Clamp(20f - (distance - 5f) / 5f, 14f, 20f);
         }
 
+        public void XrayPlayers()
+        {
+            if (Human.Localplayer == null)
+            {
+                return;
+            }
+            GUIStyle style = new GUIStyle
+            {
+                alignment = TextAnchor.UpperLeft
+            };
+            foreach (Human item7 in Human.all)
+            {
+                if (!item7.IsLocalPlayer || FreeRoamCam.allowFreeRoam)
+                {
+                    float num = Vector3.Distance(Human.Localplayer.transform.position, item7.transform.position);
+                    if (IsTheFieldOfView(item7.transform.position))
+                    {
+                        Vector3 vector = MainCamera.WorldToScreenPoint(item7.transform.position);
+                        int num2 = CalcSize(num);
+                        GUI.Label(new Rect(vector.x - 50f, (float)Screen.height - vector.y, 200f, 35f), string.Format("<color=#{0}>{1} {2:0.0}m</color>", item7.IsLocalPlayer ? "00FF00" : "FF0000", item7.player.host.name, num), style);
+                    }
+                }
+            }
+            if (showLoadingZone && loadingZoneVisuals != null)
+            {
+                foreach (GameObject loadingZoneVisual in loadingZoneVisuals)
+                {
+                    if (!(loadingZoneVisual == null))
+                    {
+                        Vector3 position = loadingZoneVisual.transform.position;
+                        if (IsTheFieldOfView(position))
+                        {
+                            float num3 = Vector3.Distance(Human.Localplayer.transform.position, position);
+                            Vector3 vector2 = MainCamera.WorldToScreenPoint(position);
+                            GUI.Label(new Rect(vector2.x - 50f, (float)Screen.height - vector2.y, 200f, 35f), $"<color=#00FF00>Pass {num3:0.0}m</color>", style);
+                        }
+                    }
+                }
+            }
+            if (showCheckpoint && checkpointVisuals != null)
+            {
+                foreach (GameObject checkpointVisual in checkpointVisuals)
+                {
+                    if (!(checkpointVisual == null))
+                    {
+                        Vector3 position2 = checkpointVisual.transform.position;
+                        Checkpoint component = checkpointVisual.transform.parent.GetComponent<Checkpoint>();
+                        int num4 = component?.number ?? checkpointVisual.transform.parent.GetComponent<SignalTriggerCheckpoint>().checkpointNum;
+                        int num5 = component?.subObjective ?? 0;
+                        if (IsTheFieldOfView(position2))
+                        {
+                            float num6 = Vector3.Distance(Human.Localplayer.transform.position, position2);
+                            Vector3 vector3 = MainCamera.WorldToScreenPoint(position2);
+                            GUI.Label(new Rect(vector3.x - 50f, (float)Screen.height - vector3.y, 200f, 35f), string.Format("<color=#FF8000>CP{0}{1} {2:0.0}m</color>", num4, (num5 > 0) ? ((object)num5) : "", num6), style);
+                        }
+                    }
+                }
+            }
+            Vector3 a = (FreeRoamCam.allowFreeRoam ? freeRoamCam.transform.position : Human.Localplayer.transform.position);
+            if (newbieMode)
+            {
+                Dictionary<Vector3, List<string>> dictionary = new Dictionary<Vector3, List<string>>();
+                TriggerVolume[] array = triggerVolumes;
+                foreach (TriggerVolume triggerVolume in array)
+                {
+                    if (triggerVolume == null)
+                    {
+                        continue;
+                    }
+                    Vector3 position3 = triggerVolume.transform.position;
+                    if (!(Vector3.Distance(a, position3) > 100f))
+                    {
+                        IEnumerable<GameObject> source = triggerVolume.additionalColliders;
+                        if (triggerVolume.colliderToCheckFor != null)
+                        {
+                            source = source.Prepend(triggerVolume.colliderToCheckFor.gameObject);
+                            //source = new[] { triggerVolume.colliderToCheckFor.gameObject }.Concat(source);
+                        }
+                        string item = ((source.Count() > 0) ? string.Join("/", source.Select((GameObject gameObject2) => gameObject2?.name ?? "null")) : "玩家");
+                        if (!dictionary.ContainsKey(position3))
+                        {
+                            dictionary[position3] = new List<string>();
+                        }
+                        dictionary[position3].Add(item);
+                    }
+                }
+                ColliderLabelTriggerVolume[] array2 = labelVolumes;
+                foreach (ColliderLabelTriggerVolume colliderLabelTriggerVolume in array2)
+                {
+                    if (colliderLabelTriggerVolume == null)
+                    {
+                        continue;
+                    }
+                    Vector3 position4 = colliderLabelTriggerVolume.transform.position;
+                    if (!(Vector3.Distance(a, position4) > 100f))
+                    {
+                        string item2 = string.Join("/", colliderLabelTriggerVolume.labelsToCheckFor.Select((string text) => "#" + text));
+                        if (!dictionary.ContainsKey(position4))
+                        {
+                            dictionary[position4] = new List<string>();
+                        }
+                        dictionary[position4].Add(item2);
+                    }
+                }
+                foreach (KeyValuePair<Vector3, List<string>> item8 in dictionary)
+                {
+                    if (IsTheFieldOfView(item8.Key))
+                    {
+                        Vector3 vector4 = MainCamera.WorldToScreenPoint(item8.Key);
+                        GUI.Label(new Rect(vector4.x - 50f, (float)Screen.height - vector4.y, 200f, 35f), "<color=#FF00FF>" + string.Join(", ", item8.Value) + "</color>", style);
+                    }
+                }
+                (UnityEngine.Object[], string, Func<UnityEngine.Object, string>)[] array3 = new (UnityEngine.Object[], string, Func<UnityEngine.Object, string>)[4];
+                UnityEngine.Object[] item3 = triggerObjects;
+                array3[0] = (item3, "00FFFF", (UnityEngine.Object x) => x.name);
+                item3 = labelObjects;
+                array3[1] = (item3, "00FFFF", (UnityEngine.Object x) => "#" + ((ColliderLabel)x).Label);
+                item3 = grabSensors;
+                array3[2] = (item3, "FFFF00", (UnityEngine.Object x) => (x is HumanAPI.Button button) ? (x.name + ((button.input.value >= 0.5f) ? "√" : "")) : x.name);
+                item3 = otherSensors;
+                array3[3] = (item3, "8000FF", (UnityEngine.Object x) => x.name);
+                (UnityEngine.Object[], string, Func<UnityEngine.Object, string>)[] array4 = array3;
+                for (int num8 = 0; num8 < array4.Length; num8++)
+                {
+                    (UnityEngine.Object[], string, Func<UnityEngine.Object, string>) tuple = array4[num8];
+                    UnityEngine.Object[] item4 = tuple.Item1;
+                    string item5 = tuple.Item2;
+                    Func<UnityEngine.Object, string> item6 = tuple.Item3;
+                    UnityEngine.Object[] array5 = item4;
+                    foreach (UnityEngine.Object obj in array5)
+                    {
+                        if (!(obj == null))
+                        {
+                            if (1 == 0)
+                            {
+                            }
+                            Transform transform = ((obj is GameObject gameObject) ? gameObject.transform : ((!(obj is Component component2)) ? null : component2.transform));
+                            if (1 == 0)
+                            {
+                            }
+                            Transform transform2 = transform;
+                            float num10 = Vector3.Distance(a, transform2.position);
+                            if (!(num10 > 100f) && IsTheFieldOfView(transform2.position))
+                            {
+                                Vector3 vector5 = MainCamera.WorldToScreenPoint(transform2.position);
+                                GUI.Label(new Rect(vector5.x - 50f, (float)Screen.height - vector5.y, 200f, 35f), $"<size={CalcSize(num10)}><color=#{item5}>{item6(obj)}</color></size>", style);
+                            }
+                        }
+                    }
+                }
+            }
+            for (int num11 = 0; num11 < marks.Count; num11++)
+            {
+                if (IsTheFieldOfView(marks[num11].transform.position))
+                {
+                    float num12 = Vector3.Distance(Human.Localplayer.transform.position, marks[num11].transform.position);
+                    Vector3 vector6 = MainCamera.WorldToScreenPoint(marks[num11].transform.position);
+                    GUI.Label(new Rect(vector6.x - 50f, (float)Screen.height - vector6.y, 200f, 35f), $"<color=#FF00FF>#{num11 + 1} {num12:0.0}m</color>", style);
+                }
+            }
+        }
 
 
         public static bool IsTheFieldOfView(Vector3 pos)
@@ -2583,7 +2764,7 @@ namespace YxModDll.Mod.Features
                     ulong ulSteamID = ulong.Parse(playerId);
                     CSteamID steamIDFriend = new CSteamID(ulSteamID);
                     string playername = SteamFriends.GetFriendPersonaName(steamIDFriend);
-                    UnityEngine.Debug.Log($"connection:{playername} - 房主：{Human.all[0].player.host.name} - 被移除的是：{netHost.name}");
+                    UnityEngine.Debug.Log($"[YxMod] connection:{playername} - 房主：{Human.all[0].player.host.name} - 被移除的是：{netHost.name}");
 
                     if (playerId != NetGame.instance.server.players[NetGame.instance.server.players.Count-1].skinUserId)
                     {
@@ -3173,12 +3354,12 @@ namespace YxModDll.Mod.Features
             return false;
         }
 
-        [HarmonyPatch(typeof(NetSignal), "Process")]
-        [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> ProcessPatch(IEnumerable<CodeInstruction> instructions)
-        {
-            return Transpilers.MethodReplacer(instructions, (MethodBase)Utils.Method<UnityEngine.Debug>("LogError", new Type[1] { typeof(object) }), (MethodBase)Utils.Method<FeatureManager>("LogErrorReplace"));
-        }
+        //[HarmonyPatch(typeof(NetSignal), "Process")]
+        //[HarmonyTranspiler]
+        //public static IEnumerable<CodeInstruction> ProcessPatch(IEnumerable<CodeInstruction> instructions)
+        //{
+        //    return Transpilers.MethodReplacer(instructions, (MethodBase)Utils.Method<UnityEngine.Debug>("LogError", new Type[1] { typeof(object) }), (MethodBase)Utils.Method<FeatureManager>("LogErrorReplace"));
+        //}
 
         public static void LogErrorReplace(string s)
         {

@@ -152,7 +152,11 @@ namespace YxModDll.Mod
             /////////////////////////
             else//正常的消息 正常接收
             {
-                if(UI_SheZhi.pingbiyansedaima)
+                if (msg == "q" || msg == "up" || msg == "ifg")
+                {
+                    return;
+                }
+                if (UI_SheZhi.pingbiyansedaima)
                 {
                     nick = QuDiaoDaiMa(nick, "");
                 }
