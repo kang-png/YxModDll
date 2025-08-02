@@ -196,6 +196,84 @@ namespace YxModDll.Mod
             style.fontSize = 20;
             return style;
         }
+
+        public static LayoutDisposable Horizontal(params GUILayoutOption[] options)
+        {
+            GUILayout.BeginHorizontal(options);
+            return new LayoutDisposable(GUILayout.EndHorizontal);
+        }
+
+        public static LayoutDisposable Vertical(params GUILayoutOption[] options)
+        {
+            GUILayout.BeginVertical(options);
+            return new LayoutDisposable(GUILayout.EndVertical);
+        }
+
+        public static LayoutDisposable ScrollView(ref Vector2 scrollPos, params GUILayoutOption[] options)
+        {
+            scrollPos = GUILayout.BeginScrollView(scrollPos, options);
+            return new LayoutDisposable(GUILayout.EndScrollView);
+        }
+
+        /// <summary>
+        /// 布局 disposable 类，利用using语句自动调用End方法
+        /// </summary>
+        public struct LayoutDisposable : IDisposable
+        {
+            private Action _onDispose;
+
+            public LayoutDisposable(Action onDispose)
+            {
+                _onDispose = onDispose;
+            }
+
+            // using块结束时自动调用
+            public void Dispose()
+            {
+                _onDispose?.Invoke();
+            }
+        }
+        public static void CreateHotKey(string name, ref KuaiJieJian_Type keycode, int shuzi = 0, String tishi ="")
+        {
+            using (Horizontal())
+            {
+                //标题
+                if (!string.IsNullOrEmpty(name))
+                {
+                    name = TranslateButtonText(name); // 确保按钮名称翻译
+                    GUILayout.Label(ColorfulSpeek.colorshows(name), GUILayout.Width(100));
+                }
+
+                string keystring;
+                if (keycode.keyCode1 != KeyCode.None)
+                {
+                    keystring = keycode.keyCode1.ToString();
+
+                    if (keycode.keyCode2 != KeyCode.None)
+                    {
+                        keystring += $" + {keycode.keyCode2.ToString()}";
+                    }
+                    if (shuzi == 1)
+                    {
+                        keystring += $" + Num";
+                    }
+                    else if (shuzi == 2)
+                    {
+                        keystring += $" + Num + Num";
+                    }
+                    GUILayout.Label(ColorfulSpeek.colorshows(keystring));
+                }
+
+                if (!string.IsNullOrEmpty(tishi))
+                {
+                    tishi = TranslateButtonText(tishi); // 确保按钮名称翻译
+                    GUILayout.Label(ColorfulSpeek.colorshows(tishi));
+                }
+                GUILayout.FlexibleSpace();
+            }
+        }
+
+
         public static void CreatShuZhi(string name, ref float zhi, float min, float max, float add, Action callback = null, float? yuan = null)//创建加减数值的按钮
         {
             GUILayout.BeginHorizontal();

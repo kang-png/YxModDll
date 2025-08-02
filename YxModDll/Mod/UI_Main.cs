@@ -152,7 +152,9 @@ namespace YxModDll.Mod
             UI_SheZhi.ChuShiHua();
             UI_GongNeng.ChuShiHua();
             YanSe.GetHumanHwnd();//获取游戏Hwnd
-        
+            gameObject.AddComponent<HotKey>(); 
+
+
         }
 
         // 插件启动后会一直循环执行Update()方法，可用于监听事件或判断键盘按键，执行顺序在Start()后面

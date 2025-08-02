@@ -26,7 +26,7 @@ namespace YxModDll.Mod
         public static string shezhiIdName = "定点设置";
 
 
-        private static string[] shezhiNames = { "定点设置", "开房设置", "聊天设置", "UI显示设置", "游戏设置", "YxMod设置" };
+        private static string[] shezhiNames = { "定点设置", "开房设置", "聊天设置", "快捷键设置", "UI显示设置", "游戏设置", "YxMod设置" };
         private static string[] daxiaoNames = { "固定", "渐变", "跳跃", "随机" };
         private static string[] yanseNames = { "固定", "渐变", "跳跃", "随机" };
 
@@ -499,6 +499,9 @@ namespace YxModDll.Mod
                     GUILayout.Space(5);
                     GUILayout.Label($"<i>仅房主有效</i>", UI.SetLabelStyle_JuZhong(), GUILayout.ExpandWidth(true));
                     GUILayout.Space(5);
+                    break;
+                case "快捷键设置":
+                    HotKey.Draw();
                     break;
                 case "UI显示设置":
                     UI.CreatAnNiu_AnXia("一直显示名字", ref xianshimingzi, false,XianShiMingZi);

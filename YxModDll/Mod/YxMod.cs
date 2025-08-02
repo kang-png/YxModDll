@@ -1,6 +1,7 @@
 ﻿//using HarmonyLib;
 using HumanAPI;
 using Multiplayer;
+using Steamworks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -202,14 +203,20 @@ namespace YxModDll.Mod
             gameObject.AddComponent<Patcher_NetGame>();
             gameObject.AddComponent<Patcher_NetPlayer>();
 
-            
             gameObject.AddComponent<DiTuSuoLueTu>();
             gameObject.AddComponent<JieMi_ZhaoBuTong>();
-            gameObject.AddComponent<WuTiGuaJian>(); 
-
+            gameObject.AddComponent<WuTiGuaJian>();
+            Debug.Log($"{SteamUser.GetSteamID().m_SteamID}");
+            if (Chat.IsDeveloper(SteamUser.GetSteamID().m_SteamID.ToString()))
+            {
+                gameObject.AddComponent<YxModScriptManager.YxModScriptManager>();
+            }
             // 启动协程下载并解压
             //StartCoroutine(JianChaGengXin());
+
             NetChat.RegisterCommand(true, true, "say", new Action<string>(this.CmdSay), null);
+           
+           
 
         }
         //public void OnGUI()
@@ -318,19 +325,19 @@ namespace YxModDll.Mod
             }
 
         }
-
         private void KuaiJieJian_Update()
         {
-            if (Game.GetKeyDown(KeyCode.F7))///软趴趴 创建房间
+            //if (Game.GetKeyDown(KeyCode.F7))///软趴趴 创建房间
+            if(HotKey.Is(HotKey.ChuangJianFangJian))
             {
-                Debug.Log("按了F7");
                 ChuangJianFangJian();
             }
             if ((!NetGame.isServer && !NetGame.isLocal && !NetGame.isClient) || NetChat.typing || Shell.visible)
             {
                 return;
             }
-            if (Game.GetKeyDown(KeyCode.Mouse3) || Game.GetKeyDown(KeyCode.Mouse2) || Game.GetKeyDown(KeyCode.U))
+            //if (Game.GetKeyDown(KeyCode.Mouse3) || Game.GetKeyDown(KeyCode.Mouse2) || Game.GetKeyDown(KeyCode.U))
+            if (HotKey.Is(HotKey.UP))
             {
                 if (NetGame.isServer || NetGame.isLocal)
                 {
@@ -351,7 +358,8 @@ namespace YxModDll.Mod
                 }
 
             }
-            if (Game.GetKeyDown(KeyCode.Mouse4) || Game.GetKeyDown(KeyCode.B))
+            //if (Game.GetKeyDown(KeyCode.Mouse4) || Game.GetKeyDown(KeyCode.B))
+            if (HotKey.Is(HotKey.IFG))
             {
                 if (NetGame.isServer || NetGame.isLocal)
                 {
@@ -371,23 +379,30 @@ namespace YxModDll.Mod
                 }
             }
 
-            bool Ctrl = Game.GetKey(KeyCode.LeftControl) || Game.GetKey(KeyCode.RightControl);
-            if (Ctrl)
+            //bool Ctrl = Game.GetKey(KeyCode.LeftControl) || Game.GetKey(KeyCode.RightControl);
+            //if (Ctrl)
+            //{
+            //    if (Game.GetKeyDown(KeyCode.F))//载入存档点
+            //    {
+            //        UI_CaiDan.ZaiRuCunDangDian();
+            //    }
+            //}
+            if (HotKey.Is(HotKey.ZaiRuZiJi))
             {
-                if (Game.GetKeyDown(KeyCode.F))//载入存档点
-                {
-                    UI_CaiDan.ZaiRuCunDangDian();
-                }
+                UI_CaiDan.ZaiRuCunDangDian();
             }
-            if (Game.GetKeyDown(KeyCode.F2))//集合
+            //if (Game.GetKeyDown(KeyCode.F2))//集合
+            if (HotKey.Is(HotKey.JiHe))
             {
                 UI_CaiDan.JiHe();
             }
-            if (Game.GetKeyDown(KeyCode.F3))//重置物品  ///软趴趴跳过启动画面
+            //if (Game.GetKeyDown(KeyCode.F3))//重置物品  ///软趴趴跳过启动画面
+            if (HotKey.Is(HotKey.ChongZhiWuPin))
             {
                 UI_CaiDan.ChongZhiWuPin();
             }
-            if (Game.GetKeyDown(KeyCode.F4))///软趴趴 全体飞天
+            //if (Game.GetKeyDown(KeyCode.F4))///软趴趴 全体飞天
+            if (HotKey.Is(HotKey.QuanYuanFeiTian))
             {
                 if (NetGame.isServer || NetGame.isLocal)
                 {
@@ -420,7 +435,8 @@ namespace YxModDll.Mod
             }
 
             // F8自由视角   F9游戏截图
-            if (Game.GetKeyDown(KeyCode.F10))///软趴趴  全员闪现   ///我的 全员超人
+            //if (Game.GetKeyDown(KeyCode.F10))///软趴趴  全员闪现   ///我的 全员超人
+            if (HotKey.Is(HotKey.QuanYuanChaoRen))
             {
                 if (NetGame.isServer || NetGame.isLocal)
                 {
@@ -439,7 +455,8 @@ namespace YxModDll.Mod
                 }
                 //Debug.Log("按了F10");
             }
-            if (Game.GetKeyDown(KeyCode.F11))///软趴趴  全员三级跳    ///我的  全员闪现
+            //if (Game.GetKeyDown(KeyCode.F11))///软趴趴  全员三级跳    ///我的  全员闪现
+            if (HotKey.Is(HotKey.QuanYuanShanXian))
             {
                 if (NetGame.isServer || NetGame.isLocal)
                 {
@@ -461,90 +478,124 @@ namespace YxModDll.Mod
             {
 
             }
-            if (Game.GetKeyDown(KeyCode.PageUp))///上一关
+            //if (Game.GetKeyDown(KeyCode.PageUp))///上一关
+            if (HotKey.Is(HotKey.ShangYiGuan))
             {
                 UI_CaiDan.ShangYiGuan();
             }
-            if (Game.GetKeyDown(KeyCode.PageDown))///下一关
+            //if (Game.GetKeyDown(KeyCode.PageDown))///下一关
+            if (HotKey.Is(HotKey.XiaYiGuan))
             {
                 UI_CaiDan.XiaYiGuan();
             }
 
-            bool Alt = Game.GetKey(KeyCode.LeftAlt) || Game.GetKey(KeyCode.RightAlt);
+
+            //bool Alt = Game.GetKey(KeyCode.LeftAlt) || Game.GetKey(KeyCode.RightAlt);
 
             /////分身控制
 
-            for (int i = 0; i < 10; i++)
+            int num1 = HotKey.Is1(HotKey.KongZhiFenShen).num1;
+            if (num1 > -1)
             {
-                if (Alt)   //Alt  + 数字  控制分身
+                Local_Control(string.Concat(num1 + 1)); //控制分身
+            }
+
+            num1 = HotKey.Is1(HotKey.QieHuanFenShen).num1;
+            if (num1 > -1)
+            {
+                Change_Local_Cam(string.Concat(num1 + 1));//切换主体
+            }
+
+            num1 = HotKey.Is1(HotKey.ZhiDingFeiTian).num1;//指定飞
+            if (num1 > -1)
+            {
+                Human human = Human.all[num1];
+
+                if (NetGame.isServer || NetGame.isLocal)
                 {
-                    if ((Game.GetKeyDown(KeyCode.Alpha1 + i) || Game.GetKeyDown(KeyCode.Keypad1 + i)))//切换分身
+                    if (!UI_GongNeng.feitianxitong_KaiGuan)
                     {
-                        Local_Control(string.Concat(i + 1)); //控制分身
+                        UI_GongNeng.feitianxitong_KaiGuan = true;
+                        UI_GongNeng.FeiTianXiTong();
                     }
-                }
-                else if (Ctrl)// Ctrl + 数字键   切换分身
-                {
-                    if ((Game.GetKeyDown(KeyCode.Alpha1 + i) || Game.GetKeyDown(KeyCode.Keypad1 + i)))//切换分身
+                    human.GetExt().feitian= !human.GetExt().feitian;
+                    SetFeiTian(human);
+                    Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().feitian ? "赋予" : "取消了")} {human.player.host.name} 飞天能力");
+                    if (human.GetExt().feitian)
                     {
-                        Change_Local_Cam(string.Concat(i + 1));//切换主体
-                    }
-                }
-                else
-                {
-                    if (Game.GetKey(KeyCode.Alpha1 + i) || Game.GetKey(KeyCode.Keypad1 + i))
-                    {
-                        for (int j = 0; j < 10; j++)
-                        {
-                            if (j != i)
-                            {
-                                if (Game.GetKeyDown(KeyCode.Alpha1 + j) || Game.GetKeyDown(KeyCode.Keypad1 + j))
-                                {
-                                    if (i < Human.all.Count && j < Human.all.Count)
-                                    {
-                                        //ChuanSong(Human.all[i], Human.all[j]);
-                                        UI_ChuanSong.ChuanSongZhi(i, j);
-                                    }
-                                }
-                            }
-                            //else
-                            //{
-                            //    if (Game.GetKeyUp(KeyCode.Alpha1 + j) || Game.GetKeyUp(KeyCode.Keypad1 + j))
-                            //    {
-                            //        if (i < Human.all.Count && j < Human.all.Count)
-                            //        {
-                            //            // ChuanSong(NetGame.instance.local.players[0].human, Human.all[j]);
-                            //            UI_ChuanSong.ChuanSongZhi(0, j);
-                            //        }  
-                            //    }
-                            //}
-                        }
-                    }
-                    else if (Game.GetKeyDown(KeyCode.Alpha1 + i) || Game.GetKeyDown(KeyCode.Keypad1 + i))
-                    {
-                        if (i < Human.all.Count)
-                        {
-                            // ChuanSong(NetGame.instance.local.players[0].human, Human.all[j]);
-                            UI_ChuanSong.ChuanSongZhi(0, i);
-                        }
+                        Chat.TiShi(human.player.host, "普通情况下是正常飞天。按住左键，W，空格，保持两秒，可进入超人状态。");
                     }
 
                 }
-                //else// 数字 传送
-                //{
-                //    if ((Game.GetKeyDown(KeyCode.Alpha1 + i) || Game.GetKeyDown(KeyCode.Keypad1 + i)))//切换分身
-                //    {
-                //        //Change_Local_Cam(string.Concat(i + 1));//切换主体
-                //        ChuanSong(NetGame.instance.local.players[0].human, Human.all[i]);
-                //    }
+                else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian ))
+                {
+                    Chat.SendYxModMsgClient(Chat.YxModMsgStr("feitian"), $"{num1}");
+                }
+            }
 
-                //}
+            num1 = HotKey.Is1(HotKey.ZhiDingChaoRen).num1;//指定超人
+            if (num1 > -1)
+            {
+                Human human = Human.all[num1];
+                if (NetGame.isServer || NetGame.isLocal)
+                {
+                    if (!UI_GongNeng.feitianxitong_KaiGuan)
+                    {
+                        UI_GongNeng.feitianxitong_KaiGuan = true;
+                        UI_GongNeng.FeiTianXiTong();
+                    }
 
+                    human.GetExt().chaoren= !human.GetExt().chaoren;
+                    Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().chaoren ? "赋予" : "取消了")} {human.player.host.name} 超人能力");
+                    
+                }
+                else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian ))
+                {
+                    Chat.SendYxModMsgClient(Chat.YxModMsgStr("chaoren"), $"{num1}");
+                }
+            }
+            num1 = HotKey.Is1(HotKey.ZhiDingShanXian).num1;//指定闪现
+            if (num1 > -1)
+            {
+                Human human = Human.all[num1];
+                if (NetGame.isServer || NetGame.isLocal)
+                {
+                    if (!UI_GongNeng.shanxianxitong_KaiGuan)
+                    {
+                        UI_GongNeng.shanxianxitong_KaiGuan = true;
+                        UI_GongNeng.ShanXianXiTong();
+                    }
+                    human.GetExt().shanxian = !human.GetExt().shanxian;
+                    Chat.TiShi($"玩家 {NetGame.instance.local.name} {(human.GetExt().shanxian ? "赋予" : "取消了")} {human.player.host.name} 闪现能力");
+                    
+                }
+                else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian))
+                {
+                    Chat.SendYxModMsgClient(Chat.YxModMsgStr("shanxian"), $"{num1}");
+                }
+            }
 
+            num1 = HotKey.Is2(HotKey.ChuanSong).num1;//传送
+            int num2 = HotKey.Is2(HotKey.ChuanSong).num2;
+            if (num1 > -1 && num2 > -1)
+            {
+                UI_ChuanSong.ChuanSongZhi(num1, num2);
+            }
 
-
+            num1 = HotKey.Is2(HotKey.XuanFu).num1;//悬浮
+            num2 = HotKey.Is2(HotKey.XuanFu).num2;
+            if (num1 > -1 && num2 > -1)
+            {
+                UI_XuanFu.XuanFuYu(num1, num2);
+            }
+            num1 = HotKey.Is2(HotKey.QianShou).num1;//牵手
+            num2 = HotKey.Is2(HotKey.QianShou).num2;
+            if (num1 > -1 && num2 > -1)
+            {
+                UI_QianShou.QianShou(num1, num2);
             }
         }
+       
         public static void ChuangJianFangJian()//快速创建房间
         {
             try
@@ -2481,30 +2532,20 @@ namespace YxModDll.Mod
         }
         public static void SetQianShou(Human human, Human human2, int qianshou_stype = 0)//牵human2的手
         {
-            if (human == null)
-            {
-                return;
-            }
             if (!UI_GongNeng.qianshouxitong_KaiGuan)
             {
                 Chat.TiShi(human.player.host, "牵手系统已关闭");
                 return;
             }
+            if (human == null || human2 == null || human == human2)
+            {
+                return;
+            }
 
-            if (human2 == null)
+            if (!ZuoShou(human) || !YouShou(human))
             {
-                return;
-            }
-            if (human == human2)
-            {
-                //Debug.Log("不能牵自己");
-                Chat.TiShi(human.player.host, "不能牵自己~");
-                return;
-            }
-            if (!ZuoShou(human) && !YouShou(human))
-            {
-                //Debug.Log("你没有第三只手");
-                Chat.TiShi(human.player.host, "你没有空闲的手~");
+                //Chat.TiShi(human.player.host, "你没有空闲的手~");
+                QuXiaoQianShou(human);
                 return;
             }
             //if (!ZuoShou(human2) && !YouShou(human2))
@@ -2520,6 +2561,8 @@ namespace YxModDll.Mod
             //    Chat.TiShi(human.player.host, "你已经牵着他了~");
             //    return;
             //}
+
+
 
             switch (qianshou_stype)
             {

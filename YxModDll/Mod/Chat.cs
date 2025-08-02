@@ -1450,6 +1450,16 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("wutiguajian") && msg.Length == 0)
             {
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
+                {
+                    TiShi(netHost, $"客机权限系统已关闭");
+                    return;
+                }
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
+                {
+                    TiShi(netHost, $"娱乐系统已关闭");
+                    return;
+                }
                 WuTiGuaJian.SetWuTiGuaJian(human);
                 return;
             }

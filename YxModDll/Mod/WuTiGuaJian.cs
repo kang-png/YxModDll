@@ -14,14 +14,14 @@ namespace YxModDll.Mod
     {
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.M))
+            if (HotKey.Is(HotKey.WuPinGuaJian))
             {
                 SetWuTiGuaJian(Human.Localplayer);
             }
-            if (Input.GetKeyDown(KeyCode.N))
-            {
-                QuXiaoWuTiGuaJian(Human.Localplayer);
-            }
+            //if (Input.GetKeyDown(KeyCode.N))
+            //{
+            //    QuXiaoWuTiGuaJian(Human.Localplayer);
+            //}
 
         }
         public void FixedUpdate()
@@ -41,8 +41,6 @@ namespace YxModDll.Mod
         {
             if (NetGame.isServer || NetGame.isLocal)
             {
-                
-
                 Rigidbody wuti;
                 GameObject grabObject = human.ragdoll.partLeftHand.sensor.grabObject;
                 if (grabObject != null)
@@ -79,6 +77,12 @@ namespace YxModDll.Mod
                 }
                 else
                 {
+                    if(human.GetExt().ntp_wuti != null)
+                    {
+                        QuXiaoWuTiGuaJian(human);
+                        return ;
+                    }
+
                     Chat.TiShi(human.player.host, "左手没有抓住物体");
                 }
             }
@@ -121,6 +125,7 @@ namespace YxModDll.Mod
             {
                 human.GetExt().ntp_wuti = null;
                 QuXiaoXuanFu(wuti);
+                Chat.TiShi(human.player.host, "取消物体挂件");
             }
         }
         private static void QuXiaoXuanFu(Rigidbody wuti)

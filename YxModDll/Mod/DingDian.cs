@@ -88,7 +88,8 @@ namespace YxModDll.Mod
                 return;
             }
 
-            if (Input.GetKeyDown(KeyCode.Q))
+            //if (Input.GetKeyDown(KeyCode.Q))
+            if (HotKey.Is(HotKey.CunDian))
             {
                 if (NetGame.isServer || NetGame.isLocal)
                 {
