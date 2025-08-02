@@ -557,7 +557,7 @@ namespace YxModDll.Mod
                     {
                         FeatureManager.MainCamera.farClipPlane = UI_SheZhi.playerCamDistance;
                     }, yuan: 300f);
-                    UI.CreatShuZhi("自由视角视距", ref freeRoamCamDistance, 100f, 20000f, 100f, () =>
+                    UI.CreatShuZhi("F8视距", ref freeRoamCamDistance, 100f, 20000f, 100f, () =>
                     {
                         PlayerPrefs.SetFloat("freeRoamCamDistance", freeRoamCamDistance);
                     }, yuan: 300f);
