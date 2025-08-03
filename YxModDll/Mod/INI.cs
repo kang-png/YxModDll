@@ -1,11 +1,12 @@
-﻿using System;
-using System.IO;
+﻿using InControl;
+using System;
 using System.Collections.Generic;
-using UnityEngine;
-using static System.Collections.Specialized.BitVector32;
-using UnityEngine.Rendering.PostProcessing;
+using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
-using InControl;
+using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
+using static System.Collections.Specialized.BitVector32;
 
 namespace YxModDll.Mod
 {
@@ -87,13 +88,16 @@ namespace YxModDll.Mod
         {
             try
             {
+                Debug.Log("打开快捷键.ini文件"+ kuaijiejianFilePath);
                 if (File.Exists(kuaijiejianFilePath))
                 {
                     System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
                     {
                         FileName = "notepad.exe",
                         Arguments = $"\"{kuaijiejianFilePath}\"",
-                        UseShellExecute = true // 允许系统外壳处理
+                        //UseShellExecute = true // 允许系统外壳处理
+                        UseShellExecute = false,
+                        CreateNoWindow = true
                     });
                 }
             }
@@ -158,6 +162,62 @@ namespace YxModDll.Mod
             }
             return kuaijiejian;
         }
+        public static List<KuaiJieJian_Type> GetKuaiJieJianList(string key, List<KuaiJieJian_Type> defaultList = null)
+        {
+            Dictionary<string, string> configData = ReadConfigFile(kuaijiejianFilePath);
+            var resultList = new List<KuaiJieJian_Type>();
+
+            if (configData.TryGetValue(key, out string str) && !string.IsNullOrEmpty(str))
+            {
+                string[] orParts = str.Split('|');
+                foreach (string part in orParts)
+                {
+                    string[] keys = part.Trim().Split('+');
+                    try
+                    {
+                        var kjj = new KuaiJieJian_Type();
+                        if (keys.Length == 1)
+                        {
+                            kjj.keyCode1 = (KeyCode)Enum.Parse(typeof(KeyCode), keys[0], true);
+                        }
+                        else if (keys.Length == 2)
+                        {
+                            kjj.keyCode1 = (KeyCode)Enum.Parse(typeof(KeyCode), keys[0], true);
+                            kjj.keyCode2 = (KeyCode)Enum.Parse(typeof(KeyCode), keys[1], true);
+                        }
+                        resultList.Add(kjj);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"解析快捷键出错: {ex.Message}");
+                    }
+                }
+            }
+            else if (defaultList != null && defaultList.Count > 0)
+            {
+                resultList = defaultList;
+
+                // 保存默认值回配置
+                string saveStr = string.Join("|", defaultList.Select(k =>
+                {
+                    string s = k.keyCode1.ToString();
+                    if (k.keyCode2 != KeyCode.None)
+                        s += "+" + k.keyCode2.ToString();
+                    return s;
+                }));
+
+                configData[key] = saveStr;
+                SaveConfigFile(configData, kuaijiejianFilePath);
+            }
+
+            return resultList;
+        }
+        public static List<KuaiJieJian_Type> GetKuaiJieJianList(string key, KuaiJieJian_Type defaultSingle)
+        {
+            return GetKuaiJieJianList(key, new List<KuaiJieJian_Type> { defaultSingle });
+        }
+
+
 
         public static bool GetBoolValue(string key, bool moren = false)
         {

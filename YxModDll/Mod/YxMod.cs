@@ -44,8 +44,6 @@ namespace YxModDll.Mod
         public static int fenshen_cam;//分身相机
         public static bool SuperJumpEnabled = false; // 超级跳是否启用
 
-        private string updateUrl = "https://goppx.com/https://github.com/kang-png/YxModDll/releases/download/1.0.0/YxModDll.dll";
-
         //public static bool YanZheng_OK;
         //public static string YanZheng_Str = "";
 

@@ -233,45 +233,63 @@ namespace YxModDll.Mod
                 _onDispose?.Invoke();
             }
         }
-        public static void CreateHotKey(string name, ref KuaiJieJian_Type keycode, int shuzi = 0, String tishi ="")
+        public static void CreateHotKey(string name, ref List<KuaiJieJian_Type> keycodes, int shuzi = 0, string tishi = "")
         {
             using (Horizontal())
             {
-                //标题
                 if (!string.IsNullOrEmpty(name))
                 {
-                    name = TranslateButtonText(name); // 确保按钮名称翻译
+                    name = TranslateButtonText(name);
                     GUILayout.Label(ColorfulSpeek.colorshows(name), GUILayout.Width(100));
                 }
 
-                string keystring;
-                if (keycode.keyCode1 != KeyCode.None)
-                {
-                    keystring = keycode.keyCode1.ToString();
+                string combinedKeys = "";
 
-                    if (keycode.keyCode2 != KeyCode.None)
+                if (keycodes != null && keycodes.Count > 0)
+                {
+                    List<string> keyStrings = new List<string>();
+                    foreach (var keycode in keycodes)
                     {
-                        keystring += $" + {keycode.keyCode2.ToString()}";
+                        if (keycode.keyCode1 != KeyCode.None)
+                        {
+                            string keystring = keycode.keyCode1.ToString();
+
+                            if (keycode.keyCode2 != KeyCode.None)
+                            {
+                                keystring += $" + {keycode.keyCode2.ToString()}";
+                            }
+
+                            if (shuzi == 1)
+                            {
+                                keystring += " + Num";
+                            }
+                            else if (shuzi == 2)
+                            {
+                                keystring += " + Num + Num";
+                            }
+
+                            keyStrings.Add(keystring);
+                        }
                     }
-                    if (shuzi == 1)
-                    {
-                        keystring += $" + Num";
-                    }
-                    else if (shuzi == 2)
-                    {
-                        keystring += $" + Num + Num";
-                    }
-                    GUILayout.Label(ColorfulSpeek.colorshows(keystring));
+                    combinedKeys = string.Join(" | ", keyStrings);
                 }
+                else
+                {
+                    combinedKeys = "无快捷键";
+                }
+
+                GUILayout.Label(ColorfulSpeek.colorshows(combinedKeys));
 
                 if (!string.IsNullOrEmpty(tishi))
                 {
-                    tishi = TranslateButtonText(tishi); // 确保按钮名称翻译
+                    tishi = TranslateButtonText(tishi);
                     GUILayout.Label(ColorfulSpeek.colorshows(tishi));
                 }
+
                 GUILayout.FlexibleSpace();
             }
         }
+
 
 
         public static void CreatShuZhi(string name, ref float zhi, float min, float max, float add, Action callback = null, float? yuan = null)//创建加减数值的按钮

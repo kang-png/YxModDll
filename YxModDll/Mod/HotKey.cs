@@ -9,118 +9,130 @@ namespace YxModDll.Mod
 {
     internal class HotKey : MonoBehaviour
     {
-        public static KuaiJieJian_Type CunDian = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type UP = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type IFG = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type ZaiRuZiJi = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type JiHe = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type ChongZhiWuPin = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type ShangYiGuan = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type XiaYiGuan = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type ChuangJianFangJian = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type QuanYuanFeiTian = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type QuanYuanChaoRen = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type QuanYuanShanXian = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type QuanJiZiShi = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type WuPinGuaJian = new KuaiJieJian_Type();
-        
-        //一个数字键
-        public static KuaiJieJian_Type KongZhiFenShen = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type QieHuanFenShen = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type ZhiDingFeiTian = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type ZhiDingChaoRen = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type ZhiDingShanXian = new KuaiJieJian_Type();
-        //两个数字键
-        public static KuaiJieJian_Type ChuanSong = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type XuanFu = new KuaiJieJian_Type();
-        public static KuaiJieJian_Type QianShou = new KuaiJieJian_Type();
+        public static List<KuaiJieJian_Type> CunDian;
+        public static List<KuaiJieJian_Type> UP;
+        public static List<KuaiJieJian_Type> IFG;
+        public static List<KuaiJieJian_Type> ZaiRuZiJi;
+        public static List<KuaiJieJian_Type> JiHe;
+        public static List<KuaiJieJian_Type> ChongZhiWuPin;
+        public static List<KuaiJieJian_Type> ShangYiGuan;
+        public static List<KuaiJieJian_Type> XiaYiGuan;
+        public static List<KuaiJieJian_Type> ChuangJianFangJian;
+        public static List<KuaiJieJian_Type> QuanYuanFeiTian;
+        public static List<KuaiJieJian_Type> QuanYuanChaoRen;
+        public static List<KuaiJieJian_Type> QuanYuanShanXian;
+        public static List<KuaiJieJian_Type> QuanJiZiShi;
+        public static List<KuaiJieJian_Type> WuPinGuaJian;
+
+        // 一个数字键
+        public static List<KuaiJieJian_Type> KongZhiFenShen;
+        public static List<KuaiJieJian_Type> QieHuanFenShen;
+        public static List<KuaiJieJian_Type> ZhiDingFeiTian;
+        public static List<KuaiJieJian_Type> ZhiDingChaoRen;
+        public static List<KuaiJieJian_Type> ZhiDingShanXian;
+
+        // 两个数字键
+        public static List<KuaiJieJian_Type> ChuanSong;
+        public static List<KuaiJieJian_Type> XuanFu;
+        public static List<KuaiJieJian_Type> QianShou;
 
         private void Start()
         {
             DuQuKuaiJieJian();
         }
+
+        private static List<KuaiJieJian_Type> KJ(params object[] keys)
+        {
+            var list = new List<KuaiJieJian_Type>();
+            foreach (var item in keys)
+            {
+                if (item is KeyCode k)
+                {
+                    list.Add(new KuaiJieJian_Type(k));
+                }
+                else if (item is ValueTuple<KeyCode, KeyCode> pair)
+                {
+                    list.Add(new KuaiJieJian_Type(pair.Item1, pair.Item2));
+                }
+            }
+            return list;
+            //使用示例：ZaiRuZiJi = INI.GetKuaiJieJianList("载入自己", KJ((KeyCode.LeftControl, KeyCode.F), (KeyCode.RightControl, KeyCode.F)));
+        }
         private static void DuQuKuaiJieJian()
         {
-            CunDian = INI.GetKuaiJieJian("存点", new KuaiJieJian_Type(KeyCode.Q));
-            UP = INI.GetKuaiJieJian("UP", new KuaiJieJian_Type(KeyCode.Mouse2));
-            IFG = INI.GetKuaiJieJian("IFG", new KuaiJieJian_Type(KeyCode.B));
-            ZaiRuZiJi = INI.GetKuaiJieJian("载入自己", new KuaiJieJian_Type(KeyCode.LeftControl, KeyCode.F));
-            JiHe = INI.GetKuaiJieJian("召集玩家", new KuaiJieJian_Type(KeyCode.F2));
-            ChongZhiWuPin = INI.GetKuaiJieJian("重置物品", new KuaiJieJian_Type(KeyCode.F3));
-            ShangYiGuan = INI.GetKuaiJieJian("上一关", new KuaiJieJian_Type(KeyCode.PageUp));
-            XiaYiGuan = INI.GetKuaiJieJian("下一关", new KuaiJieJian_Type(KeyCode.PageDown));
-            ChuangJianFangJian = INI.GetKuaiJieJian("创建房间", new KuaiJieJian_Type(KeyCode.F7));
-            QuanYuanFeiTian = INI.GetKuaiJieJian("全员飞天", new KuaiJieJian_Type(KeyCode.F4));
-            QuanYuanChaoRen = INI.GetKuaiJieJian("全员超人", new KuaiJieJian_Type(KeyCode.F5));
-            QuanYuanShanXian = INI.GetKuaiJieJian("全员闪现", new KuaiJieJian_Type(KeyCode.F6));
-            QuanJiZiShi = INI.GetKuaiJieJian("拳击姿势", new KuaiJieJian_Type(KeyCode.R));
-            WuPinGuaJian = INI.GetKuaiJieJian("物品挂件", new KuaiJieJian_Type(KeyCode.M));
+            CunDian = INI.GetKuaiJieJianList("存点", new KuaiJieJian_Type(KeyCode.Q));
+            UP = INI.GetKuaiJieJianList("UP", KJ(KeyCode.Mouse2, KeyCode.Mouse3));
+            IFG = INI.GetKuaiJieJianList("IFG", KJ(KeyCode.B, KeyCode.Mouse4));
+            ZaiRuZiJi = INI.GetKuaiJieJianList("载入自己", new KuaiJieJian_Type(KeyCode.LeftControl, KeyCode.F));
+            JiHe = INI.GetKuaiJieJianList("召集玩家", new KuaiJieJian_Type(KeyCode.F2));
+            ChongZhiWuPin = INI.GetKuaiJieJianList("重置物品", new KuaiJieJian_Type(KeyCode.F3));
+            ShangYiGuan = INI.GetKuaiJieJianList("上一关", new KuaiJieJian_Type(KeyCode.PageUp));
+            XiaYiGuan = INI.GetKuaiJieJianList("下一关", new KuaiJieJian_Type(KeyCode.PageDown));
+            ChuangJianFangJian = INI.GetKuaiJieJianList("创建房间", new KuaiJieJian_Type(KeyCode.F7));
+            QuanYuanFeiTian = INI.GetKuaiJieJianList("全员飞天", new KuaiJieJian_Type(KeyCode.F4));
+            QuanYuanChaoRen = INI.GetKuaiJieJianList("全员超人", new KuaiJieJian_Type(KeyCode.F5));
+            QuanYuanShanXian = INI.GetKuaiJieJianList("全员闪现", new KuaiJieJian_Type(KeyCode.F6));
+            QuanJiZiShi = INI.GetKuaiJieJianList("拳击姿势", new KuaiJieJian_Type(KeyCode.R));
+            WuPinGuaJian = INI.GetKuaiJieJianList("物品挂件", new KuaiJieJian_Type(KeyCode.M));
 
+            KongZhiFenShen = INI.GetKuaiJieJianList("控制分身", new KuaiJieJian_Type(KeyCode.LeftAlt));
+            QieHuanFenShen = INI.GetKuaiJieJianList("切换分身", new KuaiJieJian_Type(KeyCode.LeftControl));
+            ZhiDingFeiTian = INI.GetKuaiJieJianList("指定飞", new KuaiJieJian_Type(KeyCode.F));
+            ZhiDingChaoRen = INI.GetKuaiJieJianList("指定超人", new KuaiJieJian_Type(KeyCode.C));
+            ZhiDingShanXian = INI.GetKuaiJieJianList("指定闪现", new KuaiJieJian_Type(KeyCode.B));
 
-            //一个数字键
-            KongZhiFenShen = INI.GetKuaiJieJian("控制分身", new KuaiJieJian_Type(KeyCode.LeftAlt));
-            QieHuanFenShen = INI.GetKuaiJieJian("切换分身", new KuaiJieJian_Type(KeyCode.LeftControl));
-            ZhiDingFeiTian = INI.GetKuaiJieJian("指定飞", new KuaiJieJian_Type(KeyCode.F));
-            ZhiDingChaoRen = INI.GetKuaiJieJian("指定超人", new KuaiJieJian_Type(KeyCode.C));
-            ZhiDingShanXian = INI.GetKuaiJieJian("指定闪现", new KuaiJieJian_Type(KeyCode.B));
-
-            //两个数字键
-            ChuanSong = INI.GetKuaiJieJian("传送至", new KuaiJieJian_Type(KeyCode.Mouse0));
-            XuanFu = INI.GetKuaiJieJian("悬浮于", new KuaiJieJian_Type(KeyCode.Mouse1));
-            QianShou = INI.GetKuaiJieJian("牵手", new KuaiJieJian_Type(KeyCode.Z));
+            ChuanSong = INI.GetKuaiJieJianList("传送至", new KuaiJieJian_Type(KeyCode.Mouse0));
+            XuanFu = INI.GetKuaiJieJianList("悬浮于", new KuaiJieJian_Type(KeyCode.Mouse1));
+            QianShou = INI.GetKuaiJieJianList("牵手", new KuaiJieJian_Type(KeyCode.Z));
         }
-        public static ShuZi_Type Is1(KuaiJieJian_Type kuaijiejian)
+        public static ShuZi_Type Is1(List<KuaiJieJian_Type> kuaijiejianList)
         {
-            bool fuzhujian=false;
-            if (kuaijiejian.keyCode1 == KeyCode.None)
+            foreach (var kuaijiejian in kuaijiejianList)
             {
-                fuzhujian=false;
-            }
+                bool fuzhujian = false;
+                if (kuaijiejian.keyCode1 == KeyCode.None) continue;
 
-            if (kuaijiejian.keyCode2 == KeyCode.None && Input.GetKey(kuaijiejian.keyCode1))
-            {
-                fuzhujian = true;
-            }
+                if (kuaijiejian.keyCode2 == KeyCode.None && Input.GetKey(kuaijiejian.keyCode1))
+                {
+                    fuzhujian = true;
+                }
+                else if (Input.GetKey(kuaijiejian.keyCode1) && Input.GetKey(kuaijiejian.keyCode2))
+                {
+                    fuzhujian = true;
+                }
 
-            if (Input.GetKey(kuaijiejian.keyCode1) && Input.GetKey(kuaijiejian.keyCode2))
-            {
-                fuzhujian = true;
+                if (fuzhujian)
+                {
+                    return ShuZiZuHe1();
+                }
             }
-
-            ShuZi_Type shuZi_Type = new ShuZi_Type() ;
-            if (fuzhujian)
-            {
-                shuZi_Type = ShuZiZuHe1();
-            }
-            return shuZi_Type;
+            return new ShuZi_Type();
         }
 
-        public static ShuZi_Type Is2(KuaiJieJian_Type kuaijiejian)
+        public static ShuZi_Type Is2(List<KuaiJieJian_Type> kuaijiejianList)
         {
-
-            bool fuzhujian = false;
-            if (kuaijiejian.keyCode1 == KeyCode.None)
+            foreach (var kuaijiejian in kuaijiejianList)
             {
-                fuzhujian = false;
-            }
+                bool fuzhujian = false;
+                if (kuaijiejian.keyCode1 == KeyCode.None) continue;
 
-            if (kuaijiejian.keyCode2 == KeyCode.None && Input.GetKey(kuaijiejian.keyCode1))
-            {
-                fuzhujian = true;
-            }
+                if (kuaijiejian.keyCode2 == KeyCode.None && Input.GetKey(kuaijiejian.keyCode1))
+                {
+                    fuzhujian = true;
+                }
+                else if (Input.GetKey(kuaijiejian.keyCode1) && Input.GetKey(kuaijiejian.keyCode2))
+                {
+                    fuzhujian = true;
+                }
 
-            if (Input.GetKey(kuaijiejian.keyCode1) && Input.GetKey(kuaijiejian.keyCode2))
-            {
-                fuzhujian = true;
+                if (fuzhujian)
+                {
+                    return ShuZiZuHe2();
+                }
             }
-
-            ShuZi_Type shuZi_Type = new ShuZi_Type();
-            if (fuzhujian)
-            {
-                shuZi_Type = ShuZiZuHe2();
-            }
-            return shuZi_Type;
+            return new ShuZi_Type();
         }
+
         private static ShuZi_Type ShuZiZuHe1()
         {
             ShuZi_Type shuZi_Type = new ShuZi_Type();
@@ -128,7 +140,8 @@ namespace YxModDll.Mod
             {
                 if (Input.GetKeyDown(KeyCode.Alpha1 + i) || Input.GetKeyDown(KeyCode.Keypad1 + i))
                 {
-                    shuZi_Type.num1 = i;
+                    if (i < Human.all.Count)
+                        shuZi_Type.num1 = i;
                    
                 }
             }
@@ -159,21 +172,19 @@ namespace YxModDll.Mod
             }
             return shuZi_Type;
         }
-        public static bool Is(KuaiJieJian_Type kuaijiejian)
+        public static bool Is(List<KuaiJieJian_Type> list)
         {
-            if (kuaijiejian.keyCode1 == KeyCode.None)
+            if (list == null) return false;
+            foreach (var kjj in list)
             {
-                return false;
-            }
+                if (kjj.keyCode1 == KeyCode.None)
+                    continue;
 
-            if (Input.GetKeyDown(kuaijiejian.keyCode1) && kuaijiejian.keyCode2 == KeyCode.None )
-            {
-                return true;
-            }
+                if (kjj.keyCode2 == KeyCode.None && Input.GetKeyDown(kjj.keyCode1))
+                    return true;
 
-            if (Input.GetKey(kuaijiejian.keyCode1) && Input.GetKeyDown(kuaijiejian.keyCode2))
-            {
-                return true;
+                if (Input.GetKey(kjj.keyCode1) && Input.GetKeyDown(kjj.keyCode2))
+                    return true;
             }
             return false;
         }

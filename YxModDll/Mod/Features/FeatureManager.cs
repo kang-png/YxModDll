@@ -555,7 +555,6 @@ namespace YxModDll.Mod.Features
                 }
                 if (!FreeRoamCam.allowFreeRoam)
                 {
-                    UI_Main.ShowUI = true;
                     cameraAdjusted = false;
                 }
             }
@@ -2558,21 +2557,21 @@ namespace YxModDll.Mod.Features
             return true;
         }
 
-        [HarmonyPatch(typeof(RagdollTexture), "BakeTexture")]
-        [HarmonyPostfix]
-        public static void Postfix_BakeTexture(RenderTexture rt)
-        {
-            //UnityEngine.Debug.Log("BakeTexture 后补丁触发");
-            if (!UI_SheZhi.skinCheckEnabled || rt == null)
-                return;
+        //[HarmonyPatch(typeof(RagdollTexture), "BakeTexture")]
+        //[HarmonyPostfix]
+        //public static void Postfix_BakeTexture(RenderTexture rt)
+        //{
+        //    //UnityEngine.Debug.Log("BakeTexture 后补丁触发");
+        //    if (!UI_SheZhi.skinCheckEnabled || rt == null)
+        //        return;
 
-            // 这里判断尺寸，如果是缩放后的RT就释放
-            if (rt.width <= 1024 && rt.height <= 1024)
-            {
-                RenderTexture.ReleaseTemporary(rt);
-                //UnityEngine.Debug.Log("BakeTexture 缩放后RenderTexture已释放");
-            }
-        }
+        //    // 这里判断尺寸，如果是缩放后的RT就释放
+        //    if (rt.width <= 1024 && rt.height <= 1024)
+        //    {
+        //        RenderTexture.ReleaseTemporary(rt);
+        //        //UnityEngine.Debug.Log("BakeTexture 缩放后RenderTexture已释放");
+        //    }
+        //}
         [HarmonyPatch(typeof(Texture2D), MethodType.Constructor, new Type[] { typeof(int), typeof(int) })]
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> Texture2D_ctor_Transpiler(IEnumerable<CodeInstruction> instructions)
@@ -2662,7 +2661,7 @@ namespace YxModDll.Mod.Features
             resized.Apply();
 
             RenderTexture.active = null;
-            RenderTexture.ReleaseTemporary(rt);
+            //RenderTexture.ReleaseTemporary(rt);
             UnityEngine.Object.Destroy(__result); // 销毁旧图
 
             resized.name = name;
