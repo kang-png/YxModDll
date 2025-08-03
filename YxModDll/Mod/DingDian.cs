@@ -17,7 +17,7 @@ namespace YxModDll.Mod
         public bool guanxing;
         public bool baoLiuDangQianSuDu;
         public float gaodu = 0.1f;
-        public int geshu = 2;
+        public int geshu = 1;
         public string tishiStr = "已存点";
         //public int globalgeshu = 2;
         //public string globaltishiStr = "已存点";

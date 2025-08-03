@@ -549,7 +549,7 @@ namespace YxModDll.Mod.Features
                 if (FreeRoamCam.allowFreeRoam && !cameraAdjusted)
                 {
                     MainCamera.farClipPlane = UI_SheZhi.freeRoamCamDistance;
-                    UI_Main.ShowUI = false;
+                    //UI_Main.ShowUI = false;
                     cameraAdjusted = true;
                     //UnityEngine.Debug.Log("[YxMod] FreeRoamCam 视距调整为 " + MainCamera.farClipPlane);
                 }

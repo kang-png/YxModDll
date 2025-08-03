@@ -390,6 +390,7 @@ namespace YxModDll.Mod
             //}
             if (ShowUI)
             {
+                if (FreeRoamCam.allowFreeRoam) return;
                 mainUi();//创建主界面
             }
             if (ShowCaiDanUI)

@@ -91,14 +91,16 @@ namespace YxModDll.Mod
                 Debug.Log("打开快捷键.ini文件"+ kuaijiejianFilePath);
                 if (File.Exists(kuaijiejianFilePath))
                 {
-                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
-                    {
-                        FileName = "notepad.exe",
-                        Arguments = $"\"{kuaijiejianFilePath}\"",
-                        //UseShellExecute = true // 允许系统外壳处理
-                        UseShellExecute = false,
-                        CreateNoWindow = true
-                    });
+                    System.Diagnostics.Process.Start("notepad.exe", $"\"{kuaijiejianFilePath}\"");
+
+                    //System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
+                    //{
+                    //    FileName = "notepad.exe",
+                    //    Arguments = $"\"{kuaijiejianFilePath}\"",
+                    //    //UseShellExecute = true // 允许系统外壳处理
+                    //    UseShellExecute = false,
+                    //    CreateNoWindow = true
+                    //});
                 }
             }
             catch (Exception ex)

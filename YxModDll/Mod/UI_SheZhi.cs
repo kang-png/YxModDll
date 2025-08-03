@@ -639,7 +639,7 @@ namespace YxModDll.Mod
             se = PlayerPrefs.GetInt("sedingdian", 1) > 0;
             faq = PlayerPrefs.GetInt("faqdingdian", 0) > 0;
             gaodu = PlayerPrefs.GetFloat("dingdiangaodu", 0.2f);
-            geshu = PlayerPrefs.GetInt("dingdiangeshu", 5);
+            geshu = PlayerPrefs.GetInt("dingdiangeshu", 1);
             tishiStr = PlayerPrefs.GetString("dingdiantishi", "已存点");
             //globalgeshu = PlayerPrefs.GetInt("globaldingdiangeshu", 2);
             //globaltishiStr = PlayerPrefs.GetString("globaldingdiantishi", "已存点");
