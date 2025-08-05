@@ -173,8 +173,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntryPoint.cs" />
+    <Compile Include="Mod\AssetBundleLoader.cs" />
+    <Compile Include="Mod\CoroutineRunner.cs.cs" />
     <Compile Include="Mod\INI.cs" />
     <Compile Include="Mod\HotKey.cs" />
+    <Compile Include="Mod\RagdollAnimatorSync.cs" />
     <Compile Include="Mod\YxModEffectRegistry.cs" />
     <Compile Include="Mod\DiTuSuoLueTu.cs" />
     <Compile Include="Mod\Features\AutomaticHand.cs" />

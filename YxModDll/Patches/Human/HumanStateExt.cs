@@ -132,6 +132,10 @@ namespace YxModDll.Patches
 
         public bool wutiguajian;//物体挂件
         public Rigidbody ntp_wuti;
+
+        public bool tuomasi;
+
+
         public HumanStateExt(Human human)
         {
             this.human = human;
