@@ -1801,12 +1801,12 @@ namespace YxModDll.Mod
                 {
                     human.GetExt().ntp_Offset.y = human.GetExt().ntp_Offset.y + 0.1f;
                 }
-                if (human.GetExt().ntp_Offset.y > 0f && human.controls.unconscious)
+                if (human.GetExt().ntp_Offset.y > -2f && human.controls.unconscious)
                 {
                     human.GetExt().ntp_Offset.y = human.GetExt().ntp_Offset.y - 0.1f;
-                    if (human.GetExt().ntp_Offset.y < 0f)
+                    if (human.GetExt().ntp_Offset.y < -2f)
                     {
-                        human.GetExt().ntp_Offset.y = 0f;
+                        human.GetExt().ntp_Offset.y = -2f;
                     }
                 }
                 if (human.controls.shootingFirework)

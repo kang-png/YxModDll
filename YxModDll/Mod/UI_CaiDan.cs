@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -48,7 +49,8 @@ namespace YxModDll.Mod
         public static void CreatUI()//创建菜单功能区
         {
             gaodu = 0;
-            scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.ExpandWidth(true)); //开始滚动视图区域
+            //scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.ExpandWidth(true)); //开始滚动视图区域
+            scrollPosition = GUILayout.BeginScrollView(scrollPosition); //开始滚动视图区域
             //UI.CreatAnNiu("继续", false, JiXu);
             //gaodu += UI.buttonHeight;
 
@@ -67,6 +69,8 @@ namespace YxModDll.Mod
                 UI.CreatAnNiu("下一关(PgDn)", false, XiaYiGuan_CaiDan);
                 gaodu += UI.buttonHeight;
                 UI.CreatAnNiu("重置物品(F3)", false, ChongZhiWuPin_CaiDan);
+                gaodu += UI.buttonHeight;
+                UI.CreatAnNiu("重置动画", false, ResetAllAnimations);
                 gaodu += UI.buttonHeight;
                 UI.CreatAnNiu("召集(F2)", false, JiHe_CaiDan);
                 gaodu += UI.buttonHeight;
@@ -168,17 +172,17 @@ namespace YxModDll.Mod
             GUILayout.Space(10);
             gaodu += 10;
 
-            UI.CreatAnNiu("定点设置>>", false, CaiDan_DingDianSheZhi);
-            gaodu += UI.buttonHeight;
-            UI.CreatAnNiu("开房设置>>", false, CaiDan_KaiFangSheZhi);
-            gaodu += UI.buttonHeight;
-            UI.CreatAnNiu("聊天设置>>", false, CaiDan_LiaoTianSheZhi);
-            gaodu += UI.buttonHeight;
-            UI.CreatAnNiu("UI显示设置>>", false, CaiDan_UISheZhi);
-            gaodu += UI.buttonHeight;
-            UI.CreatAnNiu("游戏设置>>", false, CaiDan_YouXiSheZhi);
-            gaodu += UI.buttonHeight;
-            UI.CreatAnNiu("YxMod设置>>", false, CaiDan_YxModSheZhi);
+            UI.CreatAnNiu("设置>>", false, CaiDan_DingDianSheZhi);
+            //gaodu += UI.buttonHeight;
+            //UI.CreatAnNiu("开房设置>>", false, CaiDan_KaiFangSheZhi);
+            //gaodu += UI.buttonHeight;
+            //UI.CreatAnNiu("聊天设置>>", false, CaiDan_LiaoTianSheZhi);
+            //gaodu += UI.buttonHeight;
+            //UI.CreatAnNiu("UI显示设置>>", false, CaiDan_UISheZhi);
+            //gaodu += UI.buttonHeight;
+            //UI.CreatAnNiu("游戏设置>>", false, CaiDan_YouXiSheZhi);
+            //gaodu += UI.buttonHeight;
+            //UI.CreatAnNiu("YxMod设置>>", false, CaiDan_YxModSheZhi);
             gaodu += UI.buttonHeight;
 
             GUILayout.EndScrollView();
@@ -312,6 +316,39 @@ namespace YxModDll.Mod
             JiXu();
             ChongZhiWuPin();
         }
+        public static void ResetAllAnimations()
+        {
+            int countAnimator = 0;
+            int countAnimation = 0;
+
+            // 处理 Animator
+            Animator[] animators = GameObject.FindObjectsOfType<Animator>();
+            foreach (var animator in animators)
+            {
+                if (!animator.enabled)
+                    continue;
+
+                animator.Rebind();
+                countAnimator++;
+            }
+
+            // 处理 Animation
+            Animation[] animations = GameObject.FindObjectsOfType<Animation>();
+            foreach (var animation in animations)
+            {
+                if (!animation.enabled)
+                    continue;
+
+                animation.Rewind();
+                countAnimation++;
+            }
+
+            Debug.Log($"已重置 {countAnimator} 个 Animator，{countAnimation} 个 Animation 组件");
+            Chat.TiShi(NetGame.instance.local, $"已重置 {countAnimator} 个 Animator，{countAnimation} 个 Animation 组件");
+        }
+
+
+
         public static void ChongZhiWuPin()
         {
             if (NetGame.isServer || NetGame.isLocal)
