@@ -1693,7 +1693,7 @@ namespace YxModDll.Mod
                 SendStr("发送q/Q/S+E 存点，E键取点，E+A键取上一个点，E+D键取下一个点。", netHost);
             }
 
-            SendStr("发送 “Y+数字(0-9)” 更改 Y 键动作，如 “y1” 更改 Y 键为坐下。", netHost);
+            SendStr("发送 “Y+数字(0-10)” 更改 Y 键动作，如 “y1” 更改 Y 键为坐下。", netHost);
             SendStr("发送 “帮助” 查看更多功能。当前版本：YxMod3.0。", netHost);
             SendStr("文件下载地址: yxmod.cc，交流群: 385272989", netHost);
             SendStr("=== 作者：一心、飞鱼鱼    贡献者：plcc ===", netHost);
@@ -2030,6 +2030,11 @@ namespace YxModDll.Mod
                 {
                     human.GetExt().numY = num;
                     Chat.TiShi(human.player.host, "Y键动作已更改为 挠死你");
+                }
+                else if (num == 10)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 托马斯");
                 }
             }
 

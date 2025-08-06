@@ -447,6 +447,13 @@ namespace YxModDll.Patches
                         case 9:
                             YxMod.NaoSiNi(instance);
                             break;
+                        //case 10:
+                        //    if (!ext.tuomasi) // 防止重复启动
+                        //    {
+                        //        ext.tuomasi = true;
+                        //        CoroutineRunner.Instance.RunCoroutine(YxMod.TuoMaSi(instance));
+                        //    }
+                        //    break;
                     }
                 }
                 else // 松开 Y 键时
@@ -469,6 +476,10 @@ namespace YxModDll.Patches
                     {
                         YxMod.EndNaoSiNi(instance);
                     }
+                    //if (ext.tuomasi)
+                    //{
+                    //    ext.tuomasi = false; 
+                    //}
                 }
 
                 // 调用原版的动作控制（跳跃、移动等）
