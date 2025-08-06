@@ -36,7 +36,7 @@ namespace YxModDll.Mod
             anniuTexture3.SetPixel(0, 0, new Color32(0, 0x70, 0xd7, 255));//按钮按下
             anniuTexture3.Apply();
 
-            LoadCacheFromFile(); // 加载翻译缓存
+            //LoadCacheFromFile(); // 加载翻译缓存
             //Debug.Log("buttonHeight : " + buttonHeight);
         }
         public static GUIStyle styleSelectionGrid()  ///按下松开效果
@@ -622,7 +622,7 @@ namespace YxModDll.Mod
             }
 
             // 没翻译，触发后台翻译（不等待）
-            StartTranslationAsync(originalText, targetLang);
+            //StartTranslationAsync(originalText, targetLang);
 
             // 返回原文（下次再回来会看到翻译结果）
             return originalText;
@@ -742,27 +742,78 @@ namespace YxModDll.Mod
 
         static Dictionary<string, Dictionary<string, string>> buttonTranslations = new()
         {
-            ["个人定点"] = new()
-            {
-                ["English"] = "Personal Point",
-                ["Chinese"] = "个人定点",
-                ["French"] = "Point Personnel",
-                ["Japanese"] = "個人ポイント",
-            },
-            ["无碰撞"] = new()
-            {
-                ["English"] = "No Collision",
-                ["Chinese"] = "无碰撞",
-                ["French"] = "Sans Collision",
-                ["Japanese"] = "衝突なし",
-            },
-            ["无假死"] = new()
-            {
-                ["English"] = "No Ragdoll",
-                ["Chinese"] = "无假死",
-                ["French"] = "Pas de Ragdoll",
-                ["Japanese"] = "ラグドール無効",
-            },
+            ["上一关(PgUp)"] = new() { ["English"] = "Prev(PgUp)" },
+            ["下一关(PgDn)"] = new() { ["English"] = "Next(PgDn)" },
+            ["传送至(C)"] = new() { ["English"] = "TP To(C)" },
+            ["分身+1"] = new() { ["English"] = "Clone+1" },
+            ["分身-1"] = new() { ["English"] = "Clone-1" },
+            ["召集(F2)"] = new() { ["English"] = "Call(F2)" },
+            ["平滑+1"] = new() { ["English"] = "Smooth+1" },
+            ["平滑-1"] = new() { ["English"] = "Smooth-1" },
+            ["悬浮于(X)"] = new() { ["English"] = "Float(X)" },
+            ["牵手(Z)"] = new() { ["English"] = "Hold(Z)" },
+            ["离开游戏"] = new() { ["English"] = "Exit" },
+            ["设置>>"] = new() { ["English"] = "Settings" },
+            ["载点(Ctrl+F)"] = new() { ["English"] = "LoadPt(Ctrl+F)" },
+            ["返回大厅"] = new() { ["English"] = "Lobby" },
+            ["邀请好友"] = new() { ["English"] = "Invite" },
+            ["重新开始"] = new() { ["English"] = "Restart" },
+            ["重置动画"] = new() { ["English"] = "ResetAnim" },
+            ["重置物品(F3)"] = new() { ["English"] = "ResetItems(F3)" },
+            ["全局灯"] = new() { ["English"] = "GlobalLight" },
+            ["头灯"] = new() { ["English"] = "Headlight" },
+            ["存档点显示"] = new() { ["English"] = "SaveVis" },
+            ["找不同模式"] = new() { ["English"] = "DiffMode" },
+            ["滑冰图"] = new() { ["English"] = "SkateMap" },
+            ["真假剔除"] = new() { ["English"] = "FakeOff" },
+            ["自动伸手"] = new() { ["English"] = "AutoReach" },
+            ["自动海豚跳"] = new() { ["English"] = "AutoBhop" },
+            ["自动爬墙"] = new() { ["English"] = "AutoClimb" },
+            ["解密模式"] = new() { ["English"] = "Decrypt" },
+            ["解锁成就"] = new() { ["English"] = "Unlock" },
+            ["触发器显示"] = new() { ["English"] = "Triggers" },
+            ["个人资料"] = new() { ["English"] = "Profile" },
+            ["传送至>>"] = new() { ["English"] = "TP>>" },
+            ["保存皮肤！慎点"] = new() { ["English"] = "SaveSkin!" },
+            ["修复所有人皮肤"] = new() { ["English"] = "FixAllSkin" },
+            ["修复皮肤"] = new() { ["English"] = "FixSkin" },
+            ["切换皮肤"] = new() { ["English"] = "SwapSkin" },
+            ["刷新皮肤"] = new() { ["English"] = "ReloadSkin" },
+            ["加好友"] = new() { ["English"] = "AddFriend" },
+            ["悬浮于>>"] = new() { ["English"] = "Float>>" },
+            ["牵手>>"] = new() { ["English"] = "Hold>>" },
+            ["踢出房间"] = new() { ["English"] = "Kick" },
+            ["三级跳"] = new() { ["English"] = "TripleJump" },
+            ["个人定点"] = new() { ["English"] = "MyPoint" },
+            ["修改手长"] = new() { ["English"] = "HandLen" },
+            ["修改速度"] = new() { ["English"] = "Speed" },
+            ["倒立"] = new() { ["English"] = "Handstand" },
+            ["冻结"] = new() { ["English"] = "Freeze" },
+            ["半身不遂"] = new() { ["English"] = "HalfParalysis" },
+            ["吊死鬼"] = new() { ["English"] = "HangGhost" },
+            ["客机权限"] = new() { ["English"] = "GuestPerm" },
+            ["手滑"] = new() { ["English"] = "Slippery" },
+            ["拆除"] = new() { ["English"] = "Dismantle" },
+            ["无假死"] = new() { ["English"] = "NoRagdoll" },
+            ["无碰撞"] = new() { ["English"] = "NoCollision" },
+            ["气球"] = new() { ["English"] = "Balloon" },
+            ["气球戏法"] = new() { ["English"] = "BalloonFX" },
+            ["潜水"] = new() { ["English"] = "Dive" },
+            ["物品挂件"] = new() { ["English"] = "ItemSlot" },
+            ["电臀"] = new() { ["English"] = "ElectroButt" },
+            ["磕头怪"] = new() { ["English"] = "HeadBanger" },
+            ["空气炮"] = new() { ["English"] = "AirCannon" },
+            ["聊天框权限"] = new() { ["English"] = "ChatPerm" },
+            ["腿拐"] = new() { ["English"] = "LegTwist" },
+            ["腿瘸"] = new() { ["English"] = "LegLimp" },
+            ["螃蟹"] = new() { ["English"] = "Crab" },
+            ["超人"] = new() { ["English"] = "Superman" },
+            ["超级跳"] = new() { ["English"] = "SuperJump" },
+            ["蹦迪"] = new() { ["English"] = "Dance" },
+            ["转圈圈"] = new() { ["English"] = "Spin" },
+            ["闪现"] = new() { ["English"] = "Blink" },
+            ["陀螺"] = new() { ["English"] = "Gyro" },
+            ["飞天"] = new() { ["English"] = "Fly" },
         };
         private static readonly string translationCachePath = Path.Combine(Application.persistentDataPath, "button_translations.bin");
 
