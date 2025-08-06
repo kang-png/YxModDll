@@ -1450,6 +1450,15 @@ namespace YxModDll.Mod
                 dancer.transform.rotation = rot;
                 dancer.transform.localScale = Vector3.one;
 
+
+                // 禁用dancer的所有Renderer组件，确保它不可见
+                Renderer[] renderers = dancer.GetComponentsInChildren<Renderer>();
+                foreach (var renderer in renderers)
+                {
+                    renderer.enabled = false; // 禁用渲染器
+                }
+
+
                 Animator animator = dancer.GetComponent<Animator>();
                 if (!animator) animator = dancer.AddComponent<Animator>();
                 animator.applyRootMotion = false;
