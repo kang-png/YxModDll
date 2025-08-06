@@ -174,7 +174,6 @@
   <ItemGroup>
     <Compile Include="EntryPoint.cs" />
     <Compile Include="Mod\AssetBundleLoader.cs" />
-    <Compile Include="Mod\CoroutineRunner.cs.cs" />
     <Compile Include="Mod\INI.cs" />
     <Compile Include="Mod\HotKey.cs" />
     <Compile Include="Mod\RagdollAnimatorSync.cs" />
