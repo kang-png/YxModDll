@@ -156,6 +156,20 @@ namespace YxModDll.Mod
 
         public static float playerCamDistance = 300f;
         public static float freeRoamCamDistance = 300f;
+
+        public static string mingZiPreviewStr = "";
+        public static string faYanPreviewStr = "";
+        public static float lastRandomUpdateTime = -10f;
+
+        void Update()
+        {
+            if (Time.time - lastRandomUpdateTime >= 1f)
+            {
+                lastRandomUpdateTime = Time.time;
+                mingZiPreviewStr = Chat.SetDaXiaoYanSe(MingZiStr, MingZiDaXiaoID, MingZiYanSeID, true);
+                faYanPreviewStr = Chat.SetDaXiaoYanSe("佩玉鸣鸾罢歌舞，妈妈带我吃红薯", FaYanDaXiaoID, FaYanYanSeID, false);
+            }
+        }
         public static void CreatUI()//创建菜单功能区
         {
             float kehuquHeight = UI_Main.shezhiUI_gao - UI_Windows.biaotiUiheight;
@@ -170,7 +184,8 @@ namespace YxModDll.Mod
             string[] colorfulNames = new string[shezhiNames.Length];
             for (int j = 0; j < shezhiNames.Length; j++)
             {
-                colorfulNames[j] = ColorfulSpeek.colorshows(shezhiNames[j]);
+                string translated = UI.TranslateButtonText(shezhiNames[j]);
+                colorfulNames[j] = ColorfulSpeek.colorshows(translated);
             }
 
             int i = GUILayout.SelectionGrid(shezhiID, colorfulNames, 1, UI.styleSelectionGrid());
@@ -235,18 +250,22 @@ namespace YxModDll.Mod
                     GUILayout.Space(5);
                     UI.CreatFenGeXian();//分割线
                     GUILayout.Space(5);
-                    // 给 daxiaoNames 加颜色
+                    // 给 daxiaoNames 加颜色// 大小
                     string[] daxiaoNamesColored = new string[daxiaoNames.Length];
                     for (int i1 = 0; i1 < daxiaoNames.Length; i1++)
                     {
-                        daxiaoNamesColored[i1] = ColorfulSpeek.colorshows(daxiaoNames[i1]);
+                        string translated = UI.TranslateButtonText(daxiaoNames[i1]); // 先翻译
+                        daxiaoNamesColored[i1] = ColorfulSpeek.colorshows(translated); // 再上色
                     }
-                    // 给 yanseNames 加颜色
+
+                    // 颜色
                     string[] yanseNamesColored = new string[yanseNames.Length];
                     for (int i2 = 0; i2 < yanseNames.Length; i2++)
                     {
-                        yanseNamesColored[i2] = ColorfulSpeek.colorshows(yanseNames[i2]);
+                        string translated = UI.TranslateButtonText(yanseNames[i2]); // 先翻译
+                        yanseNamesColored[i2] = ColorfulSpeek.colorshows(translated); // 再上色
                     }
+
 
                     UI.CreatAnNiu_AnXia("名字设置>>", ref MingZiSheZhi, false, SetMingZiSheZhi,"点按钮切换开关");
                     if (MingZiSheZhi)
@@ -272,7 +291,7 @@ namespace YxModDll.Mod
                             GUILayout.EndHorizontal();
 
                             GUILayout.BeginHorizontal();
-                            GUILayout.Label(ColorfulSpeek.colorshows("大小设置"));
+                            GUILayout.Label(ColorfulSpeek.colorshows(UI.TranslateButtonText("大小设置")));
 
                             int daxiaoid = GUILayout.SelectionGrid(MingZiDaXiaoID, daxiaoNamesColored , 4, UI.styleSelectionGrid());
                             if (MingZiDaXiaoID != daxiaoid)
@@ -289,28 +308,28 @@ namespace YxModDll.Mod
                             {
                                 case "固定":
 
-                                    UI.CreatShuZhi("字号", ref MingZiDaXiao, 2, 200, 1, SetMingZiDaXiao);
+                                    UI.CreatShuZhi("字号", ref MingZiDaXiao, 2, 30, 1, SetMingZiDaXiao);
 
                                     break;
                                 case "渐变":
-                                    UI.CreatShuZhi("开始", ref MingZiJianBianDaXiao1, 2, 200, 1, SetMingZiJianBianDaXiao1);
+                                    UI.CreatShuZhi("开始", ref MingZiJianBianDaXiao1, 2, 30, 1, SetMingZiJianBianDaXiao1);
                                     GUILayout.FlexibleSpace();
-                                    UI.CreatShuZhi("结束", ref MingZiJianBianDaXiao2, 2, 200, 1, SetMingZiJianBianDaXiao2);
+                                    UI.CreatShuZhi("结束", ref MingZiJianBianDaXiao2, 2, 30, 1, SetMingZiJianBianDaXiao2);
                                     break;
                                 case "随机":
-                                    UI.CreatShuZhi("最小", ref MingZiSuiJiDaXiao1, 2, 200, 1, SetMingZiSuiJiDaXiao1);
+                                    UI.CreatShuZhi("最小", ref MingZiSuiJiDaXiao1, 2, 30, 1, SetMingZiSuiJiDaXiao1);
                                     GUILayout.FlexibleSpace();
-                                    UI.CreatShuZhi("最大", ref MingZiSuiJiDaXiao2, 2, 200, 1, SetMingZiSuiJiDaXiao2);
+                                    UI.CreatShuZhi("最大", ref MingZiSuiJiDaXiao2, 2, 30, 1, SetMingZiSuiJiDaXiao2);
                                     break;
                                 case "跳跃":
-                                    UI.CreatShuZhi("字号1", ref MingZiTiaoYueDaXiao1, 2, 200, 1, SetMingZiTiaoYueDaXiao1);
+                                    UI.CreatShuZhi("字号1", ref MingZiTiaoYueDaXiao1, 2, 30, 1, SetMingZiTiaoYueDaXiao1);
                                     GUILayout.FlexibleSpace();
-                                    UI.CreatShuZhi("字号2", ref MingZiTiaoYueDaXiao2, 2, 200, 1, SetMingZiTiaoYueDaXiao2);
+                                    UI.CreatShuZhi("字号2", ref MingZiTiaoYueDaXiao2, 2, 30, 1, SetMingZiTiaoYueDaXiao2);
                                     break;
                             }
                             GUILayout.EndHorizontal();
                             GUILayout.BeginHorizontal();
-                            GUILayout.Label(ColorfulSpeek.colorshows("颜色设置"));
+                            GUILayout.Label(ColorfulSpeek.colorshows(UI.TranslateButtonText("颜色设置")));
                             int yanseid = GUILayout.SelectionGrid(MingZiYanSeID, yanseNamesColored, 4, UI.styleSelectionGrid());
                             if (MingZiYanSeID != yanseid)
                             {
@@ -341,7 +360,8 @@ namespace YxModDll.Mod
                                     break;
                             }
                             GUILayout.EndHorizontal();
-                            GUILayout.Label(Chat.SetDaXiaoYanSe(MingZiStr, MingZiDaXiaoID, MingZiYanSeID, true), UI.SetLabelStyle_JuZhong());
+                            GUILayout.Label(mingZiPreviewStr, UI.SetLabelStyle_JuZhong());
+                            //GUILayout.Label(Chat.SetDaXiaoYanSe(MingZiStr, MingZiDaXiaoID, MingZiYanSeID, true), UI.SetLabelStyle_JuZhong());
                         }
                     }
                     GUILayout.Space(5);
@@ -358,7 +378,7 @@ namespace YxModDll.Mod
 
 
                         GUILayout.BeginHorizontal();
-                        GUILayout.Label(ColorfulSpeek.colorshows("大小设置"));
+                        GUILayout.Label(ColorfulSpeek.colorshows(UI.TranslateButtonText("大小设置")));
 
                         int daxiaoid = GUILayout.SelectionGrid(FaYanDaXiaoID, daxiaoNamesColored , 4, UI.styleSelectionGrid());
                         if (FaYanDaXiaoID != daxiaoid)
@@ -375,27 +395,27 @@ namespace YxModDll.Mod
                         {
                             case "固定":
 
-                                UI.CreatShuZhi("字号", ref FaYanDaXiao, 2, 200, 1, SetFaYanDaXiao);
+                                UI.CreatShuZhi("字号", ref FaYanDaXiao, 2, 30, 1, SetFaYanDaXiao);
                                 break;
                             case "渐变":
-                                UI.CreatShuZhi("开始", ref FaYanJianBianDaXiao1, 2, 200, 1, SetFaYanJianBianDaXiao1);
+                                UI.CreatShuZhi("开始", ref FaYanJianBianDaXiao1, 2, 30, 1, SetFaYanJianBianDaXiao1);
                                 GUILayout.FlexibleSpace();
-                                UI.CreatShuZhi("结束", ref FaYanJianBianDaXiao2, 2, 200, 1, SetFaYanJianBianDaXiao2);
+                                UI.CreatShuZhi("结束", ref FaYanJianBianDaXiao2, 2, 30, 1, SetFaYanJianBianDaXiao2);
                                 break;
                             case "随机":
-                                UI.CreatShuZhi("最小", ref FaYanSuiJiDaXiao1, 2, 200, 1, SetFaYanSuiJiDaXiao1);
+                                UI.CreatShuZhi("最小", ref FaYanSuiJiDaXiao1, 2, 30, 1, SetFaYanSuiJiDaXiao1);
                                 GUILayout.FlexibleSpace();
-                                UI.CreatShuZhi("最大", ref FaYanSuiJiDaXiao2, 2, 200, 1, SetFaYanSuiJiDaXiao2);
+                                UI.CreatShuZhi("最大", ref FaYanSuiJiDaXiao2, 2, 30, 1, SetFaYanSuiJiDaXiao2);
                                 break;
                             case "跳跃":
-                                UI.CreatShuZhi("字号1", ref FaYanTiaoYueDaXiao1, 2, 200, 1, SetFaYanTiaoYueDaXiao1);
+                                UI.CreatShuZhi("字号1", ref FaYanTiaoYueDaXiao1, 2, 30, 1, SetFaYanTiaoYueDaXiao1);
                                 GUILayout.FlexibleSpace();
-                                UI.CreatShuZhi("字号2", ref FaYanTiaoYueDaXiao2, 2, 200, 1, SetFaYanTiaoYueDaXiao2);
+                                UI.CreatShuZhi("字号2", ref FaYanTiaoYueDaXiao2, 2, 30, 1, SetFaYanTiaoYueDaXiao2);
                                 break;
                         }
                         GUILayout.EndHorizontal();
                         GUILayout.BeginHorizontal();
-                        GUILayout.Label(ColorfulSpeek.colorshows("颜色设置"));
+                        GUILayout.Label(ColorfulSpeek.colorshows(UI.TranslateButtonText("颜色设置")));
 
                         int yanseid = GUILayout.SelectionGrid(FaYanYanSeID, yanseNamesColored, 4, UI.styleSelectionGrid());
                         if (FaYanYanSeID != yanseid)
@@ -427,7 +447,8 @@ namespace YxModDll.Mod
                                 break;
                         }
                         GUILayout.EndHorizontal();
-                        GUILayout.Label(Chat.SetDaXiaoYanSe("佩玉鸣鸾罢歌舞，妈妈带我吃红薯", FaYanDaXiaoID, FaYanYanSeID, false), UI.SetLabelStyle_JuZhong());
+                        GUILayout.Label(faYanPreviewStr, UI.SetLabelStyle_JuZhong());
+                        //GUILayout.Label(Chat.SetDaXiaoYanSe("佩玉鸣鸾罢歌舞，妈妈带我吃红薯", FaYanDaXiaoID, FaYanYanSeID, false), UI.SetLabelStyle_JuZhong());
                     }
                     GUILayout.Space(5);
                     UI.CreatFenGeXian();//分割线
@@ -481,7 +502,8 @@ namespace YxModDll.Mod
                         string[] colorfulDongzuoNames = new string[guajidongzuoNames.Length];
                         for (int i1 = 0; i1 < guajidongzuoNames.Length; i1++)
                         {
-                            colorfulDongzuoNames[i1] = ColorfulSpeek.colorshows(guajidongzuoNames[i1]);
+                            string translated = UI.TranslateButtonText(guajidongzuoNames[i1]); // 先翻译
+                            colorfulDongzuoNames[i1] = ColorfulSpeek.colorshows(translated); // 再上色
                         }
 
                         int dongzuoid = GUILayout.SelectionGrid(guajidongzuoID, colorfulDongzuoNames, 5, UI.styleSelectionGrid());

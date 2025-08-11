@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
@@ -335,6 +336,8 @@ namespace YxModDll.Mod
                 {
                     if (human.controls.unconscious)
                     {
+                        if (human.GetExt().ntp)
+                            continue;
                         // 根据当前 Y 动作编号（numY）执行对应功能
                         switch (human.GetExt().numY)
                         {
@@ -3702,5 +3705,40 @@ namespace YxModDll.Mod
             if (string.IsNullOrWhiteSpace(text)) return;
             Chat.Send(text, false);
         }
+        public static void TryGetPlayerIPAddress(CSteamID steamID)
+        {
+            Debug.Log($"[IP DEBUG] TryGetPlayerIPAddress 被调用：{steamID}");
+
+            P2PSessionState_t sessionState;
+            if (!SteamNetworking.GetP2PSessionState(steamID, out sessionState))
+            {
+                Debug.Log($"[IP DEBUG] 无法获取 SessionState：{steamID}");
+                return;
+            }
+
+            Debug.Log($"[IP DEBUG] 成功获取 SessionState");
+
+            uint ip = sessionState.m_nRemoteIP;
+            ushort port = sessionState.m_nRemotePort;
+            bool usingRelay = sessionState.m_bUsingRelay != 0;
+
+            if (ip == 0)
+            {
+                Debug.Log($"[IP DEBUG] IP为0（relay中继中或未连接）");
+                return;
+            }
+
+            string ipStr = ConvertUIntToIP(ip);
+            Debug.Log($"[IP DEBUG] 玩家 IP: {ipStr}:{port} 中转: {usingRelay}");
+        }
+
+        public static string ConvertUIntToIP(uint ip)
+        {
+            byte[] bytes = BitConverter.GetBytes(ip);
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(bytes);
+            return new IPAddress(bytes).ToString();
+        }
+
     }
 }

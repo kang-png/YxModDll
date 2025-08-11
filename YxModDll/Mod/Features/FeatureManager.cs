@@ -3289,6 +3289,31 @@ namespace YxModDll.Mod.Features
         //{
         //    return Transpilers.MethodReplacer(instructions, (MethodBase)Utils.Method<UnityEngine.Debug>("LogError", new Type[1] { typeof(object) }), (MethodBase)Utils.Method<FeatureManager>("LogErrorReplace"));
         //}
+        [HarmonyPatch(typeof(NetPlayer), "ReceiveMove")]
+        [HarmonyTranspiler]
+        public static IEnumerable<CodeInstruction> ReceiveMovePatch(IEnumerable<CodeInstruction> instructions)
+        {
+            return Transpilers.MethodReplacer(
+                instructions,
+                AccessTools.Method(typeof(UnityEngine.Debug), "LogError", new[] { typeof(object) }),
+                AccessTools.Method(typeof(FeatureManager), nameof(LogErrorReplace))
+            );
+        }
+        static readonly FieldInfo inputDeviceChangeField = AccessTools.Field(typeof(MenuSystem), "InputDeviceChange");
+        [HarmonyPatch(typeof(MenuSystem), "SetInputDevice")]
+        [HarmonyPrefix]
+        static bool Prefix_SetInputDevice(MenuSystem __instance, MenuSystem.eInputDeviceType device)
+        {
+            // 跳过空事件调用
+            var callback = inputDeviceChangeField?.GetValue(__instance) as Action<MenuSystem.eInputDeviceType>;
+
+            if (callback == null)
+            {
+                //UnityEngine.Debug.Log("[YxMod]Patch: InputDeviceChange is null, skipping SetInputDevice.");
+                return false; // 跳过原方法，避免空指针
+            }
+            return true; 
+        }
 
         public static void LogErrorReplace(string s)
         {

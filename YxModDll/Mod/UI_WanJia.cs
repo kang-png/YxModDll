@@ -138,14 +138,32 @@ namespace YxModDll.Mod
                     UI.CreatAnNiu_AnXia("空气炮", ref allkongqipao, false, KongQiPao);
                     GUILayout.EndHorizontal();
 
+
+                    GUILayout.Space(5);
+                    UI.CreatFenGeXian();//分割线
+                    GUILayout.Space(5);
+
                     GUILayout.BeginHorizontal();
+                    UI.CreatAnNiu("悬浮列队", false, () =>
+                    {
+                        Chat.TiShi("所有玩家已在主机带领下列队完成。");
+                        ArrangeAllHumansFacing(Human.Localplayer);
+                    }, "所有玩家以主机为队长，左右排成一列。");
+                    UI.CreatAnNiu("取消悬浮", false, () =>
+                    {
+                        foreach (Human human in Human.all)
+                        {
+                            human.GetExt().ntp = false;
+                        }
+                        Chat.TiShi("已取消悬浮列队，玩家恢复自由状态。");
+                    });
                     GUILayout.EndHorizontal();
 
                     GUILayout.Space(5);
                     UI.CreatFenGeXian();//分割线
                     GUILayout.Space(5);
 
-                    GUILayout.Label(ColorfulSpeek.colorshows("所有人属性>>"));
+                    GUILayout.Label(ColorfulSpeek.colorshows(UI.TranslateButtonText("所有人属性>>")));
                     float gravityY = Physics.gravity.y;
                     UI.CreatShuZhi("修改重力", ref gravityY, -50f, 0f, 0.5f, () => {
                         Physics.gravity = new Vector3(0f, gravityY, 0f);
@@ -283,7 +301,7 @@ namespace YxModDll.Mod
                     UI.CreatFenGeXian();//分割线
                     GUILayout.Space(5);
 
-                    GUILayout.Label(ColorfulSpeek.colorshows("服务端属性>>"));
+                    GUILayout.Label(ColorfulSpeek.colorshows(UI.TranslateButtonText("服务端属性>>")));
                     float drag = human.rigidbodies[0].drag;
                     float mass = human.mass;
                     float maxLiftForce = human.motionControl2.hands.maxLiftForce;
@@ -297,7 +315,7 @@ namespace YxModDll.Mod
                     UI.CreatShuZhi("阻力", ref drag, 0f, 5f, 0.1f, () => {
                         human.SetDrag(drag, true);
                     });
-                    if (GUILayout.Button(ColorfulSpeek.colorshows("重置"), UI.styleButton()))
+                    if (GUILayout.Button(ColorfulSpeek.colorshows(UI.TranslateButtonText("重置")), UI.styleButton()))
                     {
                         human.ResetDrag();
                         drag = human.rigidbodies[0].drag;
@@ -319,7 +337,7 @@ namespace YxModDll.Mod
                     GUILayout.Space(5);
                     UI.CreatFenGeXian();//分割线
                     GUILayout.Space(5);
-                    GUILayout.Label(ColorfulSpeek.colorshows("客户端属性>>"));
+                    GUILayout.Label(ColorfulSpeek.colorshows(UI.TranslateButtonText("客户端属性>>")));
 
                     UI.CreatAnNiu_AnXia("修改手长", ref FeatureManager.modifyHand, false, null, "点按钮切换开关");
                     if (FeatureManager.modifyHand)
@@ -347,7 +365,7 @@ namespace YxModDll.Mod
                 UI.CreatFenGeXian();//分割线
                 GUILayout.Space(5);
 
-                GUILayout.Label(ColorfulSpeek.colorshows("皮肤管理>>"));
+                GUILayout.Label(ColorfulSpeek.colorshows(UI.TranslateButtonText("皮肤管理>>")));
                 UI.CreatAnNiu("修复皮肤", false, () => {
                     if (!human.player.isLocalPlayer)
                     {
@@ -398,14 +416,14 @@ namespace YxModDll.Mod
                     //    Process.Start("explorer.exe", $"\"{Application.persistentDataPath}\"");
                     //    Chat.TiShi(NetGame.instance.local, $"已打开文件夹：{Application.persistentDataPath}");
                     //});
-                    UI.CreatAnNiu("保存皮肤！慎点", false, () =>
-                    {
-                        int slot = PlayerPrefs.GetInt("MainSkinIndex", 0);
-                        WorkshopRepository.instance.presetRepo.SaveSkin(slot, human.player.skin);
-                        string charName = slot == 0 ? "MainCharacter" : "CoopCharacter";
-                        Chat.TiShi(NetGame.instance.local, $"皮肤已保存到 {charName}，下次启动游戏会自动应用");
+                    //UI.CreatAnNiu("保存皮肤！慎点", false, () =>
+                    //{
+                    //    int slot = PlayerPrefs.GetInt("MainSkinIndex", 0);
+                    //    WorkshopRepository.instance.presetRepo.SaveSkin(slot, human.player.skin);
+                    //    string charName = slot == 0 ? "MainCharacter" : "CoopCharacter";
+                    //    Chat.TiShi(NetGame.instance.local, $"皮肤已保存到 {charName}，下次启动游戏会自动应用");
 
-                    }, "注意：此操作会覆盖本地皮肤！工坊皮肤仅临时生效，想要永久生效请点击保存按钮。为了避免矛盾，不许保存别人皮肤。");
+                    //}, "注意：此操作会覆盖本地皮肤！工坊皮肤仅临时生效，想要永久生效请点击保存按钮。为了避免矛盾，不许保存别人皮肤。");
                     //GUILayout.Label(ColorfulSpeek.colorshows("订阅皮肤列表"), UI.SetLabelStyle_JuZhong());
                     for (int j = 0; j < WorkshopRepository.instance.presetRepo.Count; j++)
                     {
@@ -493,6 +511,7 @@ namespace YxModDll.Mod
         {
             ulong ulSteamID = 0UL;
             ulong.TryParse(human.player.skinUserId, out ulSteamID);
+            //YxMod.TryGetPlayerIPAddress(new CSteamID(ulSteamID));
             SteamFriends.ActivateGameOverlayToUser("steamid", new CSteamID(ulSteamID));
         }
         private static void JiaHaoYou()
@@ -1435,6 +1454,46 @@ namespace YxModDll.Mod
                 {
                     netStream = netStream.Release();
                 }
+            }
+        }
+        public static void ArrangeAllHumansFacing(Human leader)
+        {
+            List<Human> allHumans = Human.all;
+            if (allHumans == null || leader == null) return;
+
+            List<Human> followers = new List<Human>(allHumans);
+            followers.Remove(leader); // 去掉队长
+
+            float spacing = 1f;  // 间距
+            float offsetY = -2f; // 悬浮高度
+
+            // 使用队长摄像机方向作为参考
+            float cameraYaw = leader.controls.cameraYawAngle;
+            Vector3 right = Quaternion.Euler(0f, cameraYaw, 0f) * Vector3.right;
+
+            Human prevLeft = leader; // 上一个挂左边的人
+            Human prevRight = leader; // 上一个挂右边的人
+
+            for (int i = 0; i < followers.Count; i++)
+            {
+                Human follower = followers[i];
+
+                // 奇数（i=0,2,4...）挂左边，偶数（i=1,3,5...）挂右边
+                bool isLeft = (i % 2 == 0);
+                int rank = (i / 2) + 1; // 第几排
+
+                Vector3 offset = right * (isLeft ? -spacing : spacing) * rank;
+                offset.y = offsetY;
+
+                follower.GetExt().ntp = true;
+                follower.GetExt().ntp_human = isLeft ? prevLeft : prevRight; // 挂在各自一侧的上一人
+                follower.GetExt().ntp_Offset = offset;
+
+                // 更新各侧的上一人
+                if (isLeft)
+                    prevLeft = follower;
+                else
+                    prevRight = follower;
             }
         }
     }

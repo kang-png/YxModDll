@@ -26,7 +26,7 @@ namespace YxModDll.Mod
         public static bool jifeixitong_KaiGuan;
         public static bool qianshouxitong_KaiGuan;
         public static bool chaojitiao_KaiGuan;
-
+        public static bool wutiguajian_KaiGuan;
 
         public static void CreatUI()//创建菜单功能区
         {
@@ -55,8 +55,8 @@ namespace YxModDll.Mod
             UI.CreatAnNiu_AnXia("闪现系统", ref shanxianxitong_KaiGuan, false, ShanXianXiTong);
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
-            UI.CreatAnNiu_AnXia("传送系统", ref chuansongxitong_KaiGuan, false, ChuanSongXiTong);
-            UI.CreatAnNiu_AnXia("挂件系统", ref guajianxitong_KaiGuan, false, GuaJianXiTong);
+            UI.CreatAnNiu_AnXia("玩家挂件", ref guajianxitong_KaiGuan, false, GuaJianXiTong);
+            UI.CreatAnNiu_AnXia("物体挂件", ref wutiguajian_KaiGuan, false, WuTiGuaJianXiTong);
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             UI.CreatAnNiu_AnXia("娱乐系统", ref yulexitong_KaiGuan, false, YuLeXiTong);
@@ -64,6 +64,7 @@ namespace YxModDll.Mod
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             UI.CreatAnNiu_AnXia("牵手系统", ref qianshouxitong_KaiGuan, false, QianShouXiTong);
+            UI.CreatAnNiu_AnXia("传送系统", ref chuansongxitong_KaiGuan, false, ChuanSongXiTong);
             GUILayout.EndHorizontal();
 
             GUILayout.FlexibleSpace();
@@ -85,6 +86,7 @@ namespace YxModDll.Mod
             shanxianxitong_KaiGuan = PlayerPrefs.GetInt("shanxianxitong_KaiGuan", 1) > 0;
             chuansongxitong_KaiGuan = PlayerPrefs.GetInt("chuansongxitong_KaiGuan", 1) > 0;
             guajianxitong_KaiGuan = PlayerPrefs.GetInt("guajianxitong_KaiGuan", 1) > 0;
+            wutiguajian_KaiGuan = PlayerPrefs.GetInt("wutiguajian_KaiGuan", 1) > 0;
             yulexitong_KaiGuan = PlayerPrefs.GetInt("yulexitong_KaiGuan", 1) > 0;
             qianshouxitong_KaiGuan = PlayerPrefs.GetInt("qianshouxitong_KaiGuan", 1) > 0;
             chaojitiao_KaiGuan = PlayerPrefs.GetInt("chaojitiao_KaiGuan", 1) > 0;
@@ -267,6 +269,19 @@ namespace YxModDll.Mod
         {
             string str = $"挂件系统已{(guajianxitong_KaiGuan ? "打开" : "关闭")}";
             PlayerPrefs.SetInt("guajianxitong_KaiGuan", guajianxitong_KaiGuan ? 1 : 0);
+            if (NetGame.isServer)
+            {
+                Chat.TiShi(str, TiShiMsgId.XiTongTiShi);
+            }
+            else if (NetGame.isClient)
+            {
+                Chat.TiShi(NetGame.instance.local, $"{str}，仅房主有效");
+            }
+        }
+        public static void WuTiGuaJianXiTong()
+        {
+            string str = $"挂件系统已{(wutiguajian_KaiGuan ? "打开" : "关闭")}";
+            PlayerPrefs.SetInt("wutiguajian_KaiGuan", wutiguajian_KaiGuan ? 1 : 0);
             if (NetGame.isServer)
             {
                 Chat.TiShi(str, TiShiMsgId.XiTongTiShi);

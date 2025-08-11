@@ -33,6 +33,7 @@ namespace YxModDll.Mod
         public static bool ShowXuanFuUI;
         public static bool ShowQianShouUI;
 
+        public static bool ShowUI2 = true;
         public static bool ShowCaiDanUI2 = true;
         public static bool ShowGongNengUI2;
         public static bool ShowWanJiaUI2;
@@ -110,16 +111,16 @@ namespace YxModDll.Mod
         public static Rect xuanfuUiRect = new Rect(xuanfuUI_left, xuanfuUI_top, xuanfuUI_kuan, xuanfuUI_gao);
         public static Rect qianshouUiRect = new Rect(qianshouUI_left, qianshouUI_top, qianshouUI_kuan, qianshouUI_gao);
 
-        public UI_Windows caidan = new UI_Windows("菜单(Tab)", caidanUiRect);
-        public UI_Windows gongneng = new UI_Windows("全局功能开关(K)", gongnengUiRect);
-        public UI_Windows wanjia = new UI_Windows("玩家控制(P)", wanjiaUiRect);
-        public UI_Windows wuti = new UI_Windows("物体控制(I)", wutiUiRect);
-        public UI_Windows huantu = new UI_Windows("换图(H)", huantuUiRect);
-        public UI_Windows shezhi = new UI_Windows("设置(O)", shezhiUiRect);
+        public UI_Windows caidan = new UI_Windows(UI.TranslateButtonText("菜单(Tab)"), caidanUiRect);
+        public UI_Windows gongneng = new UI_Windows(UI.TranslateButtonText("功能开关(K)"), gongnengUiRect);
+        public UI_Windows wanjia = new UI_Windows(UI.TranslateButtonText("玩家控制(P)"), wanjiaUiRect);
+        public UI_Windows wuti = new UI_Windows(UI.TranslateButtonText("物体控制(I)"), wutiUiRect);
+        public UI_Windows huantu = new UI_Windows(UI.TranslateButtonText("换图(H)"), huantuUiRect);
+        public UI_Windows shezhi = new UI_Windows(UI.TranslateButtonText("设置(O)"), shezhiUiRect);
 
-        public UI_Windows chuansong = new UI_Windows("传送至(C)", chuansongUiRect);
-        public UI_Windows xuanfu = new UI_Windows("悬浮于(X)", xuanfuUiRect);
-        public UI_Windows qianshou = new UI_Windows("牵手(Z)", qianshouUiRect);
+        public UI_Windows chuansong = new UI_Windows(UI.TranslateButtonText("传送至(C)"), chuansongUiRect);
+        public UI_Windows xuanfu = new UI_Windows(UI.TranslateButtonText("悬浮于(X)"), xuanfuUiRect);
+        public UI_Windows qianshou = new UI_Windows(UI.TranslateButtonText("牵手(Z)"), qianshouUiRect);
 
         //换图窗体
         public static bool ShowHuanTuUI;
@@ -153,6 +154,7 @@ namespace YxModDll.Mod
             UI_GongNeng.ChuShiHua();
             YanSe.GetHumanHwnd();//获取游戏Hwnd
             gameObject.AddComponent<HotKey>(); 
+            gameObject.AddComponent<UI_SheZhi>(); 
 
 
         }
@@ -336,6 +338,19 @@ namespace YxModDll.Mod
             }
             UI_CaiDan.Update();//更新头顶灯光跟随
             UI_HuanTu.Update();//
+
+            if (Input.GetKeyDown(KeyCode.F8))
+            {
+                if (FreeRoamCam.allowFreeRoam)
+                {
+                    UI_Main.XianShiCaiDan(false);
+                    ShowUI2 = UI_Main.ShowUI; UI_Main.ShowUI = false;
+                }
+                else
+                {
+                    UI_Main.ShowUI = ShowUI2;
+                }
+            }
         }
         public static void XianShiCaiDan(bool xianshi = true)
         {
@@ -390,7 +405,7 @@ namespace YxModDll.Mod
             //}
             if (ShowUI)
             {
-                if (FreeRoamCam.allowFreeRoam) return;
+                //if (FreeRoamCam.allowFreeRoam) return;
                 mainUi();//创建主界面
             }
             if (ShowCaiDanUI)

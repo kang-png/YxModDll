@@ -1455,9 +1455,9 @@ namespace YxModDll.Mod
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
+                if (!isDev && !UI_GongNeng.wutiguajian_KaiGuan)
                 {
-                    TiShi(netHost, $"娱乐系统已关闭");
+                    TiShi(netHost, $"物体挂件系统已关闭");
                     return;
                 }
                 WuTiGuaJian.SetWuTiGuaJian(human);
@@ -1470,11 +1470,11 @@ namespace YxModDll.Mod
                     TiShi(netHost, $"客机权限系统已关闭");
                     return;
                 }
-                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
-                {
-                    TiShi(netHost, $"娱乐系统已关闭");
-                    return;
-                }
+                //if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
+                //{
+                //    TiShi(netHost, $"娱乐系统已关闭");
+                //    return;
+                //}
                 int result;
                 if (int.TryParse(msg, out result))
                 {

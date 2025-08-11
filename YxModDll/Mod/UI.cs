@@ -66,7 +66,7 @@ namespace YxModDll.Mod
                 //清空//
                 if (quanyuankongzhi)
                 {
-                    string quanyuan = "全员控制";
+                    string quanyuan = UI.TranslateButtonText("全员控制");
                     AddHumanListButton(ColorfulSpeek.colorshows(quanyuan));
                 }
 
@@ -297,7 +297,9 @@ namespace YxModDll.Mod
             GUILayout.BeginHorizontal();
             ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
             name = TranslateButtonText(name); // 确保按钮名称翻译
-            GUILayout.Label(ColorfulSpeek.colorshows(name), GUILayout.Width(100));
+            //GUILayout.Label(ColorfulSpeek.colorshows(name), GUILayout.Width(100));
+            GUILayout.Label(ColorfulSpeek.colorshows(name));
+            GUILayout.FlexibleSpace();
             //GUILayout.Space(5);
             if (GUILayout.Button(ColorfulSpeek.colorshows("-"), UI.styleButton()))
             {
@@ -346,9 +348,10 @@ namespace YxModDll.Mod
             }
 
             GUILayout.FlexibleSpace();
+            GUILayout.FlexibleSpace();
             if (yuan.HasValue)
             {
-                if (GUILayout.Button(ColorfulSpeek.colorshows("重置"), UI.styleButton()))
+                if (GUILayout.Button(ColorfulSpeek.colorshows(UI.TranslateButtonText("重置")), UI.styleButton()))
                 {
                     zhi = float.Parse(yuan.Value.ToString("0.0"));
                     callback?.Invoke();
@@ -364,7 +367,9 @@ namespace YxModDll.Mod
             GUILayout.BeginHorizontal();
             ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
             name = TranslateButtonText(name); // 确保按钮名称翻译
-            GUILayout.Label(ColorfulSpeek.colorshows(name), GUILayout.Width(100));
+            //GUILayout.Label(ColorfulSpeek.colorshows(name), GUILayout.Width(100));
+            GUILayout.Label(ColorfulSpeek.colorshows(name));
+            GUILayout.FlexibleSpace();
             //GUILayout.Space(5);
             if (GUILayout.Button(ColorfulSpeek.colorshows("-"), UI.styleButton()))
             {
@@ -409,9 +414,10 @@ namespace YxModDll.Mod
             }
 
             GUILayout.FlexibleSpace();
+            GUILayout.FlexibleSpace();
             if (yuan.HasValue)
             {
-                if (GUILayout.Button(ColorfulSpeek.colorshows("重置"), UI.styleButton()))
+                if (GUILayout.Button(ColorfulSpeek.colorshows(UI.TranslateButtonText("重置")), UI.styleButton()))
                 {
                     zhi = yuan.Value;
                     callback?.Invoke();
@@ -794,7 +800,6 @@ namespace YxModDll.Mod
             ["客机权限"] = new() { ["English"] = "GuestPerm" },
             ["手滑"] = new() { ["English"] = "Slippery" },
             ["拆除"] = new() { ["English"] = "Dismantle" },
-            ["无假死"] = new() { ["English"] = "NoRagdoll" },
             ["无碰撞"] = new() { ["English"] = "NoCollision" },
             ["气球"] = new() { ["English"] = "Balloon" },
             ["气球戏法"] = new() { ["English"] = "BalloonFX" },
@@ -814,6 +819,128 @@ namespace YxModDll.Mod
             ["闪现"] = new() { ["English"] = "Blink" },
             ["陀螺"] = new() { ["English"] = "Gyro" },
             ["飞天"] = new() { ["English"] = "Fly" },
+            ["降低贴图分辨率"] = new() { ["English"] = "LowTextureRes" },
+            ["传送系统"] = new() { ["English"] = "Teleport" },
+            ["击飞系统"] = new() { ["English"] = "KnockUp" },
+            ["娱乐系统"] = new() { ["English"] = "FunMode" },
+            ["定点系统"] = new() { ["English"] = "Waypoint" },
+            ["挂机提醒"] = new() { ["English"] = "AFKAlert" },
+            ["无假死"] = new() { ["English"] = "NoFakeDeath" },
+            ["无碰撞系统"] = new() { ["English"] = "NoCollision" },
+            ["漂浮代码"] = new() { ["English"] = "FloatCode" },
+            ["爬墙代码"] = new() { ["English"] = "ClimbCode" },
+            ["物体挂件"] = new() { ["English"] = "ItemDeco" },
+            ["玩家挂件"] = new() { ["English"] = "PlyDeco" },
+            ["牵手系统"] = new() { ["English"] = "HandHold" },
+            ["闪现系统"] = new() { ["English"] = "Blink" },
+            ["飞天系统"] = new() { ["English"] = "Fly" },
+            ["功能开关(K)"] = new() { ["English"] = "Switch(K)" },
+            ["换图(H)"] = new() { ["English"] = "Map(H)" },
+            ["物体控制(I)"] = new() { ["English"] = "Obj(I)" },
+            ["玩家控制(P)"] = new() { ["English"] = "Plyr(P)" },
+            ["菜单(Tab)"] = new() { ["English"] = "Menu(Tab)" },
+            ["设置(O)"] = new() { ["English"] = "Options(O)" },
+            ["Q定点"] = new() { ["English"] = "Qpoint" },
+            ["SE定点"] = new() { ["English"] = "SEpoint" },
+            ["一直显示名字"] = new() { ["English"] = "AlwaysShowName" },
+            ["仅限邀请"] = new() { ["English"] = "InviteOnly" },
+            ["保速"] = new() { ["English"] = "KeepSpeed" },
+            ["修改贴图格式"] = new() { ["English"] = "ChangeTextureFormat" },
+            ["关闭大厅下载"] = new() { ["English"] = "DisableLobbyDL" },
+            ["去除没订阅地图文件加载失败"] = new() { ["English"] = "SkipMissingMapError" },
+            ["去除游戏启动画面"] = new() { ["English"] = "SkipIntro" },
+            ["发Q定点"] = new() { ["English"] = "SendQpoint" },
+            ["发言设置>>"] = new() { ["English"] = "SpeechSettings>>" },
+            ["发言限制"] = new() { ["English"] = "SpeechLimit" },
+            ["名字设置>>"] = new() { ["English"] = "NameSettings>>" },
+            ["回溯"] = new() { ["English"] = "Rewind" },
+            ["回车聊天"] = new() { ["English"] = "EnterToChat" },
+            ["好友房间(用 @ 标识)"] = new() { ["English"] = "FriendRoom(@)" },
+            ["客机时禁止其他客机控制我"] = new() { ["English"] = "BlockGuestControl" },
+            ["屏蔽颜色代码"] = new() { ["English"] = "BlockColorCodes" },
+            ["惯性"] = new() { ["English"] = "Inertia" },
+            ["房主时不受客机玩家控制"] = new() { ["English"] = "HostBlocksGuestCtrl" },
+            ["房主时默认打开客机权限"] = new() { ["English"] = "HostGuestRightsOn" },
+            ["房间列表单页显示"] = new() { ["English"] = "SinglePageRoomList" },
+            ["房间列表按照当前玩家数量降序显示"] = new() { ["English"] = "SortRoomsByPlayers" },
+            ["按Shift键显示鼠标"] = new() { ["English"] = "ShowMouse(Shift)" },
+            ["斜体"] = new() { ["English"] = "Italic" },
+            ["显示FPS"] = new() { ["English"] = "ShowFPS" },
+            ["显示小地图"] = new() { ["English"] = "ShowMiniMap" },
+            ["显示按键信息"] = new() { ["English"] = "ShowKeys" },
+            ["显示目标距离"] = new() { ["English"] = "ShowTargetDist" },
+            ["显示私密房间(用 * 标识)"] = new() { ["English"] = "ShowPrivateRoom(*)" },
+            ["显示鼠标时人物不可控"] = new() { ["English"] = "LockCharWMouse" },
+            ["清除Bug玩家"] = new() { ["English"] = "ClearBugPlayer" },
+            ["游戏中禁止加入"] = new() { ["English"] = "NoJoinInGame" },
+            ["粗体"] = new() { ["English"] = "Bold" },
+            ["自定义代码"] = new() { ["English"] = "CustomCode" },
+            ["菜单颜色>>"] = new() { ["English"] = "MenuColors>>" },
+            ["锁定关卡"] = new() { ["English"] = "LockLevel" },
+            ["锁定关卡"] = new() { ["English"] = "LockLevel" },
+            ["修改名字"] = new() { ["English"] = "EditName" },
+            ["大厅名称"] = new() { ["English"] = "LobbyName" },
+            ["定点提示"] = new() { ["English"] = "WaypointTip" },
+            ["屏蔽固定词"] = new() { ["English"] = "BlockWords" },
+            ["房间名称"] = new() { ["English"] = "RoomName" },
+            ["F8视距"] = new() { ["English"] = "F8ViewDist" },
+            ["发言字数限制(个)"] = new() { ["English"] = "ChatCharLimit" },
+            ["发言渐变"] = new() { ["English"] = "ChatGradient" },
+            ["发言重复次数限制(条)"] = new() { ["English"] = "ChatRepeatLimit" },
+            ["发言间隔限制(秒)"] = new() { ["English"] = "ChatInterval" },
+            ["名字渐变"] = new() { ["English"] = "NameGradient" },
+            ["字号"] = new() { ["English"] = "FontSize" },
+            ["字号1"] = new() { ["English"] = "FontSize1" },
+            ["字号2"] = new() { ["English"] = "FontSize2" },
+            ["存点数量"] = new() { ["English"] = "SaveCount" },
+            ["定点高度"] = new() { ["English"] = "PointHeight" },
+            ["开始"] = new() { ["English"] = "Start" },
+            ["无动作进入挂机(分钟)"] = new() { ["English"] = "IdleAFKMin" },
+            ["最低亮度"] = new() { ["English"] = "MinBrightness" },
+            ["最大"] = new() { ["English"] = "Max" },
+            ["最小"] = new() { ["English"] = "Min" },
+            ["玩家上限"] = new() { ["English"] = "PlayerLimit" },
+            ["玩家视距"] = new() { ["English"] = "PlayerViewDist" },
+            ["结束"] = new() { ["English"] = "End" },
+            ["菜单渐变"] = new() { ["English"] = "MenuGradient" },
+            ["虚假人数"] = new() { ["English"] = "FakePlayer" },
+            ["体重"] = new() { ["English"] = "Weight" },
+            ["修改重力"] = new() { ["English"] = "ChangeGravity" },
+            ["倍速"] = new() { ["English"] = "SpeedMult" },
+            ["手部力量"] = new() { ["English"] = "HandPow" },
+            ["普通手长"] = new() { ["English"] = "HandLen" },
+            ["伸手手长"] = new() { ["English"] = "HandExt" },
+            ["跳跃间距"] = new() { ["English"] = "JumpDist" },
+            ["阻力"] = new() { ["English"] = "Drag" },
+            ["修改快捷键"] = new() { ["English"] = "EditHotkey" },
+            ["重新读取快捷键"] = new() { ["English"] = "ReloadHotkey" },
+            ["取消牵手"] = new() { ["English"] = "CancelHold" },
+            ["还原"] = new() { ["English"] = "Restore" },
+            ["取消悬浮"] = new() { ["English"] = "CancelFloat" },
+            ["跌落"] = new() { ["English"] = "Fall" },
+            ["睡觉"] = new() { ["English"] = "Sleep" },
+            ["气球"] = new() { ["English"] = "Balloon" },
+            ["坐下"] = new() { ["English"] = "Sit" },
+            ["挂件"] = new() { ["English"] = "Pendant" },
+            ["定点设置"] = new() { ["English"] = "WaypointSet" },
+            ["开房设置"] = new() { ["English"] = "RoomSet" },
+            ["聊天设置"] = new() { ["English"] = "ChatSet" },
+            ["快捷键设置"] = new() { ["English"] = "HotkeySet" },
+            ["UI显示设置"] = new() { ["English"] = "UISet" },
+            ["游戏设置"] = new() { ["English"] = "GameSet" },
+            ["YxMod设置"] = new() { ["English"] = "YxModSet" },
+            ["固定"] = new() { ["English"] = "Fix" },
+            ["渐变"] = new() { ["English"] = "Grad" },
+            ["跳跃"] = new() { ["English"] = "Jump" },
+            ["随机"] = new() { ["English"] = "Rand" },
+            ["皮肤管理>>"] = new() { ["English"] = "Skins>>" },
+            ["客户端属性>>"] = new() { ["English"] = "Client>>" },
+            ["所有人属性>>"] = new() { ["English"] = "All>>" },
+            ["服务端属性>>"] = new() { ["English"] = "Server>>" },
+            ["颜色设置"] = new() { ["English"] = "Color" },
+            ["大小设置"] = new() { ["English"] = "Size" },
+            ["重置"] = new() { ["English"] = "Reset" },
+            ["全员控制"] = new() { ["English"] = "AllPlayers" },
         };
         private static readonly string translationCachePath = Path.Combine(Application.persistentDataPath, "button_translations.bin");
 
