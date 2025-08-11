@@ -2572,6 +2572,16 @@ namespace YxModDll.Mod.Features
         //        //UnityEngine.Debug.Log("BakeTexture 缩放后RenderTexture已释放");
         //    }
         //}
+        [HarmonyPatch(typeof(Texture2D), nameof(Texture2D.Compress))]
+        [HarmonyPrefix]
+        static bool Prefix_Compress(Texture2D __instance, bool highQuality)
+        {
+            if (!UI_SheZhi.SkipTextureCompression)
+                return true;
+
+            UnityEngine.Debug.Log($"[Patch] Skip Texture2D.Compress on {__instance.name}");
+            return false;
+        }
         [HarmonyPatch(typeof(Texture2D), MethodType.Constructor, new Type[] { typeof(int), typeof(int) })]
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> Texture2D_ctor_Transpiler(IEnumerable<CodeInstruction> instructions)

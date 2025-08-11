@@ -820,6 +820,7 @@ namespace YxModDll.Mod
             ["陀螺"] = new() { ["English"] = "Gyro" },
             ["飞天"] = new() { ["English"] = "Fly" },
             ["降低贴图分辨率"] = new() { ["English"] = "LowTextureRes" },
+            ["跳过贴图压缩"] = new() { ["English"] = "SkipTextureCompression" },
             ["传送系统"] = new() { ["English"] = "Teleport" },
             ["击飞系统"] = new() { ["English"] = "KnockUp" },
             ["娱乐系统"] = new() { ["English"] = "FunMode" },

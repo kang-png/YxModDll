@@ -153,7 +153,7 @@ namespace YxModDll.Mod
                     {
                         foreach (Human human in Human.all)
                         {
-                            human.GetExt().ntp = false;
+                            YxMod.QuXiaoGuaJian(human);
                         }
                         Chat.TiShi("已取消悬浮列队，玩家恢复自由状态。");
                     });
@@ -1480,13 +1480,14 @@ namespace YxModDll.Mod
 
                 // 奇数（i=0,2,4...）挂左边，偶数（i=1,3,5...）挂右边
                 bool isLeft = (i % 2 == 0);
-                int rank = (i / 2) + 1; // 第几排
 
-                Vector3 offset = right * (isLeft ? -spacing : spacing) * rank;
+                Vector3 offset = right * (isLeft ? -spacing : spacing);
                 offset.y = offsetY;
 
-                follower.GetExt().ntp = true;
-                follower.GetExt().ntp_human = isLeft ? prevLeft : prevRight; // 挂在各自一侧的上一人
+                // 通过 SetGuaJian 来挂载，传入参数注意顺序
+                YxMod.SetGuaJian(isLeft ? prevLeft : prevRight, follower);
+
+                // 设置偏移量，挂载后更新
                 follower.GetExt().ntp_Offset = offset;
 
                 // 更新各侧的上一人

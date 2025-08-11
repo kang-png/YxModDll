@@ -153,6 +153,7 @@ namespace YxModDll.Mod
         public static bool dangqianrenshupaixu;
         public static bool skinCheckEnabled;
         public static bool skinUseRGB24Format;
+        public static bool SkipTextureCompression;
 
         public static float playerCamDistance = 300f;
         public static float freeRoamCamDistance = 300f;
@@ -572,6 +573,11 @@ namespace YxModDll.Mod
                     {
                         PlayerPrefs.SetInt("skinUseRGB24Format", skinUseRGB24Format ? 1 : 0);
                     },"将贴图格式更改为 RGB24（不支持透明像素），可减少约 25% 的内存占用。可与分辨率压缩叠加，总体节省约 81.25%。重启生效");
+                    UI.CreatAnNiu_AnXia("跳过贴图压缩", ref SkipTextureCompression, false, () =>
+                    {
+                        PlayerPrefs.SetInt("SkipTextureCompression", SkipTextureCompression ? 1 : 0);
+                    }, "跳过贴图压缩，减少 CPU 和内存占用，降低崩溃风险。虽增加 GPU 负担，但更稳定。关闭恢复默认。");
+
                     UI.CreatAnNiu_AnXia("清除Bug玩家", ref FeatureManager.removeBugHuman, false, () =>
                     {
                         PlayerPrefs.SetInt("removeBugHuman", FeatureManager.removeBugHuman ? 1 : 0);
@@ -762,6 +768,7 @@ namespace YxModDll.Mod
             haoyoufangjian = PlayerPrefs.GetInt("haoyoufangjian", 1) > 0;
             skinCheckEnabled = PlayerPrefs.GetInt("skinCheckEnabled", 1) > 0;
             skinUseRGB24Format = PlayerPrefs.GetInt("skinUseRGB24Format", 1) > 0;
+            SkipTextureCompression = PlayerPrefs.GetInt("SkipTextureCompression", 1) > 0;
             freeRoamCamDistance = PlayerPrefs.GetFloat("freeRoamCamDistance", 300f);
 
             //显示设置
@@ -791,6 +798,7 @@ namespace YxModDll.Mod
         //public static bool kongzhiziji = true;
         public static bool jinzhibeikong;
         public static bool fangzhububeikong;
+
         public static void KeJiChuShiHua() ///在进入房间时,初始化
         {
             if (NetGame.isClient && YxMod.YxModServer)
