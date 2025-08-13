@@ -16,7 +16,7 @@ jobs:
           $CommitUrl = '${{ github.event.head_commit.url }}'
           $Author = '${{ github.event.head_commit.author.name }}'
           $Repo = '${{ github.repository }}'
-          $GroupId = 878969691
+          $GroupId = '${{ secrets.ONEBOT_GROUP_ID }}'
           $AccessToken = '${{ secrets.ONEBOT_TOKEN }}'
 
           # 构建消息
