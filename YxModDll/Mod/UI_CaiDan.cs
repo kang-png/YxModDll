@@ -70,7 +70,7 @@ namespace YxModDll.Mod
                 gaodu += UI.buttonHeight;
                 UI.CreatAnNiu("重置物品(F3)", false, ChongZhiWuPin_CaiDan);
                 gaodu += UI.buttonHeight;
-                UI.CreatAnNiu("重置动画", false, ResetAllAnimations);
+                UI.CreatAnNiu("重置动画", false, ResetAllAnimations_CaiDan);
                 gaodu += UI.buttonHeight;
                 UI.CreatAnNiu("召集(F2)", false, JiHe_CaiDan);
                 gaodu += UI.buttonHeight;
@@ -316,6 +316,33 @@ namespace YxModDll.Mod
             JiXu();
             ChongZhiWuPin();
         }
+        public static void ChongZhiWuPin()
+        {
+            if (NetGame.isServer || NetGame.isLocal)
+            {
+                YxMod.ChongZhiWuPin();
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} 重置了所有物品");
+            }
+            else if (NetGame.isClient && YxMod.YxModServer && YxMod.KeJiQuanXian)
+            {
+                Chat.SendYxModMsgClient(Chat.YxModMsgStr("czwp"));
+            
+            }
+        
+        }
+        public static void ResetAllAnimations_CaiDan()
+        {
+            if (NetGame.isServer || NetGame.isLocal)
+            {
+                ResetAllAnimations();
+                Chat.TiShi($"玩家 {NetGame.instance.local.name} 重置了所有动画");
+            }
+            else if (NetGame.isClient && YxMod.YxModServer && YxMod.KeJiQuanXian)
+            {
+                Chat.SendYxModMsgClient(Chat.YxModMsgStr("czdh"));
+            
+            }
+        }
         public static void ResetAllAnimations()
         {
             int countAnimator = 0;
@@ -343,25 +370,8 @@ namespace YxModDll.Mod
                 countAnimation++;
             }
 
-            Debug.Log($"已重置 {countAnimator} 个 Animator，{countAnimation} 个 Animation 组件");
+            //Debug.Log($"已重置 {countAnimator} 个 Animator，{countAnimation} 个 Animation 组件");
             Chat.TiShi(NetGame.instance.local, $"已重置 {countAnimator} 个 Animator，{countAnimation} 个 Animation 组件");
-        }
-
-
-
-        public static void ChongZhiWuPin()
-        {
-            if (NetGame.isServer || NetGame.isLocal)
-            {
-                YxMod.ChongZhiWuPin();
-                Chat.TiShi($"玩家 {NetGame.instance.local.name} 重置了所有物品");
-            }
-            else if (NetGame.isClient && YxMod.YxModServer && YxMod.KeJiQuanXian)
-            {
-                Chat.SendYxModMsgClient(Chat.YxModMsgStr("czwp"));
-            
-            }
-        
         }
         private static void JiHe_CaiDan()
         {

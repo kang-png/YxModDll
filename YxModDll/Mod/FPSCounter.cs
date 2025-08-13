@@ -18,7 +18,7 @@ namespace YxModDll.Mod
 
         public static bool showFPS;
 
-        private string levelTitle = "加载中...";
+        public string levelTitle = "加载中...";
         private Text LevelTextRef;
 
         private GUIStyle style;

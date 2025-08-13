@@ -1922,6 +1922,16 @@ namespace YxModDll.Mod
                     {
                         return NetGame.instance.readyclients[num - 2].players[NetGame.instance.readyclients[num - 2].players.Count - 1].human;
                     }
+
+                    // 本地分身（local.players 里多出来的）
+                    if (num > NetGame.instance.readyclients.Count + 1)
+                    {
+                        int localCloneIndex = num - (NetGame.instance.readyclients.Count + 2); // 偏移修正、减去全员和本地玩家0号
+                        if (localCloneIndex >= 0 && localCloneIndex < NetGame.instance.local.players.Count)
+                        {
+                            return NetGame.instance.local.players[localCloneIndex].human;
+                        }
+                    }
                 }
                 Chat.TiShi(NetGame.instance.local, $"{num}号玩家不存在!");
                 return null;
@@ -3704,40 +3714,6 @@ namespace YxModDll.Mod
         {
             if (string.IsNullOrWhiteSpace(text)) return;
             Chat.Send(text, false);
-        }
-        public static void TryGetPlayerIPAddress(CSteamID steamID)
-        {
-            Debug.Log($"[IP DEBUG] TryGetPlayerIPAddress 被调用：{steamID}");
-
-            P2PSessionState_t sessionState;
-            if (!SteamNetworking.GetP2PSessionState(steamID, out sessionState))
-            {
-                Debug.Log($"[IP DEBUG] 无法获取 SessionState：{steamID}");
-                return;
-            }
-
-            Debug.Log($"[IP DEBUG] 成功获取 SessionState");
-
-            uint ip = sessionState.m_nRemoteIP;
-            ushort port = sessionState.m_nRemotePort;
-            bool usingRelay = sessionState.m_bUsingRelay != 0;
-
-            if (ip == 0)
-            {
-                Debug.Log($"[IP DEBUG] IP为0（relay中继中或未连接）");
-                return;
-            }
-
-            string ipStr = ConvertUIntToIP(ip);
-            Debug.Log($"[IP DEBUG] 玩家 IP: {ipStr}:{port} 中转: {usingRelay}");
-        }
-
-        public static string ConvertUIntToIP(uint ip)
-        {
-            byte[] bytes = BitConverter.GetBytes(ip);
-            if (BitConverter.IsLittleEndian)
-                Array.Reverse(bytes);
-            return new IPAddress(bytes).ToString();
         }
 
     }

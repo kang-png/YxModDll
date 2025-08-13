@@ -3341,7 +3341,17 @@ namespace YxModDll.Mod.Features
                         : (num - 90f);
             }
         }
-
+        [HarmonyPatch(typeof(MenuCameraEffects), nameof(MenuCameraEffects.SetupViewports))]
+        [HarmonyPrefix]
+        static bool Prefix_SetupViewports(MenuCameraEffects __instance)
+        {
+            if (!UI_SheZhi.splitScreenEnabled)
+            {
+                return false; 
+            }
+            // 分屏开时走原方法
+            return true;
+        }
     }
 }
 

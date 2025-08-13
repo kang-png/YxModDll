@@ -302,6 +302,7 @@ namespace YxModDll.Mod
                     GUILayout.Space(5);
 
                     GUILayout.Label(ColorfulSpeek.colorshows(UI.TranslateButtonText("服务端属性>>")));
+                    UI.CreatShuZhi("自定义Y", ref human.GetExt().numY, 0, 10, 1, null, yuan: 0);
                     float drag = human.rigidbodies[0].drag;
                     float mass = human.mass;
                     float maxLiftForce = human.motionControl2.hands.maxLiftForce;
@@ -1495,6 +1496,29 @@ namespace YxModDll.Mod
                     prevLeft = follower;
                 else
                     prevRight = follower;
+            }
+        }
+        private void SuoFang(Human human)
+        {
+            //if (suofang)
+            {
+                if (human.ragdoll.partLeftHand.sensor.grabBody != null)
+                {
+
+                    if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+                    {
+
+                        Transform transform = human.ragdoll.partLeftHand.sensor.grabBody.transform;
+                        transform.localScale = transform.localScale / 1.2f;
+                        return;
+                    }
+                    if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+                    {
+                        Transform transform2 = human.ragdoll.partLeftHand.sensor.grabBody.transform;
+                        transform2.localScale = transform2.localScale * 1.2f;
+
+                    }
+                }
             }
         }
     }

@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Interop;
 using UnityEngine;
+using YxModDll.Mod.Features;
 using YxModDll.Patches;
 
 namespace YxModDll.Mod
@@ -267,6 +268,17 @@ namespace YxModDll.Mod
                 }
                 YxMod.ChongZhiWuPin();
                 Chat.TiShi($"玩家 {netHost.name} 重置了所有物品");
+                return;
+            }
+            else if (nick == YxModMsgStr("czdh") && msg.Length == 0)
+            {
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
+                {
+                    TiShi(netHost, $"客机权限系统已关闭");
+                    return;
+                }
+                UI_CaiDan.ResetAllAnimations();
+                Chat.TiShi($"玩家 {netHost.name} 重置了所有动画");
                 return;
             }
             else if (nick == YxModMsgStr("jihe") && msg.Length == 0)
@@ -1608,6 +1620,12 @@ namespace YxModDll.Mod
             else if (nick == YxModMsgStr("ifg") && msg.Length == 0)
             {
                 YxMod.Ifg(human);
+                return;
+            }
+            else if (nick == YxModMsgStr("wjlb") && msg.Length == 0)
+            {
+
+                Chat.TiShi(netHost, "玩家列表");
                 return;
             }
 

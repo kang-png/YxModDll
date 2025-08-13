@@ -100,10 +100,25 @@ namespace YxModDll.Mod
                     //}
 
                 }
+                // 添加本地分身
+                for (int k = 1; k < NetGame.instance.local.players.Count; k++)
+                {
+                    string cloneName = $"{hosts.Count + k + 1}.{NetGame.instance.local.players[k].human.name}分身";
+                    AddHumanListButton(ColorfulSpeek.colorshows(cloneName));
+                }
+
 
                 index = GUILayout.SelectionGrid(index, humanNames, 1, styleSelectionGrid());
                 //Debug.Log("当前选中：" + index + "   客户机总数：" + hosts.Count);
-                index = (index > (quanyuankongzhi? hosts.Count + 1:hosts.Count)) ? 0 : index;
+                //index = (index > (quanyuankongzhi? hosts.Count + 1:hosts.Count)) ? 0 : index;
+                int totalCount = hosts.Count + NetGame.instance.local.players.Count; // 1是主机
+                if (quanyuankongzhi)
+                {
+                    totalCount += 1; // 多加一个"全员控制"
+                }
+
+                index = (index >= totalCount) ? 0 : index;
+
                 return index;
             }
             catch
@@ -942,6 +957,8 @@ namespace YxModDll.Mod
             ["大小设置"] = new() { ["English"] = "Size" },
             ["重置"] = new() { ["English"] = "Reset" },
             ["全员控制"] = new() { ["English"] = "AllPlayers" },
+            ["分身时分屏显示"] = new() { ["English"] = "splitScreenEnabled" },
+            ["自定义Y"] = new() { ["English"] = "Custom Y" },
         };
         private static readonly string translationCachePath = Path.Combine(Application.persistentDataPath, "button_translations.bin");
 

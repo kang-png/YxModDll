@@ -154,6 +154,7 @@ namespace YxModDll.Mod
         public static bool skinCheckEnabled;
         public static bool skinUseRGB24Format;
         public static bool SkipTextureCompression;
+        public static bool splitScreenEnabled;
 
         public static float playerCamDistance = 300f;
         public static float freeRoamCamDistance = 300f;
@@ -582,7 +583,10 @@ namespace YxModDll.Mod
                     {
                         PlayerPrefs.SetInt("removeBugHuman", FeatureManager.removeBugHuman ? 1 : 0);
                     },"移除异常玩家对象。通常因为网络问题没有正确加入房间，导致主机信息和玩家信息对不上。比如头顶ID不一致，同时接收两个房间的消息。");
-
+                    UI.CreatAnNiu_AnXia("分身时分屏显示", ref splitScreenEnabled, false, () =>
+                    {
+                        PlayerPrefs.SetInt("splitScreenEnabled", splitScreenEnabled ? 1 : 0);
+                    }, "控制分身是否分屏显示");
                     UI.CreatAnNiu_AnXia("显示目标距离", ref FeatureManager.xrayPlayers, false, null, "显示玩家距离、存档点距离");
                     UI.CreatShuZhi("玩家视距", ref playerCamDistance, 100f, 20000f, 100f, () =>
                     {
@@ -769,6 +773,7 @@ namespace YxModDll.Mod
             skinCheckEnabled = PlayerPrefs.GetInt("skinCheckEnabled", 1) > 0;
             skinUseRGB24Format = PlayerPrefs.GetInt("skinUseRGB24Format", 1) > 0;
             SkipTextureCompression = PlayerPrefs.GetInt("SkipTextureCompression", 1) > 0;
+            splitScreenEnabled = PlayerPrefs.GetInt("splitScreenEnabled", 1) > 0;
             freeRoamCamDistance = PlayerPrefs.GetFloat("freeRoamCamDistance", 300f);
 
             //显示设置
