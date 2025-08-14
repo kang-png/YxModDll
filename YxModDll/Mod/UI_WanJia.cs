@@ -102,23 +102,26 @@ namespace YxModDll.Mod
                     UI.CreatAnNiu_AnXia("超人", ref allchaoren, false, ChaoRen);
                     UI.CreatAnNiu_AnXia("闪现", ref allshanxian, false, ShanXian);
                     GUILayout.EndHorizontal();
-
+                    
                     GUILayout.BeginHorizontal();
                     UI.CreatAnNiu_AnXia("冻结", ref alldongjie, false, DongJie);
                     UI.CreatAnNiu_AnXia("半身不遂", ref allbanshen, false, BanShen);
                     UI.CreatAnNiu_AnXia("超级跳", ref allchaojitiao, false, chaojitiao);
-                    UI.CreatAnNiu_AnXia("手滑", ref allshouhua, false, ShouHua);
                     GUILayout.EndHorizontal();
 
                     GUILayout.BeginHorizontal();
+                    UI.CreatAnNiu_AnXia("手滑", ref allshouhua, false, ShouHua);
                     UI.CreatAnNiu_AnXia("蹦迪", ref allbengdi, false, BengDi);
                     UI.CreatAnNiu_AnXia("三级跳", ref allsanjitiao, false, SanJiTiao);
-                    UI.CreatAnNiu_AnXia("电臀", ref alldiantun, false, DianTun);
-                    UI.CreatAnNiu_AnXia("气球", ref allqiqiu, false, QiQiu);
                     GUILayout.EndHorizontal();
 
                     GUILayout.BeginHorizontal();
+                    UI.CreatAnNiu_AnXia("电臀", ref alldiantun, false, DianTun);
+                    UI.CreatAnNiu_AnXia("气球", ref allqiqiu, false, QiQiu);
                     UI.CreatAnNiu_AnXia("气球戏法", ref allqiqiuxifa, false, QiQiuXiFa);
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
                     UI.CreatAnNiu_AnXia("倒立", ref alldaoli, false, DaoLi);
                     UI.CreatAnNiu_AnXia("转圈圈", ref allzhuanquan, false, ZhuanQuan);
                     UI.CreatAnNiu_AnXia("陀螺", ref alltuoluo, false, TuoLuo);
@@ -128,16 +131,18 @@ namespace YxModDll.Mod
                     UI.CreatAnNiu_AnXia("磕头怪", ref allketouguai, false, KeTouGuai);
                     UI.CreatAnNiu_AnXia("吊死鬼", ref alldiaosigui, false, DiaoSiGui);
                     UI.CreatAnNiu_AnXia("螃蟹", ref allpangxie, false, PangXie);
-                    UI.CreatAnNiu_AnXia("潜水", ref allqianshui, false, QianShui);
                     GUILayout.EndHorizontal();
 
                     GUILayout.BeginHorizontal();
+                    UI.CreatAnNiu_AnXia("潜水", ref allqianshui, false, QianShui);
                     UI.CreatAnNiu_AnXia("腿瘸", ref alltuique, false, TuiQue);
                     UI.CreatAnNiu_AnXia("腿拐", ref alltuiguai, false, TuiGuai);
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
                     UI.CreatAnNiu_AnXia("拆除", ref allchaichu, false, ChaiChu);
                     UI.CreatAnNiu_AnXia("空气炮", ref allkongqipao, false, KongQiPao);
                     GUILayout.EndHorizontal();
-
 
                     GUILayout.Space(5);
                     UI.CreatFenGeXian();//分割线
@@ -146,7 +151,11 @@ namespace YxModDll.Mod
                     GUILayout.BeginHorizontal();
                     UI.CreatAnNiu("悬浮列队", false, () =>
                     {
-                        Chat.TiShi("所有玩家已在主机带领下列队完成。");
+                        foreach (Human human in Human.all)
+                        {
+                            YxMod.QuXiaoGuaJian(human);
+                        }
+                        //Chat.TiShi("所有玩家已在主机带领下列队完成。");
                         ArrangeAllHumansFacing(Human.Localplayer);
                     }, "所有玩家以主机为队长，左右排成一列。");
                     UI.CreatAnNiu("取消悬浮", false, () =>
@@ -155,7 +164,7 @@ namespace YxModDll.Mod
                         {
                             YxMod.QuXiaoGuaJian(human);
                         }
-                        Chat.TiShi("已取消悬浮列队，玩家恢复自由状态。");
+                        //Chat.TiShi("已取消悬浮列队，玩家恢复自由状态。");
                     });
                     GUILayout.EndHorizontal();
 
@@ -258,18 +267,21 @@ namespace YxModDll.Mod
                     UI.CreatAnNiu_AnXia("冻结", ref human.GetExt().dongjie, false, DongJie);
                     UI.CreatAnNiu_AnXia("半身不遂", ref human.GetExt().banshen, false, BanShen);
                     UI.CreatAnNiu_AnXia("超级跳", ref human.GetExt().chaojitiao, false, chaojitiao);
-                    UI.CreatAnNiu_AnXia("手滑", ref human.GetExt().shouhua, false, ShouHua);
                     GUILayout.EndHorizontal();
 
                     GUILayout.BeginHorizontal();
+                    UI.CreatAnNiu_AnXia("手滑", ref human.GetExt().shouhua, false, ShouHua);
                     UI.CreatAnNiu_AnXia("蹦迪", ref human.GetExt().bengdi, false, BengDi);
                     UI.CreatAnNiu_AnXia("三级跳", ref human.GetExt().sanjitiao, false, SanJiTiao);
-                    UI.CreatAnNiu_AnXia("电臀", ref human.GetExt().diantun, false, DianTun);
-                    UI.CreatAnNiu_AnXia("气球", ref human.GetExt().qiqiu, false, QiQiu);
                     GUILayout.EndHorizontal();
 
                     GUILayout.BeginHorizontal();
+                    UI.CreatAnNiu_AnXia("电臀", ref human.GetExt().diantun, false, DianTun);
+                    UI.CreatAnNiu_AnXia("气球", ref human.GetExt().qiqiu, false, QiQiu);
                     UI.CreatAnNiu_AnXia("气球戏法", ref human.GetExt().qiqiuxifa, false, QiQiuXiFa);
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
                     UI.CreatAnNiu_AnXia("倒立", ref human.GetExt().daoli, false, DaoLi);
                     UI.CreatAnNiu_AnXia("转圈圈", ref human.GetExt().zhuanquan, false, ZhuanQuan);
                     UI.CreatAnNiu_AnXia("陀螺", ref human.GetExt().tuoluo, false, TuoLuo);
@@ -279,17 +291,17 @@ namespace YxModDll.Mod
                     UI.CreatAnNiu_AnXia("磕头怪", ref human.GetExt().ketouguai, false, KeTouGuai);
                     UI.CreatAnNiu_AnXia("吊死鬼", ref human.GetExt().diaosigui, false, DiaoSiGui);
                     UI.CreatAnNiu_AnXia("螃蟹", ref human.GetExt().pangxie, false, PangXie);
-                    UI.CreatAnNiu_AnXia("潜水", ref human.GetExt().qianshui, false, QianShui);
                     GUILayout.EndHorizontal();
 
                     GUILayout.BeginHorizontal();
+                    UI.CreatAnNiu_AnXia("潜水", ref human.GetExt().qianshui, false, QianShui);
                     UI.CreatAnNiu_AnXia("腿瘸", ref human.GetExt().tuique, false, TuiQue);
                     UI.CreatAnNiu_AnXia("腿拐", ref human.GetExt().tuiguai, false, TuiGuai);
-                    UI.CreatAnNiu_AnXia("拆除", ref human.GetExt().chaichu, false, ChaiChu);
-                    UI.CreatAnNiu_AnXia("空气炮", ref human.GetExt().kongqipao, false, KongQiPao);
                     GUILayout.EndHorizontal();
 
                     GUILayout.BeginHorizontal();
+                    UI.CreatAnNiu_AnXia("拆除", ref human.GetExt().chaichu, false, ChaiChu);
+                    UI.CreatAnNiu_AnXia("空气炮", ref human.GetExt().kongqipao, false, KongQiPao);
                     GUILayout.EndHorizontal();
 
                 }

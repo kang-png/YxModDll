@@ -1545,11 +1545,13 @@ namespace YxModDll.Mod
         public static void SetCaiDanYanShe()
         {
             PlayerPrefs.SetInt("Gradual_Change", ColorfulSpeek.Gradual_Change ? 1 : 0);
+            UI.nameCache.Clear();
         }
 
         public static void SetCaiDanColorType()
         {
             ColorfulSpeek.ins.Change_Gradual_Num(CaiDanColorType.ToString());
+            UI.nameCache.Clear();
         }
         public static void SetFaYanSuiJiYanSeLiangDu()
         {

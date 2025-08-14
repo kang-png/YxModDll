@@ -394,6 +394,7 @@ namespace YxModDll.Mod
 
         void OnGUI()
         {
+            UI.EnsureStyles();
             UI.currentTooltip = null;
             if (!UI_SheZhi.shift_xianshishubiao)
             {

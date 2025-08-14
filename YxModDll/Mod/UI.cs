@@ -24,7 +24,30 @@ namespace YxModDll.Mod
         public static float buttonHeight;
         public static string currentTooltip = null;
         public static Vector2 currentTooltipPos;
+        private static readonly GUIContent _tempContent = new GUIContent();
 
+        private static GUIStyle _styleSelectionGrid;
+        private static GUIStyle _styleButtonTabTrue;
+        private static GUIStyle _styleButtonTabFalse;
+        private static GUIStyle _styleButton;
+        private static GUIStyle _styleButtonLeft;
+        private static GUIStyle _styleTxt;
+        private static GUIStyle _styleLabelCenter;
+        private static bool _stylesInited = false;
+        public static void EnsureStyles()
+        {
+            if (_stylesInited) return;
+
+            _styleSelectionGrid = CreateStyleSelectionGrid();
+            _styleButtonTabTrue = CreateStyleButtonTab(true);
+            _styleButtonTabFalse = CreateStyleButtonTab(false);
+            _styleButton = CreateStyleButton();
+            _styleButtonLeft = CreateStyleButtonLeft();
+            _styleTxt = CreateTxtStyle();
+            _styleLabelCenter = CreateLabelStyleCenter();
+
+            _stylesInited = true;
+        }
         public static void UI_ChuShiHua()
         {
             anniuTexture.SetPixel(0, 0, new Color32(130, 130, 130, 255));//按钮未按下背景色
@@ -39,178 +62,174 @@ namespace YxModDll.Mod
             //LoadCacheFromFile(); // 加载翻译缓存
             //Debug.Log("buttonHeight : " + buttonHeight);
         }
-        public static GUIStyle styleSelectionGrid()  ///按下松开效果
+        private static GUIStyle CreateStyleSelectionGrid()
         {
-            GUIStyle styleButton = new GUIStyle(GUI.skin.button);
-            styleButton.normal.background = anniuTexture; // 没选中的
-            styleButton.onNormal.background = anniuTexture2;//选中的
-            styleButton.active.background = anniuTexture2; //鼠标按下的
-            styleButton.hover.background = styleButton.onNormal.background;//鼠标移动的
-            styleButton.onHover.background = styleButton.onNormal.background;//选中的  鼠标移动的
-            styleButton.normal.textColor = new Color32(220, 220, 220, 255);// Color.white;
-            styleButton.hover.textColor = Color.white;
-            styleButton.alignment = TextAnchor.MiddleLeft;// MiddleCenter;
-            styleButton.fontSize = 20;
-            styleButton.richText = true; // ✅ 开启富文本支持（必须）
+            var styleButton = new GUIStyle(GUI.skin.button)
+            {
+                normal = { background = anniuTexture, textColor = new Color32(220, 220, 220, 255) },
+                onNormal = { background = anniuTexture2 },
+                active = { background = anniuTexture2 },
+                hover = { background = anniuTexture2, textColor = Color.white },
+                onHover = { background = anniuTexture2 },
+                alignment = TextAnchor.MiddleLeft,
+                fontSize = 20,
+                richText = true
+            };
             return styleButton;
         }
-        public static int CreatHumanList(int index,bool quanyuankongzhi=true)
+
+        private static GUIStyle CreateStyleButtonTab(bool tab)
+        {
+            var styleButton = new GUIStyle(GUI.skin.button)
+            {
+                normal = { background = tab ? anniuTexture2 : anniuTexture, textColor = new Color32(220, 220, 220, 255) },
+                active = { background = anniuTexture2 },
+                hover = { background = tab ? anniuTexture : anniuTexture2, textColor = Color.white },
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 20
+            };
+            return styleButton;
+        }
+
+        private static GUIStyle CreateStyleButton()
+        {
+            var styleButton = new GUIStyle(GUI.skin.button)
+            {
+                normal = { background = anniuTexture, textColor = Color.white },
+                active = { background = anniuTexture2 },
+                hover = { background = anniuTexture2, textColor = Color.black },
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 20
+            };
+            return styleButton;
+        }
+        private static GUIStyle CreateStyleButtonLeft()
+        {
+            var styleButton = new GUIStyle(GUI.skin.button)
+            {
+                alignment = TextAnchor.MiddleLeft,
+                fontSize = 20
+            };
+            styleButton.normal.background = anniuTexture;
+            styleButton.active.background = anniuTexture2;
+            styleButton.hover.background = anniuTexture2;
+            styleButton.normal.textColor = Color.white;
+            styleButton.hover.textColor = Color.black;
+            return styleButton;
+        }
+
+        private static GUIStyle CreateTxtStyle()
+        {
+            var styleTxt = new GUIStyle(GUI.skin.textField)
+            {
+                alignment = TextAnchor.MiddleLeft,
+                fontSize = 20
+            };
+            styleTxt.normal.textColor = Color.white;
+            return styleTxt;
+        }
+
+        private static GUIStyle CreateLabelStyleCenter()
+        {
+            var style = new GUIStyle(GUI.skin.label)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 20
+            };
+            style.normal.textColor = Color.gray;
+            return style;
+        }
+
+        // 缓存上一次生成的玩家名字，用于比较是否变化
+        private static List<string> lastHumanNames = new List<string>();
+        public static int CreatHumanList(int index, bool quanyuankongzhi = true)
         {
             try
             {
-                //清空//
-                //List<string> tempList = new List<string>(humanNames);
-                //tempList.Clear();
-                //humanNames = tempList.ToArray();
-                humanNames = new string[0];
-                //清空//
+                List<string> tempNames = new List<string>();
+
+                // 全员控制按钮
                 if (quanyuankongzhi)
                 {
                     string quanyuan = UI.TranslateButtonText("全员控制");
-                    AddHumanListButton(ColorfulSpeek.colorshows(quanyuan));
+                    tempNames.Add(ColorfulSpeek.colorshows(quanyuan));
                 }
 
+                // 房主按钮
                 string fzname = $"1.{NetGame.instance.server.name}";
-                //if (NetGame.isServer || (NetGame.isClient && YxMod.YxModServer))
-                //{
-                //    fzname = $"★{fzname}";
-                //}
+                tempNames.Add(ColorfulSpeek.colorshows(fzname));
 
-                AddHumanListButton(ColorfulSpeek.colorshows(fzname));
-            
-                //if(NetGame.isServer)
-                //{
-                //    ZiJiId = 1;
-                //}
-                List<NetHost> hosts = NetGame.instance.readyclients;//客户机名
-
-
+                // 客户机玩家按钮
+                List<NetHost> hosts = NetGame.instance.readyclients;
                 for (int j = 0; j < hosts.Count; j++)
                 {
-                    string name = $"{j+2}.{hosts[j].name}";
-                    //if ((NetGame.isServer && players[j].players[0].human.isClient) || (NetGame.isClient && players[j].hostId == NetGame.instance.local.hostId))
-                    //if ((NetGame.isServer && players[j].players[0].human.isClient) || (NetGame.isClient && players[j].players[0].human.isClient))
-                    //{
-                    //    name = $"☆{name}";
-                    //}
-                    AddHumanListButton(ColorfulSpeek.colorshows(name));
-                    //if(NetGame.isClient && hosts[j].hostId == NetGame.instance.local.hostId)
-                    //{
-                    //    ZiJiId = j;
-                    //}
-
+                    string name = $"{j + 2}.{hosts[j].name}";
+                    tempNames.Add(ColorfulSpeek.colorshows(name));
                 }
-                // 添加本地分身
+
+                // 本地玩家分身按钮
                 for (int k = 1; k < NetGame.instance.local.players.Count; k++)
                 {
                     string cloneName = $"{hosts.Count + k + 1}.{NetGame.instance.local.players[k].human.name}分身";
-                    AddHumanListButton(ColorfulSpeek.colorshows(cloneName));
+                    tempNames.Add(ColorfulSpeek.colorshows(cloneName));
                 }
 
-
-                index = GUILayout.SelectionGrid(index, humanNames, 1, styleSelectionGrid());
-                //Debug.Log("当前选中：" + index + "   客户机总数：" + hosts.Count);
-                //index = (index > (quanyuankongzhi? hosts.Count + 1:hosts.Count)) ? 0 : index;
-                int totalCount = hosts.Count + NetGame.instance.local.players.Count; // 1是主机
-                if (quanyuankongzhi)
+                // 检查是否与上一次相同
+                bool listChanged = lastHumanNames.Count != tempNames.Count;
+                if (!listChanged)
                 {
-                    totalCount += 1; // 多加一个"全员控制"
+                    for (int i = 0; i < tempNames.Count; i++)
+                    {
+                        if (lastHumanNames[i] != tempNames[i])
+                        {
+                            listChanged = true;
+                            break;
+                        }
+                    }
                 }
 
+                // 仅在变化时更新数组并触发 GUI 刷新
+                if (listChanged)
+                {
+                    humanNames = tempNames.ToArray();
+                    lastHumanNames = new List<string>(tempNames); // 缓存最新列表
+                    GUI.changed = true; // 只刷新一次
+                }
+
+                // 绘制 SelectionGrid
+                index = GUILayout.SelectionGrid(index, humanNames, 1, styleSelectionGrid());
+
+                // 防止 index 超出范围
+                int totalCount = humanNames.Length;
                 index = (index >= totalCount) ? 0 : index;
 
                 return index;
             }
-            catch
+            catch (Exception e)
             {
-                Debug.Log("选中出错了");
+                Debug.LogError("CreatHumanList 出错: " + e);
                 return 0;
             }
         }
 
-        private static void AddHumanListButton(string name)
-        {
-            // 创建一个新的字符串数组，长度比原来多一个
-            List<string> tempList = new List<string>(humanNames);
-            tempList.Add(name); // 向列表中添加新的按钮名称
-            humanNames = tempList.ToArray(); // 将列表转换回数组
+        public static GUIStyle styleSelectionGrid() => _styleSelectionGrid;
+        public static GUIStyle styleButton_Tab(bool tab) => tab ? _styleButtonTabTrue : _styleButtonTabFalse;
+        public static GUIStyle styleButton() => _styleButton;
 
-            // 更新SelectionGrid以反映变化
-            UpdateSelectionGrid();
-        }
-        private static void UpdateSelectionGrid()
-        {
-            // 强制Unity重新绘制GUI，确保SelectionGrid更新
-            GUI.changed = true;
-            // 注意：在某些情况下，可能需要使用Layout.Repaint()来强制更新GUI
-            // UnityEngine.Experimental.UIElements.Layout.Repaint();
-        }
-        private static GUIStyle styleButton_Tab(bool tab)  ///按下松开效果
-        {
-            GUIStyle styleButton = new GUIStyle(GUI.skin.button);
-            styleButton.normal.background = !tab ? anniuTexture : anniuTexture2; // 按钮的背景纹理
-            styleButton.active.background = anniuTexture2; 
-            styleButton.hover.background = tab ? anniuTexture : anniuTexture2;
-            styleButton.normal.textColor = new Color32(220, 220, 220, 255);// Color.white;
-            styleButton.hover.textColor = Color.white;
-            styleButton.alignment = TextAnchor.MiddleCenter;
-            styleButton.fontSize = 20;
-            return styleButton;
-        }
+        public static GUIStyle styleButton_Left() => _styleButtonLeft;
+        public static GUIStyle SetTxtStyle() => _styleTxt;
+        public static GUIStyle SetLabelStyle_JuZhong() => _styleLabelCenter;
 
-        public static GUIStyle styleButton() /// 滑动效果
-        {
-            GUIStyle styleButton = new GUIStyle(GUI.skin.button);
-            styleButton.normal.background = anniuTexture; // 按钮的背景纹理
-            styleButton.active.background = anniuTexture2; // 假设按下时的纹理
-            styleButton.hover.background = styleButton.active.background;
-            styleButton.normal.textColor = Color.white;
-            styleButton.hover.textColor = Color.black;
-            styleButton.alignment = TextAnchor.MiddleCenter;
-            styleButton.fontSize = 20;
-
-            return styleButton;
-        }
-        public static GUIStyle styleButton_Left() /// 滑动效果,字体居左
-        {
-            GUIStyle styleButton = new GUIStyle(GUI.skin.button);
-            styleButton.normal.background = anniuTexture; // 按钮的背景纹理
-            styleButton.active.background = anniuTexture2; // 假设按下时的纹理
-            styleButton.hover.background = styleButton.active.background;
-            styleButton.normal.textColor = Color.white;
-            styleButton.hover.textColor = Color.black;
-            styleButton.alignment = TextAnchor.MiddleLeft;
-            styleButton.fontSize = 20;
-
-            return styleButton;
-        }
         public static float GetButtonHeight(GUIStyle style, string sampleText = "按钮")
         {
-            //GUIStyle style = styleButton();
-            // 使用GUI.skin.button的字体大小作为参考，如果style中有自定义字体大小则应直接使用style.fontSize
-            float lineHeight = style.fontSize + style.padding.vertical; // 基于字体大小和垂直内边距估算高度
-                                                                        // 使用CalcSize进一步细化估算，考虑到文本的实际大小可能影响按钮高度
-            Vector2 size = GUI.skin.button.CalcSize(new GUIContent(sampleText));
-            return Mathf.Max(lineHeight, size.y); // 选取字体行高和文本内容高度中的较大者作为估算值
+            float lineHeight = style.fontSize + style.padding.vertical;
+
+            _tempContent.text = sampleText;
+            Vector2 size = style.CalcSize(_tempContent);
+
+            return Mathf.Max(lineHeight, size.y);
         }
-        public static GUIStyle SetTxtStyle() /// 设置文本框的样式
-        {
-            GUIStyle styleTxt = new GUIStyle(GUI.skin.textField);
-            //style.normal.background = MakeTex(500, 50, Color.white); // 创建一个纯白色的背景纹理
-            styleTxt.normal.textColor = Color.white; // 设置字体颜色为黑色
-            styleTxt.alignment = TextAnchor.MiddleLeft;
-            styleTxt.fontSize = 20;
-            return styleTxt;
-        }
-        public static GUIStyle SetLabelStyle_JuZhong()
-        {
-            // 创建或获取一个居中的GUIStyle
-            GUIStyle style = new GUIStyle(GUI.skin.label);
-            style.alignment = TextAnchor.MiddleCenter; // 设置文本居中对齐
-            style.normal.textColor = Color.gray;
-            style.fontSize = 20;
-            return style;
-        }
+
 
         public static LayoutDisposable Horizontal(params GUILayoutOption[] options)
         {
@@ -255,11 +274,10 @@ namespace YxModDll.Mod
                 if (!string.IsNullOrEmpty(name))
                 {
                     name = TranslateButtonText(name);
-                    GUILayout.Label(ColorfulSpeek.colorshows(name), GUILayout.Width(100));
+                    GUILayout.Label(GetColoredName(name), GUILayout.Width(100));
                 }
 
-                string combinedKeys = "";
-
+                string combinedKeys;
                 if (keycodes != null && keycodes.Count > 0)
                 {
                     List<string> keyStrings = new List<string>();
@@ -268,20 +286,11 @@ namespace YxModDll.Mod
                         if (keycode.keyCode1 != KeyCode.None)
                         {
                             string keystring = keycode.keyCode1.ToString();
-
                             if (keycode.keyCode2 != KeyCode.None)
-                            {
-                                keystring += $" + {keycode.keyCode2.ToString()}";
-                            }
+                                keystring += $" + {keycode.keyCode2}";
 
-                            if (shuzi == 1)
-                            {
-                                keystring += " + Num";
-                            }
-                            else if (shuzi == 2)
-                            {
-                                keystring += " + Num + Num";
-                            }
+                            if (shuzi == 1) keystring += " + Num";
+                            else if (shuzi == 2) keystring += " + Num + Num";
 
                             keyStrings.Add(keystring);
                         }
@@ -293,208 +302,184 @@ namespace YxModDll.Mod
                     combinedKeys = "无快捷键";
                 }
 
-                GUILayout.Label(ColorfulSpeek.colorshows(combinedKeys));
+                GUILayout.Label(GetColoredName(combinedKeys));
 
                 if (!string.IsNullOrEmpty(tishi))
                 {
                     tishi = TranslateButtonText(tishi);
-                    GUILayout.Label(ColorfulSpeek.colorshows(tishi));
+                    GUILayout.Label(GetColoredName(tishi));
                 }
 
                 GUILayout.FlexibleSpace();
             }
         }
 
+        // 缓存按钮显示文字，避免每帧生成
+        internal static Dictionary<string, string> nameCache = new Dictionary<string, string>();
 
+        private static string GetColoredName(string name)
+        {
+            if (!nameCache.TryGetValue(name, out string colored))
+            {
+                colored = ColorfulSpeek.colorshows(name);
+                nameCache[name] = colored;
+            }
+            return colored;
+        }
 
-        public static void CreatShuZhi(string name, ref float zhi, float min, float max, float add, Action callback = null, float? yuan = null)//创建加减数值的按钮
+        // 浮点版
+        public static void CreatShuZhi(string name, ref float zhi, float min, float max, float add, Action callback = null, float? yuan = null)
         {
             GUILayout.BeginHorizontal();
-            ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
-            name = TranslateButtonText(name); // 确保按钮名称翻译
-            //GUILayout.Label(ColorfulSpeek.colorshows(name), GUILayout.Width(100));
-            GUILayout.Label(ColorfulSpeek.colorshows(name));
+
+            name = TranslateButtonText(name);
+            GUILayout.Label(GetColoredName(name));
             GUILayout.FlexibleSpace();
-            //GUILayout.Space(5);
-            if (GUILayout.Button(ColorfulSpeek.colorshows("-"), UI.styleButton()))
+
+            if (GUILayout.Button(GetColoredName("-"), UI.styleButton()))
             {
-                zhi -= add;
-                zhi = float.Parse(zhi.ToString("0.0"));
-                if (zhi < min)
-                {
-                    zhi = min;
-                }
-                else
-                {
-                    callback?.Invoke(); // 如果callback不为null，则调用它
-                }
+                float oldValue = zhi;
+                zhi = Mathf.Max(min, Mathf.Round((zhi - add) * 10f) / 10f);
+                if (Math.Abs(zhi - oldValue) > 0.001f) callback?.Invoke();
             }
 
-            // 使用 string 存储和显示 float 值
-            string zhiStr = zhi.ToString("0.0");
-
-            // 绘制可编辑文本框
-            zhiStr = GUILayout.TextField(zhiStr, SetLabelStyle_JuZhong());
-
-            // 尝试解析用户输入并更新 zhi
-            if (float.TryParse(zhiStr, out float inputValue))
+            // 缓存显示字符串，减少每帧生成
+            string displayStr = zhi.ToString("0.0");
+            displayStr = GUILayout.TextField(displayStr, SetLabelStyle_JuZhong());
+            if (float.TryParse(displayStr, out float inputValue))
             {
                 inputValue = Mathf.Clamp(inputValue, min, max);
-                if (Math.Abs(zhi - inputValue) > 0.001f)
+                float roundedValue = Mathf.Round(inputValue * 10f) / 10f;
+                if (Math.Abs(zhi - roundedValue) > 0.001f)
                 {
-                    zhi = float.Parse(inputValue.ToString("0.0")); // 保留 1 位小数
+                    zhi = roundedValue;
                     callback?.Invoke();
                 }
             }
 
-
-            if (GUILayout.Button(ColorfulSpeek.colorshows("+"), UI.styleButton()))
+            if (GUILayout.Button(GetColoredName("+"), UI.styleButton()))
             {
-                zhi += add;
-                zhi = float.Parse(zhi.ToString("0.0"));
-                if (zhi > max)
-                {
-                    zhi = max;
-                }
-                else
-                {
-                    callback?.Invoke(); // 如果callback不为null，则调用它
-                }
+                float oldValue = zhi;
+                zhi = Mathf.Min(max, Mathf.Round((zhi + add) * 10f) / 10f);
+                if (Math.Abs(zhi - oldValue) > 0.001f) callback?.Invoke();
             }
 
             GUILayout.FlexibleSpace();
-            GUILayout.FlexibleSpace();
-            if (yuan.HasValue)
+            if (yuan.HasValue && GUILayout.Button(GetColoredName("重置"), UI.styleButton()))
             {
-                if (GUILayout.Button(ColorfulSpeek.colorshows(UI.TranslateButtonText("重置")), UI.styleButton()))
-                {
-                    zhi = float.Parse(yuan.Value.ToString("0.0"));
-                    callback?.Invoke();
-                }
+                float oldValue = zhi;
+                zhi = Mathf.Round(yuan.Value * 10f) / 10f;
+                if (Math.Abs(zhi - oldValue) > 0.001f) callback?.Invoke();
             }
 
-            //GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-
         }
-        public static void CreatShuZhi(string name, ref int zhi, int min, int max, int add, Action callback = null, int? yuan = null)//创建加减数值的按钮
+
+        // 整数版
+        public static void CreatShuZhi(string name, ref int zhi, int min, int max, int add, Action callback = null, int? yuan = null)
         {
             GUILayout.BeginHorizontal();
-            ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
-            name = TranslateButtonText(name); // 确保按钮名称翻译
-            //GUILayout.Label(ColorfulSpeek.colorshows(name), GUILayout.Width(100));
-            GUILayout.Label(ColorfulSpeek.colorshows(name));
+
+            name = TranslateButtonText(name);
+            GUILayout.Label(GetColoredName(name));
             GUILayout.FlexibleSpace();
-            //GUILayout.Space(5);
-            if (GUILayout.Button(ColorfulSpeek.colorshows("-"), UI.styleButton()))
+
+            if (GUILayout.Button(GetColoredName("-"), UI.styleButton()))
             {
-                zhi -= add;
-                //zhi = float.Parse(zhi.ToString("0.0"));
-                if (zhi < min)
-                {
-                    zhi = min;
-                }
-                else
-                {
-                    callback?.Invoke(); // 如果callback不为null，则调用它
-                }
+                int oldValue = zhi;
+                zhi = Mathf.Max(min, zhi - add);
+                if (zhi != oldValue) callback?.Invoke();
             }
 
-            // 显示可编辑输入框（整数）
-            string inputStr = zhi.ToString();
-            inputStr = GUILayout.TextField(inputStr, SetLabelStyle_JuZhong());
-
-            if (int.TryParse(inputStr, out int parsedValue))
+            string displayStr = zhi.ToString();
+            displayStr = GUILayout.TextField(displayStr, SetLabelStyle_JuZhong());
+            if (int.TryParse(displayStr, out int inputValue))
             {
-                parsedValue = Mathf.Clamp(parsedValue, min, max);
-                if (parsedValue != zhi)
+                inputValue = Mathf.Clamp(inputValue, min, max);
+                if (inputValue != zhi)
                 {
-                    zhi = parsedValue;
+                    zhi = inputValue;
                     callback?.Invoke();
                 }
             }
 
-            if (GUILayout.Button(ColorfulSpeek.colorshows("+"), UI.styleButton()))
+            if (GUILayout.Button(GetColoredName("+"), UI.styleButton()))
             {
-                zhi += add;
-                //zhi = float.Parse(zhi.ToString("0.0"));
-                if (zhi > max)
-                {
-                    zhi = max;
-                }
-                else
-                {
-                    callback?.Invoke(); // 如果callback不为null，则调用它
-                }
+                int oldValue = zhi;
+                zhi = Mathf.Min(max, zhi + add);
+                if (zhi != oldValue) callback?.Invoke();
             }
 
             GUILayout.FlexibleSpace();
-            GUILayout.FlexibleSpace();
-            if (yuan.HasValue)
+            if (yuan.HasValue && GUILayout.Button(GetColoredName("重置"), UI.styleButton()))
             {
-                if (GUILayout.Button(ColorfulSpeek.colorshows(UI.TranslateButtonText("重置")), UI.styleButton()))
-                {
-                    zhi = yuan.Value;
-                    callback?.Invoke();
-                }
+                int oldValue = zhi;
+                zhi = yuan.Value;
+                if (zhi != oldValue) callback?.Invoke();
             }
 
-            //GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
-
         }
-        public static void CreatWenBenKuang(string name, ref string str, int maxChang, int KuanDuan,Action callback = null)//创建文本框
+
+        // 文本框
+        public static void CreatWenBenKuang(string name, ref string str, int maxChang, int KuanDuan, Action callback = null)
         {
             GUILayout.BeginHorizontal();
-            ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
-            if (name != null)
-            {
-                name = TranslateButtonText(name); // 确保按钮名称翻译
-                GUILayout.Label(ColorfulSpeek.colorshows(name));
-            }
-      
-            string str1 = GUILayout.TextField(str, SetTxtStyle(), GUILayout.Width(KuanDuan));
-            if(str != str1)
-            {
-                str = str1;
-                if (str.Length > maxChang)
-                {
-                    //str = str.PadLeft(maxChang);
-                    str = str.Substring(0, maxChang); // 超过长度则截取
-                }
-                callback?.Invoke(); // 如果callback不为null，则调用它
 
+            if (!string.IsNullOrEmpty(name))
+            {
+                name = TranslateButtonText(name);
+                GUILayout.Label(GetColoredName(name));
+            }
+
+            string newStr = GUILayout.TextField(str, SetTxtStyle(), GUILayout.Width(KuanDuan));
+            if (newStr != str)
+            {
+                if (newStr.Length > maxChang)
+                    newStr = newStr.Substring(0, maxChang);
+
+                str = newStr;
+                callback?.Invoke();
             }
 
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
         }
-        public static void CreatYanSeKuang(string name, string strYanSe, Action callback)//创建文本框
+
+        // 颜色按钮框
+        public static void CreatYanSeKuang(string name, string strYanSe, Action callback)
         {
             GUILayout.BeginHorizontal();
-            ///$"<b><size=16>YxMod <i><color=grey>{BanBen}</color></i></size></b>"
-            if (name != null)
+
+            if (!string.IsNullOrEmpty(name))
             {
-                name = TranslateButtonText(name); // 确保按钮名称翻译
-                GUILayout.Label(ColorfulSpeek.colorshows(name));
+                name = TranslateButtonText(name);
+                GUILayout.Label(GetColoredName(name));
             }
 
-            UI.CreatAnNiu($"<color={strYanSe}>{strYanSe}</color>", false, callback);
+            // 缓存按钮文本，避免每帧重复生成
+            string btnText = $"<color={strYanSe}>{strYanSe}</color>";
+            UI.CreatAnNiu(btnText, false, callback);
 
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
         }
 
+        // 分割线（线条样式可缓存）
+        private static GUIStyle lineStyle;
         public static void CreatFenGeXian()
         {
-            // 初始化一个自定义的GUIStyle并设置边框宽度为0以去除边框
-            GUIStyle LineStyle = new GUIStyle(GUI.skin.box);
-            LineStyle.border = new RectOffset(0, 0, 0, 0); // 设置四个边的边框宽度都为0
+            if (lineStyle == null)
+            {
+                lineStyle = new GUIStyle(GUI.skin.box);
+                lineStyle.border = new RectOffset(0, 0, 0, 0);
+            }
 
-            GUILayout.Box("", LineStyle, GUILayout.ExpandWidth(true), GUILayout.Height(2)); // 高度设为2代表线条的粗细
-
+            GUILayout.Box("", lineStyle, GUILayout.ExpandWidth(true), GUILayout.Height(2));
         }
-        public static void CreatAnNiu_Left(string name, bool chuizhijuzhong = true, Action callback = null, string tooltip = null)//一般按钮
+
+        // 左侧按钮
+        public static void CreatAnNiu_Left(string name, bool chuizhijuzhong = true, Action callback = null, string tooltip = null)
         {
             if (chuizhijuzhong)
             {
@@ -502,30 +487,32 @@ namespace YxModDll.Mod
                 GUILayout.FlexibleSpace();
             }
 
-            GUIContent content = new GUIContent(ColorfulSpeek.colorshows(name));
-            Rect buttonRect = GUILayoutUtility.GetRect(content, styleButton());
+            string coloredName = GetColoredName(name);
+            GUIContent content = new GUIContent(coloredName);
+
+            Rect buttonRect = GUILayoutUtility.GetRect(content, styleButton()); // 布局计算用 styleButton()
 
             if (GUI.Button(buttonRect, content, styleButton_Left()))
             {
-                callback?.Invoke(); // 如果callback不为null，则调用它
+                callback?.Invoke();
             }
 
-            // 设置提示文字
             if (!string.IsNullOrEmpty(tooltip) && buttonRect.Contains(Event.current.mousePosition))
             {
                 currentTooltip = tooltip;
             }
-            //int topBottomPadding = (GUI.skin.button.padding.top + GUI.skin.button.padding.bottom); // 这是按钮样式自带的上下内边距之和
-            //float estimatedButtonHeight = GUI.skin.button.CalcSize(new GUIContent("Sample Text")).y + topBottomPadding;
+
             if (chuizhijuzhong)
             {
                 GUILayout.FlexibleSpace();
                 GUILayout.EndVertical();
             }
-            buttonHeight = GetButtonHeight(styleButton(), ColorfulSpeek.colorshows(name)) + 6;
-            //Debug.Log(buttonHeight);
+
+            buttonHeight = GetButtonHeight(styleButton(), coloredName) + 6;
         }
-        public static void CreatAnNiu(string name, bool chuizhijuzhong = true, Action callback = null, string tooltip = null)//一般按钮
+
+        // 一般按钮
+        public static void CreatAnNiu(string name, bool chuizhijuzhong = true, Action callback = null, string tooltip = null)
         {
             if (chuizhijuzhong)
             {
@@ -533,96 +520,112 @@ namespace YxModDll.Mod
                 GUILayout.FlexibleSpace();
             }
 
-            name = TranslateButtonText(name); // 确保按钮名称翻译
-            GUIContent content = new GUIContent(ColorfulSpeek.colorshows(name));
+            name = TranslateButtonText(name);
+            string coloredName = GetColoredName(name); // 缓存彩色字符串
+            GUIContent content = new GUIContent(coloredName);
+
             Rect buttonRect = GUILayoutUtility.GetRect(content, styleButton());
 
             if (GUI.Button(buttonRect, content, styleButton()))
             {
-                callback?.Invoke(); // 如果callback不为null，则调用它
+                callback?.Invoke();
             }
 
-            // 设置提示文字
             if (!string.IsNullOrEmpty(tooltip) && buttonRect.Contains(Event.current.mousePosition))
             {
-                tooltip = TranslateButtonText(tooltip); // 确保提示文字也翻译
-                currentTooltip = tooltip;
+                currentTooltip = TranslateButtonText(tooltip);
             }
-            //int topBottomPadding = (GUI.skin.button.padding.top + GUI.skin.button.padding.bottom); // 这是按钮样式自带的上下内边距之和
-            //float estimatedButtonHeight = GUI.skin.button.CalcSize(new GUIContent("Sample Text")).y + topBottomPadding;
+
             if (chuizhijuzhong)
             {
                 GUILayout.FlexibleSpace();
                 GUILayout.EndVertical();
             }
-            buttonHeight = GetButtonHeight(styleButton(), ColorfulSpeek.colorshows(name))+6;
-            //Debug.Log(buttonHeight);
+
+            buttonHeight = GetButtonHeight(styleButton(), coloredName) + 6;
         }
 
-        public static void CreatAnNiu_AnXia(string name, ref bool tab, bool chuizhijuzhong = true, Action callback = null, string tooltip = null)//Tab按钮
+        // Tab按钮
+        public static void CreatAnNiu_AnXia(string name, ref bool tab, bool chuizhijuzhong = true, Action callback = null, string tooltip = null)
         {
             if (chuizhijuzhong)
             {
                 GUILayout.BeginVertical();
                 GUILayout.FlexibleSpace();
             }
-            //if (GUILayout.Button(ColorfulSpeek.colorshows(name), styleButton_Tab(tab)))
-            //{
-            //    tab = !tab;
-            //    callback?.Invoke(); // 如果callback不为null，则调用它
-            //}
+
             name = TranslateButtonText(name);
-            Rect buttonRect = GUILayoutUtility.GetRect(new GUIContent(ColorfulSpeek.colorshows(name)), styleButton_Tab(tab));
-            if (GUI.Button(buttonRect, ColorfulSpeek.colorshows(name), styleButton_Tab(tab)))
+            string coloredName = GetColoredName(name); // 缓存彩色字符串
+            GUIContent content = new GUIContent(coloredName);
+
+            Rect buttonRect = GUILayoutUtility.GetRect(content, styleButton_Tab(tab));
+
+            if (GUI.Button(buttonRect, content, styleButton_Tab(tab)))
             {
                 tab = !tab;
                 callback?.Invoke();
             }
+
             if (!string.IsNullOrEmpty(tooltip) && buttonRect.Contains(Event.current.mousePosition))
             {
-                tooltip = TranslateButtonText(tooltip); // 确保提示文字也翻译
-                currentTooltip = tooltip;
+                currentTooltip = TranslateButtonText(tooltip);
             }
+
             if (chuizhijuzhong)
             {
                 GUILayout.FlexibleSpace();
                 GUILayout.EndVertical();
             }
-            buttonHeight = GetButtonHeight(styleButton(), ColorfulSpeek.colorshows(name)) +6;
+
+            buttonHeight = GetButtonHeight(styleButton(), coloredName) + 6;
         }
 
+        // 缓存样式
+        private static GUIStyle tooltipStyle;
+        private static GUIStyle uiBoxStyle;
 
-        public static void CreatUiBox(Rect rect, Texture2D texture)//创建界面Box
+        public static void CreatUiBox(Rect rect, Texture2D texture)
         {
-            GUIStyle myGuiStyle = new GUIStyle(GUI.skin.box)
+            if (uiBoxStyle == null || uiBoxStyle.normal.background != texture)
             {
-                normal = { background = texture },
-            };
-            GUI.Box(rect, GUIContent.none, myGuiStyle);//GUIContent.none      "<b><size=16>菜 单</size></b>"
+                uiBoxStyle = new GUIStyle(GUI.skin.box)
+                {
+                    normal = { background = texture }
+                };
+            }
+            GUI.Box(rect, GUIContent.none, uiBoxStyle);
         }
+
         public static void DrawTooltip()
         {
-            if (!string.IsNullOrEmpty(currentTooltip))
+            if (string.IsNullOrEmpty(currentTooltip)) return;
+
+            if (tooltipStyle == null)
             {
-                // 获取屏幕坐标（左下为原点）
-                Vector2 mousePos = Input.mousePosition;
-                mousePos.y = Screen.height - mousePos.y; // 转为IMGUI左上原点
-
-                GUIStyle tooltipStyle = new GUIStyle(GUI.skin.box);
-                tooltipStyle.wordWrap = true;
-                tooltipStyle.alignment = TextAnchor.UpperLeft;
-                tooltipStyle.padding = new RectOffset(8, 8, 6, 6);
-
-                float maxWidth = 300;
-                string coloredText = ColorfulSpeek.colorshows(currentTooltip);
-                Vector2 contentSize = tooltipStyle.CalcSize(new GUIContent(coloredText));
-                float width = Mathf.Min(contentSize.x + 16, maxWidth);
-                float height = tooltipStyle.CalcHeight(new GUIContent(coloredText), width);
-
-                Rect rect = new Rect(mousePos.x + 15, mousePos.y + 15, width, height + 12);
-                GUI.Box(rect, coloredText, tooltipStyle);
+                tooltipStyle = new GUIStyle(GUI.skin.box)
+                {
+                    wordWrap = true,
+                    alignment = TextAnchor.UpperLeft,
+                    padding = new RectOffset(8, 8, 6, 6)
+                };
             }
+
+            // 缓存彩色文本
+            string coloredText = GetColoredName(currentTooltip);
+
+            // 获取鼠标位置
+            Vector2 mousePos = Input.mousePosition;
+            mousePos.y = Screen.height - mousePos.y;
+
+            float maxWidth = 300;
+            Vector2 contentSize = tooltipStyle.CalcSize(new GUIContent(coloredText));
+            float width = Mathf.Min(contentSize.x + 16, maxWidth);
+            float height = tooltipStyle.CalcHeight(new GUIContent(coloredText), width);
+
+            Rect rect = new Rect(mousePos.x + 15, mousePos.y + 15, width, height + 12);
+            GUI.Box(rect, coloredText, tooltipStyle);
         }
+
         // 正在翻译的记录（防止重复请求）
         private static HashSet<Tuple<string, string>> pendingTranslations = new();
 
@@ -958,7 +961,8 @@ namespace YxModDll.Mod
             ["重置"] = new() { ["English"] = "Reset" },
             ["全员控制"] = new() { ["English"] = "AllPlayers" },
             ["分身时分屏显示"] = new() { ["English"] = "splitScreenEnabled" },
-            ["自定义Y"] = new() { ["English"] = "Custom Y" },
+            ["自定义Y"] = new() { ["English"] = "CustomY" },
+            ["悬浮列队"] = new() { ["English"] = "HoverLine" },
         };
         private static readonly string translationCachePath = Path.Combine(Application.persistentDataPath, "button_translations.bin");
 
