@@ -342,19 +342,138 @@ namespace YxModDll.Mod
                         switch (human.GetExt().numY)
                         {
                             case 10:
-                                if (!human.GetExt().tuomasi) // 防止重复启动
+                                if (!human.GetExt().bofangdonghua) // 防止重复启动
                                 {
-                                    human.GetExt().tuomasi = true;
-                                    StartCoroutine(YxMod.TuoMaSi(human));
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.TuoMaSi));
+                                }
+                                break;
+                            case 11:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.PiLiWuDongJie));
+                                }
+                                break;
+                            case 12:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.JiaoChaTiaoYue));
+                                }
+                                break;
+                            case 13:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.YangWoQiZuo));
+                                }
+                                break;
+                            case 14:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.FuWoCheng));
+                                }
+                                break;
+                            case 15:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.XiHaWu));
+                                }
+                                break;
+                            case 16:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.XiHaWu2));
+                                }
+                                break;
+                            case 17:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.XiHaWu3));
+                                }
+                                break;
+                            case 18:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.TouXuan));
+                                }
+                                break;
+                            case 19:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.MuMaTi));
+                                }
+                                break;
+                            case 20:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.KaiHeTiao));
+                                }
+                                break;
+                            case 21:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.YaoBaiWu));
+                                }
+                                break;
+                            case 22:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.SangBaWu));
+                                }
+                                break;
+                            case 23:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.SangBaWu2));
+                                }
+                                break;
+                            case 24:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.DianTunWu));
+                                }
+                                break;
+                            case 25:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.QuanJi));
+                                }
+                                break;
+                            case 26:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.QiMaWu));
+                                }
+                                break;
+                            case 27:
+                                if (!human.GetExt().bofangdonghua)
+                                {
+                                    human.GetExt().bofangdonghua = true;
+                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.HeiYingTaoWuBu));
                                 }
                                 break;
                         }
                     }
                     else // 松开 Y 键时
                     {
-                        if (human.GetExt().tuomasi)
+                        if (human.GetExt().bofangdonghua)
                         {
-                            human.GetExt().tuomasi = false;
+                            human.GetExt().bofangdonghua = false;
                         }
                     }
                 }
@@ -1420,21 +1539,26 @@ namespace YxModDll.Mod
             human.ragdoll.partLeftArm.rigidbody.useGravity = true;
         }
 
-        public static IEnumerator TuoMaSi(Human human)
+
+        private static string GetDonghuaPath(DONGZUO_State type)
+        {
+            return $"assets/donghua/{type.ToString()}.fbx";
+        }
+        public static IEnumerator DongZuo(Human human, DONGZUO_State dongzuo)
         {
             if (human == null) yield break;
 
             var ext = human.GetExt();
             if (ext == null) yield break;
 
-            var go = AssetBundleLoader.LoadAsset<GameObject>("assets/flair (1).fbx");
+            var go = AssetBundleLoader.LoadAsset<GameObject>(GetDonghuaPath(dongzuo));
             if (go == null)
             {
                 Debug.LogError("fbx 加载失败！");
                 yield break;
             }
 
-            var clips = AssetBundleLoader.LoadAssetWithSubAssets<AnimationClip>("assets/flair (1).fbx");
+            var clips = AssetBundleLoader.LoadAssetWithSubAssets<AnimationClip>(GetDonghuaPath(dongzuo));
             if (clips == null || clips.Length == 0)
             {
                 Debug.LogError("未能从fbx 中加载到动画片段！");
@@ -1442,10 +1566,16 @@ namespace YxModDll.Mod
             }
             var clip = clips[0];
 
-            Vector3 pos = human.transform.position;
+            Vector3 pospianyi = Vector3.zero;
+            //if (dongzuo==DONGZUO_State.PiLiWuDongJie)
+            //{
+            //    pospianyi = Vector3.up / 4;
+            //}
+
+            Vector3 pos = human.transform.position + pospianyi;
             Quaternion rot = human.ragdoll.partHead.transform.rotation;
 
-            while (ext.tuomasi && human != null)
+            while (ext.bofangdonghua && human != null)
             {
                 GameObject dancer = GameObject.Instantiate(go);
                 dancer.name = "AnimatorDriver";
@@ -1464,7 +1594,7 @@ namespace YxModDll.Mod
 
                 Animator animator = dancer.GetComponent<Animator>();
                 if (!animator) animator = dancer.AddComponent<Animator>();
-                animator.applyRootMotion = false;
+                //animator.applyRootMotion = false;// 禁用根运动（不自动移动位置）
                 // 关键：禁用动画裁剪，强制始终更新
                 animator.cullingMode = AnimatorCullingMode.AlwaysAnimate; // 添加这一行
                 // ✅ 创建 PlayableGraph
@@ -1481,7 +1611,7 @@ namespace YxModDll.Mod
                 sync.Initialize(animator, human);
 
                 float timer = 0f;
-                while (timer < clip.length && ext.tuomasi && human != null)
+                while (timer < clip.length && ext.bofangdonghua && human != null)
                 {
                     timer += Time.deltaTime;
 

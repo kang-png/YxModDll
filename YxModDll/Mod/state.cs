@@ -31,4 +31,26 @@
         Q=1,
         FeiTian,
     }
+    public enum DONGZUO_State
+    {
+        TuoMaSi,
+        PiLiWuDongJie,
+        JiaoChaTiaoYue,
+        YangWoQiZuo,
+        FuWoCheng,
+        XiHaWu,
+        XiHaWu2,
+        XiHaWu3,
+        TouXuan,
+        MuMaTi,
+        KaiHeTiao,
+        YaoBaiWu,
+        SangBaWu,
+        SangBaWu2,
+        DianTunWu,
+        QuanJi,
+        QiMaWu,
+        HeiYingTaoWuBu,
+
+    }
 }

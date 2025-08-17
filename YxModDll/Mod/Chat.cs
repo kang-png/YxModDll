@@ -1711,7 +1711,7 @@ namespace YxModDll.Mod
                 SendStr("发送q/Q/S+E 存点，E键取点，E+A键取上一个点，E+D键取下一个点。", netHost);
             }
 
-            SendStr("发送 “Y+数字(0-10)” 更改 Y 键动作，如 “y1” 更改 Y 键为坐下。", netHost);
+            SendStr("发送 “Y+数字(0-27)” 更改 Y 键动作，如 “y1” 更改 Y 键为坐下。", netHost);
             SendStr("发送 “帮助” 查看更多功能。当前版本：YxMod3.0。", netHost);
             SendStr("文件下载地址: yxmod.cc，交流群: 385272989", netHost);
             SendStr("=== 作者：一心、飞鱼鱼    贡献者：plcc ===", netHost);
@@ -2053,6 +2053,91 @@ namespace YxModDll.Mod
                 {
                     human.GetExt().numY = num;
                     Chat.TiShi(human.player.host, "Y键动作已更改为 托马斯");
+                }
+                else if (num == 11)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 霹雳舞冻结");
+                }
+                else if (num == 12)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 交叉跳跃");
+                }
+                else if (num == 13)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 仰卧起坐");
+                }
+                else if (num == 14)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 俯卧撑");
+                }
+                else if (num == 15)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 嘻哈舞");
+                }
+                else if (num == 16)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 嘻哈舞2");
+                }
+                else if (num == 17)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 嘻哈舞3");
+                }
+                else if (num == 18)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 头旋");
+                }
+                else if (num == 19)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 姆玛踢");
+                }
+                else if (num == 20)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 开合跳");
+                }
+                else if (num == 21)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 摇摆舞");
+                }
+                else if (num == 22)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 桑巴舞");
+                }
+                else if (num == 23)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 桑巴舞2");
+                }
+                else if (num == 24)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 电臀舞");
+                }
+                else if (num == 25)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 拳击");
+                }
+                else if (num == 26)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 骑马舞");
+                }
+                else if (num == 27)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 黑鹰舞步");
                 }
             }
 

@@ -133,7 +133,27 @@ namespace YxModDll.Patches
         public bool wutiguajian;//物体挂件
         public Rigidbody ntp_wuti;
 
-        public bool tuomasi;
+        public bool bofangdonghua;
+
+       // public bool PiLiWuDongJie;
+       // public bool JiaoChaTiaoYue;
+       // public bool YangWoQiZuo;
+       // public bool FuWoCheng;
+       // public bool XiHaWu;
+       // public bool XiHaWu2;
+       // public bool XiHaWu3;
+       // public bool TouXuan;
+       // public bool MuMaTi;
+       // public bool KaiHeTiao;
+       // public bool YaoBaiWu;
+       // public bool SangBaWu;
+       // public bool SangBaWu2;
+       //public bool DianTunWu;
+       // public bool QuanJi;
+       // public bool QiMaWu;
+       // public bool HeiYingTaoWuBu;
+
+        //public bool BoFangDongHua;
 
 
         public HumanStateExt(Human human)
