@@ -214,6 +214,7 @@ namespace YxModDll.Mod
             }
 
             gameObject.AddComponent<AssetBundleLoader>();
+            gameObject.AddComponent<c_BeiRen>();
 
 
             // 启动协程下载并解压
@@ -2929,7 +2930,7 @@ namespace YxModDll.Mod
         {
             if (!UI_GongNeng.qianshouxitong_KaiGuan)
             {
-                Chat.TiShi(human.player.host, "牵手系统已关闭");
+                Chat.TiShi(NetGame.instance.local, "牵手系统已关闭");
                 return;
             }
             if (human == null || human2 == null || human == human2)

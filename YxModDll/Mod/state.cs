@@ -12,6 +12,7 @@
         ChuanSong,
         XuanFu,
         QianShou,
+        Bei,
         HuanTu,
     }
     public enum TiShiMsgId

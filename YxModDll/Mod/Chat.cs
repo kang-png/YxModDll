@@ -462,6 +462,50 @@ namespace YxModDll.Mod
                 }
                 return;
             }
+            else if (nick == YxModMsgStr("beiren") && msg.Length != 0)//牵手
+            {
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
+                {
+                    TiShi(netHost, $"客机权限系统已关闭");
+                    return;
+                }
+                if (!isDev && !UI_GongNeng.guajianxitong_KaiGuan)
+                {
+                    TiShi(netHost, $"挂件系统已关闭");
+                    return;
+                }
+                string[] canshu = msg.Split('|');
+
+                int result1; int result2;
+                if (int.TryParse(canshu[0], out result1) && int.TryParse(canshu[1], out result2))
+                {
+
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result1 == 0)
+                    {
+                        Chat.TiShi(netHost, $"房主不让你控制他");
+                        return;
+                    }
+                    if (human.GetExt().jinzhibeikong && human != Human.all[result1])
+                    {
+                        Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
+                        return;
+                    }
+                    if (!isDev && Human.all[result1].GetExt().jinzhibeikong && human != Human.all[0])
+                    {
+                        Chat.TiShi(netHost, $"玩家 {Human.all[result1].name} 禁止其他客机控制他");
+                        return;
+                    }
+
+                    //if (result1 == result2)
+                    //{
+                    //    Chat.TiShi(netHost, "不能当自己的头部挂件");
+                    //    return;
+                    //}
+
+                    c_BeiRen.BeiRen(Human.all[result1], Human.all[result2]);
+                }
+                return;
+            }
             else if (nick == YxModMsgStr("qxqs") && msg.Length != 0)
             {
                 if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
@@ -494,6 +538,41 @@ namespace YxModDll.Mod
                     }
 
                     YxMod.QuXiaoQianShou(Human.all[result]);
+                }
+                return;
+            }
+            else if (nick == YxModMsgStr("qxbeiren") && msg.Length != 0)
+            {
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
+                {
+                    TiShi(netHost, $"客机权限系统已关闭");
+                    return;
+                }
+                if (!isDev && !UI_GongNeng.guajianxitong_KaiGuan)
+                {
+                    TiShi(netHost, $"挂件系统已关闭");
+                    return;
+                }
+                int result;
+                if (int.TryParse(msg, out result))
+                {
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
+                    {
+                        Chat.TiShi(netHost, $"房主不让你控制他");
+                        return;
+                    }
+                    if (human.GetExt().jinzhibeikong && human != Human.all[result])
+                    {
+                        Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
+                        return;
+                    }
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    {
+                        Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
+                        return;
+                    }
+
+                    c_BeiRen.QuXiaoBeiRen(Human.all[result]);
                 }
                 return;
             }
@@ -1938,6 +2017,47 @@ namespace YxModDll.Mod
                 //human.qianshou = true;
                 YxMod.SetQianShou(human, human2);
             }
+            else if (msg.StartsWith("背") && msg.Length > 1)
+            {
+                if (!UI_GongNeng.liaotiankuangquanxian_KaiGuan)
+                {
+                    TiShi(netHost, $"聊天框权限系统已关闭");
+                    return;
+                }
+                if (!human.GetExt().liaotiankuangquanxian)
+                {
+                    TiShi(netHost, $"你没有聊天框权限");
+                    return;
+                }
+
+                if (!UI_GongNeng.guajianxitong_KaiGuan)
+                {
+                    TiShi(netHost, $"挂件系统已关闭");
+                    return;
+                }
+
+                string strnum = msg.Substring(1);
+                if (string.IsNullOrEmpty(strnum))
+                {
+                    return;
+                }
+                if (!int.TryParse(strnum, out int num))
+                {
+                    return;
+                }
+
+                if (num == 0)
+                {
+                    //human.qianshou = false;
+                    c_BeiRen.QuXiaoBeiRen(human);
+                    return;
+                }
+
+                Human human2 = YxMod.ChaHumanId(strnum, human);
+
+                //human.qianshou = true;
+                c_BeiRen.BeiRen(human, human2);
+            }
             else if (msg.StartsWith("定点高度") && msg.Length > 4)
             {
                 if (!UI_GongNeng.dingdian_KaiGuan)
@@ -2250,7 +2370,45 @@ namespace YxModDll.Mod
                         }
 
                         YxMod.QuXiaoQianShou(human);
-                    
+
+                        break;
+                    case "背":
+                        if (!UI_GongNeng.liaotiankuangquanxian_KaiGuan)
+                        {
+                            TiShi(netHost, $"聊天框权限系统已关闭");
+                            break;
+                        }
+                        if (!human.GetExt().liaotiankuangquanxian)
+                        {
+                            TiShi(netHost, $"你没有聊天框权限");
+                            break;
+                        }
+                        if (!UI_GongNeng.guajianxitong_KaiGuan)
+                        {
+                            TiShi(netHost, $"挂件系统已关闭");
+                            break;
+                        }
+                        c_BeiRen.BeiRen(human, NetGame.instance.server.players[0].human);
+                        break;
+                    case "取消背":
+                        if (!UI_GongNeng.liaotiankuangquanxian_KaiGuan)
+                        {
+                            TiShi(netHost, $"聊天框权限系统已关闭");
+                            break;
+                        }
+                        if (!human.GetExt().liaotiankuangquanxian)
+                        {
+                            TiShi(netHost, $"你没有聊天框权限");
+                            break;
+                        }
+                        if (!UI_GongNeng.guajianxitong_KaiGuan)
+                        {
+                            TiShi(netHost, $"挂件系统已关闭");
+                            break;
+                        }
+
+                        c_BeiRen.QuXiaoBeiRen(human);
+
                         break;
                     case "定点设置":
                         if (!UI_GongNeng.dingdian_KaiGuan)

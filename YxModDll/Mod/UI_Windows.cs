@@ -121,6 +121,9 @@ namespace YxModDll.Mod
                 case UiState.XuanFu:
                     UI_XuanFu.CreatUI();
                     break;
+                case UiState.Bei:
+                    UI_Bei.CreatUI();
+                    break;
                 case UiState.QianShou:
                     UI_QianShou.CreatUI();
                     break;
@@ -187,6 +190,9 @@ namespace YxModDll.Mod
                     break;
                 case UiState.QianShou:
                     UI_Main.ShowQianShouUI = !UI_Main.ShowQianShouUI;
+                    break;
+                case UiState.Bei:
+                    UI_Main.ShowBeiUI = !UI_Main.ShowBeiUI;
                     break;
             }
         }

@@ -260,7 +260,10 @@ namespace YxModDll.Mod
                     GUILayout.BeginHorizontal();
                     UI.CreatAnNiu("传送至>>", false, ChuanSongZhi);
                     UI.CreatAnNiu("悬浮于>>", false, XuanFuYu);
+                    GUILayout.EndHorizontal();
+                    GUILayout.BeginHorizontal();
                     UI.CreatAnNiu("牵手>>", false, QianShou);
+                    UI.CreatAnNiu("被..背>>", false, Bei);
                     GUILayout.EndHorizontal();
 
                     GUILayout.BeginHorizontal();
@@ -487,7 +490,7 @@ namespace YxModDll.Mod
             UI_Main.ShowChuanSongUI = true;
             if (UI_Main.ShowChuanSongUI)
             {
-                UI_Main.ShowXuanFuUI = UI_Main.ShowQianShouUI = false;
+                UI_Main.ShowXuanFuUI = UI_Main.ShowQianShouUI = UI_Main.ShowBeiUI = false;
                 UI_Main.chuansongUiRect.xMin = UI_Main.wanjiaUiRect.xMin + 100;
                 UI_Main.chuansongUiRect.yMin = UI_Main.wanjiaUiRect.yMin ;
             }
@@ -502,7 +505,7 @@ namespace YxModDll.Mod
             UI_Main.ShowXuanFuUI = true;
             if (UI_Main.ShowXuanFuUI)
             {
-                UI_Main.ShowChuanSongUI = UI_Main.ShowQianShouUI = false;
+                UI_Main.ShowChuanSongUI = UI_Main.ShowQianShouUI = UI_Main.ShowBeiUI = false;
                 UI_Main.xuanfuUiRect.xMin = UI_Main.wanjiaUiRect.xMin + 150;
                 UI_Main.xuanfuUiRect.yMin = UI_Main.wanjiaUiRect.yMin;
             }
@@ -514,11 +517,23 @@ namespace YxModDll.Mod
             UI_Main.ShowQianShouUI = true;
             if (UI_Main.ShowQianShouUI)
             {
-                UI_Main.ShowChuanSongUI = UI_Main.ShowXuanFuUI = false;
+                UI_Main.ShowChuanSongUI = UI_Main.ShowXuanFuUI = UI_Main.ShowBeiUI = false;
                 UI_Main.qianshouUiRect.xMin = UI_Main.wanjiaUiRect.xMin + 150;
                 UI_Main.qianshouUiRect.yMin = UI_Main.wanjiaUiRect.yMin;
             }
             UI_QianShou.yuan_humanID = humanID;
+        }
+        private static void Bei()//背
+        {
+
+            UI_Main.ShowBeiUI = true;
+            if (UI_Main.ShowBeiUI)
+            {
+                UI_Main.ShowQianShouUI = UI_Main.ShowChuanSongUI = UI_Main.ShowXuanFuUI = false;
+                UI_Main.beiUiRect.xMin = UI_Main.wanjiaUiRect.xMin + 150;
+                UI_Main.beiUiRect.yMin = UI_Main.wanjiaUiRect.yMin;
+            }
+            UI_Bei.yuan_humanID = humanID;
         }
         private static void GeRenZiLiao()
         {

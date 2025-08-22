@@ -35,6 +35,7 @@ namespace YxModDll.Mod
         public static List<KuaiJieJian_Type> ChuanSong;
         public static List<KuaiJieJian_Type> XuanFu;
         public static List<KuaiJieJian_Type> QianShou;
+        public static List<KuaiJieJian_Type> Bei;
 
         private void Start()
         {
@@ -84,6 +85,7 @@ namespace YxModDll.Mod
             ChuanSong = INI.GetKuaiJieJianList("传送至", new KuaiJieJian_Type(KeyCode.Mouse0));
             XuanFu = INI.GetKuaiJieJianList("悬浮于", new KuaiJieJian_Type(KeyCode.Mouse1));
             QianShou = INI.GetKuaiJieJianList("牵手", new KuaiJieJian_Type(KeyCode.Z));
+            Bei = INI.GetKuaiJieJianList("背人", new KuaiJieJian_Type(KeyCode.N));
         }
         public static ShuZi_Type Is1(List<KuaiJieJian_Type> kuaijiejianList)
         {
@@ -235,6 +237,7 @@ namespace YxModDll.Mod
                 UI.CreateHotKey("传送至：", ref ChuanSong, 2);
                 UI.CreateHotKey("悬浮于：", ref XuanFu, 2);
                 UI.CreateHotKey("牵手：", ref QianShou, 2);
+                UI.CreateHotKey("背人：", ref Bei, 2);
 
             }
             ;
