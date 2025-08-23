@@ -53,9 +53,19 @@ namespace YxModDll.Patches
             Patcher2.MethodPatch(typeof(NetGame), "OnReceiveChatClient", new[] { typeof(NetStream) }, typeof(Patcher_NetGame), "OnReceiveChatClient", new[] { typeof(NetGame), typeof(NetStream) });
             Patcher2.MethodPatch(typeof(NetGame), "OnReceiveChatServer", new[] { typeof(NetHost), typeof(NetStream) }, typeof(Patcher_NetGame), "OnReceiveChatServer", new[] { typeof(NetGame), typeof(NetHost), typeof(NetStream) });
 
-
+            ////破解软趴趴
+            //Patcher2.MethodPatch(typeof(NetGame), "IsUserAllowed", null, typeof(Patcher_NetGame), "IsUserAllowed", new[] { typeof(NetGame) });
+            //Patcher2.MethodPatch(typeof(NetGame), "CheckUserAccess", null, typeof(Patcher_NetGame), "CheckUserAccess", new[] { typeof(NetGame) });
         }
-
+        public static bool IsUserAllowed()
+        {
+            return true;
+        }
+        public static bool CheckUserAccess()
+        {
+            
+            return true;
+        }
         public static void OnClientHelo(NetGame instance, NetHost client, NetStream msg)
         {
             if (client == null)

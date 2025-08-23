@@ -13,9 +13,10 @@ namespace YxModDll.Mod
         //public static Human bei_human;
         private void FixedUpdate()
         {
-
             foreach (Human human in Human.all)
             {
+                QingChuWuXiaoHuman(human);
+
                 if (!UI_GongNeng.guajianxitong_KaiGuan)
                 {
                     if (human.GetExt().bei_human != null)
@@ -23,24 +24,36 @@ namespace YxModDll.Mod
                         QuXiaoBeiRen(human);
                     }
                 }
-                if (!GetHumans().Contains(human))
+                else
                 {
-                    if (human.transform.parent != null)
+                    if (human.GetExt().bei_human != null)
                     {
-                        human.transform.SetParent(null);
+                        human.transform.localPosition = new Vector3(0, -0.3f, -0.3f);
+                        //human.transform.localRotation = Quaternion.Euler(0, 0, 0);
                     }
-                    foreach (var rb in human.rigidbodies)
-                    {
-                        rb.isKinematic = false;
-                        rb.detectCollisions = true;
-                        rb.useGravity = true;
-                    }
-
-                    Debug.Log("销毁human");
-                    Destroy(human.gameObject);
-                    Human.all.Remove(human);
-                    return;
+                    
                 }
+
+            }
+        }
+        private void QingChuWuXiaoHuman(Human human)
+        {
+            if (!GetHumans().Contains(human))
+            {
+                if (human.transform.parent != null)
+                {
+                    human.transform.SetParent(null);
+                }
+                foreach (var rb in human.rigidbodies)
+                {
+                    rb.isKinematic = false;
+                    rb.detectCollisions = true;
+                    rb.useGravity = true;
+                }
+
+                Debug.Log("销毁无效human");
+                Destroy(human.gameObject);
+                Human.all.Remove(human);
             }
         }
         private void Update()
@@ -54,11 +67,7 @@ namespace YxModDll.Mod
                     UI_Bei.Bei(num1, num2);
                 }
             }
-
-
         }
-
-
 
 
         public static void BeiRen(Human human1, Human human2) //human1 背在 human2 身上
@@ -82,9 +91,7 @@ namespace YxModDll.Mod
             {
                 human1.GetExt().bei_human = human2;
 
-                human1.transform.SetParent(human2.ragdoll.partChest.transform);
-
-
+                
                 for (int i = 0; i < human1.rigidbodies.Length; i++)
                 {
                     human1.rigidbodies[i].detectCollisions = false;
@@ -92,16 +99,16 @@ namespace YxModDll.Mod
                     human1.rigidbodies[i].useGravity = false;
                     human1.rigidbodies[i].velocity = Vector3.zero;
                     human1.rigidbodies[i].angularVelocity = Vector3.zero;
+
+                    //human2.rigidbodies[i].transform.rotation = Quaternion.Euler(0, 0, 0);
+
+                    human1.rigidbodies[i].transform.position = human2.rigidbodies[i].transform.position;
                     human1.rigidbodies[i].transform.rotation = human2.rigidbodies[i].transform.rotation;
 
                 }
-                //human1.ragdoll.partHead.rigidbody.isKinematic = false;
-                //human1.ragdoll.partHead.rigidbody.detectCollisions = true;
 
+                human1.transform.SetParent(human2.ragdoll.partChest.transform);
                 human1.transform.localPosition = new Vector3(0, -0.3f, -0.3f);
-                //// 设置初始位置（世界坐标）
-                //Vector3 initialPos = human2.ragdoll.partChest.transform.TransformPoint(new Vector3(0, -0.3f, -0.3f));
-                //human1.transform.position = initialPos;
 
                 BeCarriedPose(human1);
 
