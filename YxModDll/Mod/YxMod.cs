@@ -1999,7 +1999,15 @@ namespace YxModDll.Mod
                     enThrowing(human, true);
                 }
             }
-
+            //如果被背就取消背
+            if (ntphuman.GetExt().bei_human == human)
+            {
+                c_BeiRen.QuXiaoBeiRen(ntphuman);
+            }
+            if (human.GetExt().bei_human == ntphuman)
+            {
+                c_BeiRen.QuXiaoBeiRen(human);
+            }
             ntphuman.GetExt().ntp = true;
             ntphuman.GetExt().ntp_human = human;
             enThrowing(ntphuman, false);
