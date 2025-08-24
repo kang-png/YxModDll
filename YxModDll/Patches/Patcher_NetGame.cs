@@ -47,7 +47,7 @@ namespace YxModDll.Patches
             //_serverCommands = typeof(NetChat).GetField("serverCommands", BindingFlags.Public | BindingFlags.Static);
             //_clientCommands = typeof(NetChat).GetField("clientCommands", BindingFlags.Public | BindingFlags.Static);
 
-
+            Patcher2.MethodPatch(typeof(NetGame), "OnDisconnect", new[] { typeof(object), typeof(bool) }, typeof(Patcher_NetGame), "OnDisconnect", new[] { typeof(NetGame), typeof(NetHost), typeof(object), typeof(bool) });
             Patcher2.MethodPatch(typeof(NetGame), "OnServerDisconnect", new[] { typeof(NetHost) }, typeof(Patcher_NetGame), "OnServerDisconnect", new[] { typeof(NetGame), typeof(NetHost) });
             Patcher2.MethodPatch(typeof(NetGame), "OnClientHelo", new[] { typeof(NetHost), typeof(NetStream) }, typeof(Patcher_NetGame), "OnClientHelo", new[] { typeof(NetGame), typeof(NetHost), typeof(NetStream) });
             Patcher2.MethodPatch(typeof(NetGame), "OnReceiveChatClient", new[] { typeof(NetStream) }, typeof(Patcher_NetGame), "OnReceiveChatClient", new[] { typeof(NetGame), typeof(NetStream) });
@@ -56,6 +56,78 @@ namespace YxModDll.Patches
             ////破解软趴趴
             //Patcher2.MethodPatch(typeof(NetGame), "IsUserAllowed", null, typeof(Patcher_NetGame), "IsUserAllowed", new[] { typeof(NetGame) });
             //Patcher2.MethodPatch(typeof(NetGame), "CheckUserAccess", null, typeof(Patcher_NetGame), "CheckUserAccess", new[] { typeof(NetGame) });
+        }
+
+
+        public static void OnDisconnect(NetGame instance, object connection, bool suppressMessage = false)
+        {
+            if (NetGame. isServer)
+            {
+                NetHost netHost = FindAnyClient(connection);
+                if (netHost != null)
+                {
+                    foreach(NetPlayer player in netHost.players)
+                    {
+                        Human human =player.human;
+                        if (human == null) continue; // 防止空引用
+                        if (human.GetExt().bei_human != null)
+                        {
+                            c_BeiRen.QuXiaoBeiRen(human);
+                        }
+                        //然后获取 human.ragdoll.partChest 的所有子物体，如果有Human，则 SetParent(null)
+                        // 2. 处理反向情况：如果当前角色是被背者（即其他角色的子物体）
+                        // 遍历胸部骨骼的所有子物体，检查是否有其他Human对象
+                        foreach (Transform child in human.ragdoll.partChest.transform)
+                        {
+                            // 尝试获取子物体上的Human组件
+                            Human childHuman = child.GetComponent<Human>();
+                            if (childHuman != null)
+                            {
+                                c_BeiRen.QuXiaoBeiRen(childHuman);
+                            }
+                        }
+                    }
+
+                    DestroyHostObjects(netHost);
+                    OnServerDisconnect(instance,netHost);
+                }
+            }
+            else
+            {
+                OnLostConnection(suppressMessage);
+            }
+        }
+        public static void OnLostConnection(bool suppressMessage = false)
+        {
+            App.instance.OnLostConnection(suppressMessage);
+        }
+        private static void DestroyHostObjects(NetHost client)
+        {
+            NetPlayer[] array = client.players.ToArray();
+            foreach (NetPlayer netPlayer in array)
+            {
+                NetGame.instance.players.Remove(netPlayer);
+                netPlayer.DespawnPlayer();
+            }
+            NetGame.instance.allclients.Remove(client);
+            NetGame.instance.readyclients.Remove(client);
+            if (client.notificationQueue != null)
+            {
+                client.notificationQueue.clients.Remove(client);
+            }
+            NetScope.RemoveAllRemoteState(client, setDying: true);
+        }
+        private static NetHost FindAnyClient(object connection)
+        {
+            int i = 0;
+            for (int count = NetGame.instance. allclients.Count; i < count; i++)
+            {
+                if (connection != null && NetGame.instance.transport.ConnectionEquals(connection, NetGame.instance.allclients[i]))
+                {
+                    return NetGame.instance.allclients[i];
+                }
+            }
+            return null;
         }
         public static bool IsUserAllowed()
         {

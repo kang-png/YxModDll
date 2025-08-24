@@ -15,7 +15,6 @@ namespace YxModDll.Mod
         {
             foreach (Human human in Human.all)
             {
-                QingChuWuXiaoHuman(human);
 
                 if (!UI_GongNeng.guajianxitong_KaiGuan)
                 {
@@ -30,9 +29,10 @@ namespace YxModDll.Mod
                     {
                         human.transform.localPosition = new Vector3(0, -0.3f, -0.3f);
                         //human.transform.localRotation = Quaternion.Euler(0, 0, 0);
+
                     }
-                    
                 }
+                //QingChuWuXiaoHuman(human);
 
             }
         }
@@ -40,6 +40,12 @@ namespace YxModDll.Mod
         {
             if (!GetHumans().Contains(human))
             {
+                // 关键修改：如果当前角色是背负者，先取消对被背者的背负关系
+                if (human.GetExt().bei_human != null)
+                {
+                    // 取消背负，解除父子关系
+                    QuXiaoBeiRen(human);
+                }
                 if (human.transform.parent != null)
                 {
                     human.transform.SetParent(null);
@@ -68,8 +74,46 @@ namespace YxModDll.Mod
                 }
             }
         }
+        //// 确保QuXiaoBeiRen方法正确解除父子关系
+        //public static void QuXiaoBeiRen(Human human)
+        //{
+        //    if (human == null) return;
 
+        //    Human carried = human.GetExt().bei_human;
+        //    if (carried != null)
+        //    {
+        //        // 解除被背者的父子关系（核心：避免被连带销毁）
+        //        carried.transform.SetParent(null);
+        //        // 恢复被背者的物理状态
+        //        foreach (var rb in carried.rigidbodies)
+        //        {
+        //            rb.detectCollisions = true;
+        //            rb.isKinematic = false;
+        //            rb.useGravity = true;
+        //        }
+        //        // 清除背负关系记录
+        //        carried.GetExt().bei_human = null;
+        //    }
+        //    // 清除当前角色的背负记录
+        //    human.GetExt().bei_human = null;
+        //}
+        public static void QuXiaoBeiRen(Human human)
+        {
+            if(human==null)
+            { return; }
+            human.GetExt().bei_human = null;
+            if (human.transform.parent != null)
+            {
+                human.transform.SetParent(null);
+            }
+            foreach (var rb in human.rigidbodies)
+            {
+                rb.isKinematic = false;
+                rb.detectCollisions = true;
+                rb.useGravity = true;
+            }
 
+        }
         public static void BeiRen(Human human1, Human human2) //human1 背在 human2 身上
         {
 
@@ -168,21 +212,7 @@ namespace YxModDll.Mod
 
             return list;
         }
-        public static void QuXiaoBeiRen(Human human)
-        {
-            human.GetExt().bei_human = null;
-            if (human.transform.parent != null)
-            {
-                human.transform.SetParent(null);
-            }
-            foreach (var rb in human.rigidbodies)
-            {
-                rb.isKinematic = false;
-                rb.detectCollisions = true;
-                rb.useGravity = true;
-            }
 
-        }
     }
 
 
