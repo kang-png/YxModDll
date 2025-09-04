@@ -2259,6 +2259,11 @@ namespace YxModDll.Mod
                     human.GetExt().numY = num;
                     Chat.TiShi(human.player.host, "Y键动作已更改为 黑鹰舞步");
                 }
+                else if (num == 28)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 慢跑");
+                }
             }
 
             else

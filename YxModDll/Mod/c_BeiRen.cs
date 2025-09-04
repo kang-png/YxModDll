@@ -134,7 +134,7 @@ namespace YxModDll.Mod
             if (human1.GetExt(). bei_human == null)
             {
                 YxMod.QuXiaoGuaJian(human1);//先取消挂件
-                if(human2.GetExt().ntp_human = human1)
+                if(human2.GetExt().ntp_human == human1)
                 {
                     YxMod.QuXiaoGuaJian(human2);
                 }
