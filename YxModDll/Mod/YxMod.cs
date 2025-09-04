@@ -215,7 +215,7 @@ namespace YxModDll.Mod
 
             gameObject.AddComponent<AssetBundleLoader>();
             gameObject.AddComponent<c_BeiRen>();
-
+            gameObject.AddComponent<Patcher_YanHua>();
 
             // 启动协程下载并解压
             //StartCoroutine(JianChaGengXin());
