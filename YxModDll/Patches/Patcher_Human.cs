@@ -405,6 +405,12 @@ namespace YxModDll.Patches
                 // 如果按住了 Y 键（对应 controls.unconscious）
                 if (instance.controls.unconscious)
                 {
+                    if (!UI_GongNeng.Y_KaiGuan)
+                    {
+                        ext.numY = 0;
+                        QuXiaoY(instance, ext);
+                        
+                    }
                     // 根据当前 Y 动作编号（numY）执行对应功能
                     switch (ext.numY)
                     {
@@ -458,28 +464,8 @@ namespace YxModDll.Patches
                 }
                 else // 松开 Y 键时
                 {
-                    // 重置某些状态（如果正在执行特定动作）
-                    ext.yititui = false;
-                    ext.titui = false;
-                    ext.quanji = false;
+                    QuXiaoY(instance,ext);
 
-                    // 如果仍处于扇翅膀状态，立即关闭（恢复重力等）
-                    if (ext.fanchibang)
-                    {
-                        YxMod.EndFanChiBang(instance);
-                    }
-                    if (ext.fanchibangY8)
-                    {
-                        YxMod.EndFanChiBangY8(instance);
-                    }
-                    if(ext.naosini)
-                    {
-                        YxMod.EndNaoSiNi(instance);
-                    }
-                    //if (ext.tuomasi)
-                    //{
-                    //    ext.tuomasi = false; 
-                    //}
                 }
 
                 // 调用原版的动作控制（跳跃、移动等）
@@ -489,7 +475,27 @@ namespace YxModDll.Patches
                 }
             }
         }
+        private static void QuXiaoY(Human instance, HumanStateExt ext)
+        {
+            // 重置某些状态（如果正在执行特定动作）
+            ext.yititui = false;
+            ext.titui = false;
+            ext.quanji = false;
 
+            // 如果仍处于扇翅膀状态，立即关闭（恢复重力等）
+            if (ext.fanchibang)
+            {
+                YxMod.EndFanChiBang(instance);
+            }
+            if (ext.fanchibangY8)
+            {
+                YxMod.EndFanChiBangY8(instance);
+            }
+            if (ext.naosini)
+            {
+                YxMod.EndNaoSiNi(instance);
+            }
+        }
 
         private static void PushGroundAngle(Human instance)
         {

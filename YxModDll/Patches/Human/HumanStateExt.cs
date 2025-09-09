@@ -138,25 +138,7 @@ namespace YxModDll.Patches
         public SmoothAnimator animator;
         public Human bei_human;
 
-        // public bool PiLiWuDongJie;
-        // public bool JiaoChaTiaoYue;
-        // public bool YangWoQiZuo;
-        // public bool FuWoCheng;
-        // public bool XiHaWu;
-        // public bool XiHaWu2;
-        // public bool XiHaWu3;
-        // public bool TouXuan;
-        // public bool MuMaTi;
-        // public bool KaiHeTiao;
-        // public bool YaoBaiWu;
-        // public bool SangBaWu;
-        // public bool SangBaWu2;
-        //public bool DianTunWu;
-        // public bool QuanJi;
-        // public bool QiMaWu;
-        // public bool HeiYingTaoWuBu;
-
-        //public bool BoFangDongHua;
+        public float bufasudu = 1.5f;
 
 
         public HumanStateExt(Human human)

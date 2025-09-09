@@ -23,6 +23,15 @@ namespace YxModDll.Mod.HumanAnimator
                     {
                         if (human.GetExt().ntp)
                             continue;
+
+                        if (!UI_GongNeng.Y_KaiGuan)
+                        {
+                            human.GetExt().numY = 0;
+                            if (human.GetExt().bofangdonghua)
+                            {
+                                human.GetExt().bofangdonghua = false;
+                            }
+                        }
                         // 根据当前 Y 动作编号（numY）执行对应功能
                         switch (human.GetExt().numY)
                         {

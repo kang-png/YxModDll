@@ -60,6 +60,8 @@ namespace YxModDll.Mod
         public static Human human;
         private static bool allshouhua;
 
+        public static float bufasudu = 1.5f;
+
         public static void CreatUI()//创建菜单功能区
         {
             float kehuquHeight = UI_Main.wanjiaUI_gao - UI_Windows.biaotiUiheight;
@@ -213,6 +215,9 @@ namespace YxModDll.Mod
                     humanID = 0;
                     return;
                 }
+
+                
+
                 GUILayout.BeginHorizontal();
                 if ((NetGame.isServer && humanID != 1) || (NetGame.isClient && !KeJiZiJi())) //不是自己
                 {
@@ -224,6 +229,32 @@ namespace YxModDll.Mod
                     UI.CreatAnNiu("踢出房间", false, TiChuFangJian);
                 }
                 GUILayout.EndHorizontal();
+
+                if ((NetGame.isServer) || (NetGame.isClient && YxMod.YxModServer && KeJiZiJi())) 
+                {
+                    if (NetGame.isServer)
+                    {
+                        UI.CreatShuZhi("步伐速度", ref human.GetExt().bufasudu, 1f, 3f, 0.1f, () =>
+                        {
+                            //human.GetExt().bufasudu = bufasudu;
+                            if(humanID != 1 && human.GetExt().isClient)
+                            {
+                                Chat.SendYxModMsgServer(human.player.host, Chat.YxModMsgStr("bufasudu"), $"{human.GetExt().bufasudu}");
+                            }
+                            
+                        }, yuan: 1.5f);
+                    }
+                    else if(NetGame.isClient)
+                    {
+                        UI.CreatShuZhi("步伐速度", ref bufasudu, 1f, 3f, 0.1f, () =>
+                        {
+                            Chat.SendYxModMsgClient(Chat.YxModMsgStr("bufasudu"), $"{bufasudu}");
+                        }, yuan: 1.5f);
+                    }
+
+                }
+
+
                 GUILayout.BeginHorizontal();
                 if (NetGame.isServer || (NetGame.isClient && KeJiZiJi())) //是自己
                 {

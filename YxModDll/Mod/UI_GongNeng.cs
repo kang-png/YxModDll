@@ -27,6 +27,7 @@ namespace YxModDll.Mod
         public static bool qianshouxitong_KaiGuan;
         public static bool chaojitiao_KaiGuan;
         public static bool wutiguajian_KaiGuan;
+        public static bool Y_KaiGuan;
 
         public static void CreatUI()//创建菜单功能区
         {
@@ -66,7 +67,10 @@ namespace YxModDll.Mod
             UI.CreatAnNiu_AnXia("牵手系统", ref qianshouxitong_KaiGuan, false, QianShouXiTong);
             UI.CreatAnNiu_AnXia("传送系统", ref chuansongxitong_KaiGuan, false, ChuanSongXiTong);
             GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            UI.CreatAnNiu_AnXia("Y系统", ref Y_KaiGuan, false, YXiTong);
 
+            GUILayout.EndHorizontal();
             GUILayout.FlexibleSpace();
         }
 
@@ -90,6 +94,7 @@ namespace YxModDll.Mod
             yulexitong_KaiGuan = PlayerPrefs.GetInt("yulexitong_KaiGuan", 1) > 0;
             qianshouxitong_KaiGuan = PlayerPrefs.GetInt("qianshouxitong_KaiGuan", 1) > 0;
             chaojitiao_KaiGuan = PlayerPrefs.GetInt("chaojitiao_KaiGuan", 1) > 0;
+            Y_KaiGuan = PlayerPrefs.GetInt("Y_KaiGuan", 1) > 0;
 
         }
 
@@ -152,6 +157,19 @@ namespace YxModDll.Mod
         {
             string str = $"Y键击飞系统已{(jifeixitong_KaiGuan ? "打开" : "关闭")}";
             PlayerPrefs.SetInt("jifeixitong_KaiGuan", jifeixitong_KaiGuan ? 1 : 0);
+            if (NetGame.isServer)
+            {
+                Chat.TiShi(str, TiShiMsgId.XiTongTiShi);
+            }
+            else if (NetGame.isClient)
+            {
+                Chat.TiShi(NetGame.instance.local, $"{str}，仅房主有效");
+            }
+        }
+        private static void YXiTong()
+        {
+            string str = $"Y键自定义系统已{(Y_KaiGuan ? "打开" : "关闭")}";
+            PlayerPrefs.SetInt("Y_KaiGuan", Y_KaiGuan ? 1 : 0);
             if (NetGame.isServer)
             {
                 Chat.TiShi(str, TiShiMsgId.XiTongTiShi);

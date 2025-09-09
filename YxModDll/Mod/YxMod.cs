@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using YxModDll.Mod.HumanAnimator;
 using YxModDll.Patches;
+using YxMod测试;
 
 ////////修改的内容///////
 ///Human                             主要功能 <summary>
@@ -210,6 +211,7 @@ namespace YxModDll.Mod
 
             gameObject.AddComponent<PlayAnimator>();
 
+            gameObject.AddComponent<Patcher_LegMuscles>();
             
             // 启动协程下载并解压
             //StartCoroutine(JianChaGengXin());

@@ -148,6 +148,14 @@ namespace YxModDll.Mod
                     YxMod.KeJiQuanXian = result == 1;
                 }
             }
+            else if (nick == YxModMsgStr("bufasudu") && msg.Length != 0)
+            {
+                float result;
+                if (float.TryParse(msg, out result))
+                {
+                    UI_WanJia.bufasudu = result;
+                }
+            }
 
             //发送一些客机记录的至给服务器
             /////////////////////////
@@ -1500,6 +1508,15 @@ namespace YxModDll.Mod
                 }
                 return;
             }
+            else if (nick == YxModMsgStr("bufasudu") && msg.Length != 0)
+            {
+                float result;
+                if (float.TryParse(msg, out result))
+                {
+                    human.GetExt().bufasudu = result;
+                }
+                return;
+            }
             else if (nick == YxModMsgStr("kongqipao") && msg.Length != 0)
             {
                 if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
@@ -2111,6 +2128,13 @@ namespace YxModDll.Mod
                 {
                     return;
                 }
+                if(!UI_GongNeng.Y_KaiGuan)
+                {
+                    string str = $"Y键自定义系统已关闭";
+                    Chat.TiShi(netHost, str);
+                    return;
+                }
+
                 if (num == 0)
                 {
                     human.GetExt().numY = num;
