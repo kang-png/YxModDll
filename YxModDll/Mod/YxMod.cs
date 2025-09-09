@@ -3,7 +3,9 @@ using HumanAPI;
 using Multiplayer;
 using Steamworks;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 using YxModDll.Mod.HumanAnimator;
 using YxModDll.Patches;
@@ -1009,7 +1011,8 @@ namespace YxModDll.Mod
                                           new Vector3(Mathf.Cos(radians), 0.2f, Mathf.Sin(radians)) * 0.5f;
 
                     // 设置新位置
-                    currentHuman.SetPosition(newPosition);
+                    //currentHuman.SetPosition(newPosition);
+                    currentHuman.StartCoroutine(SmoothMove(currentHuman, newPosition , 0.3f));
                 }
             }
         }
@@ -1700,10 +1703,45 @@ namespace YxModDll.Mod
         }
         public static void ChuanSong(Human human1, Human human2)//human1 传送到 human2
         {
-            human1.SetPosition(human2.transform.position + new Vector3(0.5f, 0.2f, 0f));
+            //human1.SetPosition(human2.transform.position + new Vector3(0.5f, 0.2f, 0f));
+            human1.StartCoroutine(SmoothMove(human1, human2.transform.position + new Vector3(0.5f, 0.2f, 0f), 0.3f));
+
+
             Chat.TiShi($"玩家 {human1.player.host.name} 传送到了 {human2.player.host.name} 的身边");
         }
+        public static IEnumerator SmoothMove(Human human, Vector3 targetRoot, float duration)
+        {
+            int count = human.rigidbodies.Length;
 
+            Vector3 rootStart = human.transform.position;
+
+            for (int i = 0; i < human.rigidbodies.Length; i++)
+            {
+                human.rigidbodies[i].useGravity = false;
+                human.rigidbodies[i].detectCollisions = false;
+            }
+
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = elapsed / duration;
+
+                // 根节点插值
+                human.transform.position = Vector3.Lerp(rootStart, targetRoot, t);
+
+                yield return new WaitForFixedUpdate(); // 跟物理帧对齐，更平滑
+            }
+
+            // 最后精确对齐 + 恢复物理
+            //human.transform.position = targetRoot;
+            for (int i = 0; i < human.rigidbodies.Length; i++)
+            {
+                human.rigidbodies[i].useGravity = true;
+                human.rigidbodies[i].detectCollisions = true;
+            }
+        }
         public static void ShanXian_Fun(Human human)
         {
             if (human == null)
