@@ -245,15 +245,7 @@ namespace YxModDll.Mod
 
             if (!huisu)
             {
-                //human.transform.position = now_positions[qudianId] + new Vector3(0, gaodu, 0);
-
-                Vector3 targetPos2 = now_positions[qudianId] + new Vector3(0, gaodu, 0);
-                Vector3[] targetRbPos2 = now_rigi_positions[qudianId];
-
-                human.ReleaseGrab(0.2f);
-
-                human.StartCoroutine(YxMod. SmoothMove(human, targetPos2,  0.2f));
-
+                human.transform.position = now_positions[qudianId] + new Vector3(0, gaodu, 0);
 
                 for (int j = 0; j < human.rigidbodies.Length; j++)
                 {
@@ -271,92 +263,16 @@ namespace YxModDll.Mod
             Vector3[] targetspeeds = now_rigi_inertiaTensors[qudianId];
             human.ReleaseGrab(0.2f);
 
-            human.StartCoroutine(SmoothMoveRagdoll(human,  targetRbPos, targetRbRot, targetinertiaTensor, targetspeeds, 0.2f));
-
-
-            //for (int j = 0; j < human.rigidbodies.Length; j++)
-            //{
-            //    human.rigidbodies[j].transform.position = now_rigi_positions[qudianId][j];
-            //    human.rigidbodies[j].transform.rotation = now_rigi_rotations[qudianId][j];
-            //    human.rigidbodies[j].inertiaTensor = now_rigi_inertiaTensors[qudianId][j];
-            //    if (!baoLiuDangQianSuDu)
-            //    {
-            //        human.rigidbodies[j].velocity = guanxing ? (now_rigi_speeds[qudianId][j]) : Vector3.zero;
-            //    }
-            //}
-        }
-        
-        private IEnumerator SmoothMoveRagdoll(Human human, Vector3[] targetRbPos, Quaternion[] targetRbRot, Vector3[] targetinertiaTensor, Vector3[] targetspeeds, float duration)
-        {
-            int count = human.rigidbodies.Length;
-
-            Vector3[] startPos = new Vector3[count];
-            Quaternion[] startRot = new Quaternion[count];
-            Vector3[] startinertiaTensor = new Vector3[count];
-            Vector3[] startspeeds = new Vector3[count];
-
-
-            //Vector3 rootStart = human.transform.position;
-
-            // 记录起始状态 & 设置刚体为 Kinematic
-            for (int i = 0; i < count; i++)
+            for (int j = 0; j < human.rigidbodies.Length; j++)
             {
-                startPos[i] = human.rigidbodies[i].position;
-                startRot[i] = human.rigidbodies[i].rotation;
-                //startinertiaTensor[i]= human.rigidbodies[i].
-                //startspeeds[i]= human.rigidbodies[i].velocity;
-
-                //human.rigidbodies[i].isKinematic = true;
-                human.rigidbodies[i].useGravity=false;
-                human.rigidbodies[i].detectCollisions = false;
-            }
-
-            float elapsed = 0f;
-
-            while (elapsed < duration)
-            {
-                elapsed += Time.deltaTime;
-                float t = elapsed / duration;
-
-                //// 根节点插值
-                //human.transform.position = Vector3.Lerp(rootStart, targetRoot, t);
-                
-                // 每个刚体插值
-                for (int i = 0; i < count; i++)
+                human.rigidbodies[j].transform.position = now_rigi_positions[qudianId][j];
+                human.rigidbodies[j].transform.rotation = now_rigi_rotations[qudianId][j];
+                human.rigidbodies[j].inertiaTensor = now_rigi_inertiaTensors[qudianId][j];
+                if (!baoLiuDangQianSuDu)
                 {
-                    if (targetRbPos.Length > i && targetRbRot.Length > i)
-                    {
-
-                        human.rigidbodies[i].MovePosition(Vector3.Lerp(startPos[i], targetRbPos[i], t));
-                        human.rigidbodies[i].MoveRotation(Quaternion.Slerp(startRot[i], targetRbRot[i], t));
-
-                    }
+                    human.rigidbodies[j].velocity = guanxing ? (now_rigi_speeds[qudianId][j]) : Vector3.zero;
                 }
-
-                yield return new WaitForFixedUpdate(); // 跟物理帧对齐，更平滑
-            }
-            
-            // 最后精确对齐 + 恢复物理
-            //human.transform.position = targetRoot;
-            for (int i = 0; i < count; i++)
-            {
-                if (targetRbPos.Length > i && targetRbRot.Length > i)
-                {
-                    human.rigidbodies[i].position = targetRbPos[i];
-                    human.rigidbodies[i].rotation = targetRbRot[i];
-                    human.rigidbodies[i].inertiaTensor = targetinertiaTensor[i];
-                    //if (!baoLiuDangQianSuDu)
-                    //{
-                        //human.rigidbodies[i].velocity = guanxing ? (targetinertiaTensor[i]) : Vector3.zero;
-                    //}
-
-                    //human.rigidbodies[i].detectCollisions = true;
-                }
-                //human.rigidbodies[i].isKinematic = false;
-                human.rigidbodies[i].useGravity = true;
-                human.rigidbodies[i].detectCollisions = true;
             }
         }
-
     }
 }

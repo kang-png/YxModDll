@@ -5,6 +5,7 @@ using Steamworks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using UnityEngine;
 using YxModDll.Mod.HumanAnimator;
@@ -1709,20 +1710,47 @@ namespace YxModDll.Mod
 
             Chat.TiShi($"玩家 {human1.player.host.name} 传送到了 {human2.player.host.name} 的身边");
         }
-        public static IEnumerator SmoothMove(Human human, Vector3 targetRoot, float duration)
+
+
+        public static IEnumerator SmoothMove(Human human, Vector3 targetRoot, float duration, float checkRadius = 1f)
         {
             int count = human.rigidbodies.Length;
-
             Vector3 rootStart = human.transform.position;
 
-            for (int i = 0; i < human.rigidbodies.Length; i++)
+            // 1. 找到 human 身上的所有 Collider
+            Collider[] humanColliders = human.GetComponentsInChildren<Collider>();
+
+            // 2. 路径检测，找到路径上的所有物体
+            Vector3 dir = targetRoot - rootStart;
+            float distance = dir.magnitude;
+            dir.Normalize();
+
+            List<Collider> ignoredColliders = new List<Collider>();
+            //RaycastHit[] hits = Physics.SphereCastAll(rootStart, checkRadius, dir, distance, mask, QueryTriggerInteraction.Ignore);
+            // ⚠️ 不再传 mask，直接检测所有层
+            RaycastHit[] hits = Physics.SphereCastAll(rootStart,checkRadius,dir,distance,~0, QueryTriggerInteraction.Ignore);
+
+            foreach (var hit in hits)
             {
-                human.rigidbodies[i].useGravity = false;
-                human.rigidbodies[i].detectCollisions = false;
+                Collider hitCol = hit.collider;
+                if (hitCol == null) continue;
+
+                // 跳过自己
+                bool isSelf = humanColliders.Any(hc => hc == hitCol);
+                if (isSelf) continue;
+
+                // 忽略 human 和路径上物体的碰撞
+                foreach (var hc in humanColliders)
+                {
+                    Physics.IgnoreCollision(hc, hitCol, true);
+                    //IgnoreCollision.Ignore(hc.transform, hitCol.transform);
+                }
+
+                ignoredColliders.Add(hitCol);
             }
 
+            // 3. 平滑移动
             float elapsed = 0f;
-
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
@@ -1731,17 +1759,61 @@ namespace YxModDll.Mod
                 // 根节点插值
                 human.transform.position = Vector3.Lerp(rootStart, targetRoot, t);
 
-                yield return new WaitForFixedUpdate(); // 跟物理帧对齐，更平滑
+                yield return new WaitForFixedUpdate(); // 跟物理帧对齐
             }
 
-            // 最后精确对齐 + 恢复物理
-            //human.transform.position = targetRoot;
-            for (int i = 0; i < human.rigidbodies.Length; i++)
+            // 最后精确对齐
+            human.transform.position = targetRoot;
+
+            //// 4. 恢复物理
+            //for (int i = 0; i < count; i++)
+            //{
+            //    human.rigidbodies[i].useGravity = true;
+            //}
+
+            foreach (var hitCol in ignoredColliders)
             {
-                human.rigidbodies[i].useGravity = true;
-                human.rigidbodies[i].detectCollisions = true;
+                foreach (var hc in humanColliders)
+                {
+                    Physics.IgnoreCollision(hc, hitCol, false);
+                    //IgnoreCollision.Unignore(hc.transform, hitCol.transform);
+                }
             }
         }
+
+        //public static IEnumerator SmoothMove(Human human, Vector3 targetRoot, float duration)
+        //{
+        //    int count = human.rigidbodies.Length;
+
+        //    Vector3 rootStart = human.transform.position;
+
+        //    for (int i = 0; i < human.rigidbodies.Length; i++)
+        //    {
+        //        human.rigidbodies[i].useGravity = false;
+        //        human.rigidbodies[i].detectCollisions = false;
+        //    }
+
+        //    float elapsed = 0f;
+
+        //    while (elapsed < duration)
+        //    {
+        //        elapsed += Time.deltaTime;
+        //        float t = elapsed / duration;
+
+        //        // 根节点插值
+        //        human.transform.position = Vector3.Lerp(rootStart, targetRoot, t);
+        //        //human.transform.p(Vector3.Lerp(rootStart, targetRoot, t));
+        //        yield return new WaitForFixedUpdate(); // 跟物理帧对齐，更平滑
+        //    }
+
+        //    // 最后精确对齐 + 恢复物理
+        //    //human.transform.position = targetRoot;
+        //    for (int i = 0; i < human.rigidbodies.Length; i++)
+        //    {
+        //        human.rigidbodies[i].useGravity = true;
+        //        human.rigidbodies[i].detectCollisions = true;
+        //    }
+        //}
         public static void ShanXian_Fun(Human human)
         {
             if (human == null)
