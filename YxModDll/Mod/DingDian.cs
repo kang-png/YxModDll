@@ -256,12 +256,7 @@ namespace YxModDll.Mod
                 }
                 return;
             }
-            Vector3 targetPos = now_positions[qudianId] + new Vector3(0, gaodu, 0);
-            Vector3[] targetRbPos = now_rigi_positions[qudianId];
-            Quaternion[] targetRbRot = now_rigi_rotations[qudianId];
-            Vector3[] targetinertiaTensor = now_rigi_inertiaTensors[qudianId];
-            Vector3[] targetspeeds = now_rigi_inertiaTensors[qudianId];
-            human.ReleaseGrab(0.2f);
+
 
             for (int j = 0; j < human.rigidbodies.Length; j++)
             {

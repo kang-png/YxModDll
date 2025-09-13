@@ -1617,6 +1617,13 @@ namespace YxModDll.Mod
                 {
                     human.GetExt().ntp = false;
                     human.GetExt().ntp_human = null;
+
+                    foreach (Rigidbody rigidbody in human.rigidbodies)
+                    {
+                        //rigidbody.position += new Vector3(0f, 1f, 0f);
+                        rigidbody.isKinematic = false;
+                    }
+
                     enThrowing(human, true);
                 }
             }
@@ -1632,6 +1639,12 @@ namespace YxModDll.Mod
             ntphuman.GetExt().ntp = true;
             ntphuman.GetExt().ntp_human = human;
             enThrowing(ntphuman, false);
+
+            foreach(var rb in ntphuman.rigidbodies)
+            {
+                rb.isKinematic= true;
+            }
+
             Chat.TiShi($"玩家 {ntphuman.player.host.name} 悬浮到了 {human.player.host.name} 的头上");
             Chat.TiShi(ntphuman.player.host, $"您成为了 {human.player.host.name} 的头部挂件，跳跃上升，按Y下降，可前后左右移动调整位置。");//，跳跃上升，按Y下降，可前后左右移动调整位置。
         }
@@ -1648,6 +1661,7 @@ namespace YxModDll.Mod
                 foreach (Rigidbody rigidbody in human.rigidbodies)
                 {
                     rigidbody.position += new Vector3(0f, 1f, 0f);
+                    rigidbody.isKinematic = false;
                 }
                 human.GetExt().ntp_Offset = Vector3.zero;
                 human.GetExt().ntp_human = null;
