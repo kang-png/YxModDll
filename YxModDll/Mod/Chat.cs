@@ -148,6 +148,37 @@ namespace YxModDll.Mod
                     YxMod.KeJiQuanXian = result == 1;
                 }
             }
+            //else if (nick == YxModMsgStr("scale") && msg.Length != 0)
+            //{
+            //    string[] split = msg.Split(';');
+            //    if (split.Length == 2)
+            //    {
+            //        int targetId = int.Parse(split[0]);
+            //        string[] parts = split[1].Split('|');
+            //        if (parts.Length == 7)
+            //        {
+            //            float head = float.Parse(parts[0]);
+            //            float torso = float.Parse(parts[1]);
+            //            float leftArm = float.Parse(parts[2]);
+            //            float rightArm = float.Parse(parts[3]);
+            //            float leftLeg = float.Parse(parts[4]);
+            //            float rightLeg = float.Parse(parts[5]);
+            //            float ball = float.Parse(parts[6]);
+
+            //            // 找目标人
+            //            NetHost targetHost = NetGame.instance.FindReadyHost((uint)targetId);
+            //            if (targetHost != null && targetHost.players.Count > 0)
+            //            {
+            //                Human target = targetHost.players[targetHost.players.Count - 1].human;
+            //                UI_WanJia.SetHumanScaleByPart(target,
+            //                    head: head, torso: torso,
+            //                    leftArm: leftArm, rightArm: rightArm,
+            //                    leftLeg: leftLeg, rightLeg: rightLeg,
+            //                    ball: ball);
+            //            }
+            //        }
+            //    }
+            //}
 
             //发送一些客机记录的至给服务器
             /////////////////////////
@@ -1707,6 +1738,55 @@ namespace YxModDll.Mod
                 Chat.TiShi(netHost, "玩家列表");
                 return;
             }
+            else if (nick == YxModMsgStr("scale") && msg.Length != 0)
+            {
+                // msg: "targetId;1.2|1|1|1|1|1|1"
+                string[] split = msg.Split(';');
+                if (split.Length == 2)
+                {
+                    int targetId = int.Parse(split[0]);
+                    string[] parts = split[1].Split('|');
+                    if (parts.Length == 7)
+                    {
+                        float head = float.Parse(parts[0]);
+                        float torso = float.Parse(parts[1]);
+                        float leftArm = float.Parse(parts[2]);
+                        float rightArm = float.Parse(parts[3]);
+                        float leftLeg = float.Parse(parts[4]);
+                        float rightLeg = float.Parse(parts[5]);
+                        float ball = float.Parse(parts[6]);
+
+                        // 根据目标id找到Human
+                        NetHost targetHost = NetGame.instance.FindReadyHost((uint)targetId);
+                        if (targetHost != null && targetHost.players.Count > 0)
+                        {
+                            Human target = targetHost.players[targetHost.players.Count - 1].human;
+
+                            // 主机自己应用
+                            UI_WanJia.SetHumanScaleByPart(target,
+                                head: head, torso: torso,
+                                leftArm: leftArm, rightArm: rightArm,
+                                leftLeg: leftLeg, rightLeg: rightLeg,
+                                ball: ball);
+
+                            //// 转发给其他客机
+                            //foreach (var host in NetGame.instance.readyclients)
+                            //{
+                            //    if (host.players.Count > 0)
+                            //    {
+                            //        Human h = host.players[0].human;
+                            //        if (h != null && h.GetExt().isClient)
+                            //        {
+                            //            SendYxModMsgServer(host, YxModMsgStr("scale"),
+                            //                $"{targetId};{head}|{torso}|{leftArm}|{rightArm}|{leftLeg}|{rightLeg}|{ball}");
+                            //        }
+                            //    }
+                            //}
+                        }
+                    }
+                }
+            }
+
 
 
             bool isZhaFang = false;

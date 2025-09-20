@@ -220,14 +220,25 @@ namespace YxModDll.Mod
         public static GUIStyle SetTxtStyle() => _styleTxt;
         public static GUIStyle SetLabelStyle_JuZhong() => _styleLabelCenter;
 
+        // 缓存高度
+        internal static readonly Dictionary<string, float> heightCache = new();
+
         public static float GetButtonHeight(GUIStyle style, string sampleText = "按钮")
         {
+            if (heightCache.TryGetValue(sampleText, out float h))
+            {
+                return h;
+            }
+
             float lineHeight = style.fontSize + style.padding.vertical;
 
             _tempContent.text = sampleText;
             Vector2 size = style.CalcSize(_tempContent);
 
-            return Mathf.Max(lineHeight, size.y);
+            h = Mathf.Max(lineHeight, size.y);
+            heightCache[sampleText] = h;
+
+            return h;
         }
 
 
@@ -325,6 +336,17 @@ namespace YxModDll.Mod
                 nameCache[name] = colored;
             }
             return colored;
+        }
+        internal static readonly Dictionary<string, GUIContent> contentCache = new();
+
+        private static GUIContent GetContent(string text)
+        {
+            if (!contentCache.TryGetValue(text, out var content))
+            {
+                content = new GUIContent(text);
+                contentCache[text] = content;
+            }
+            return content;
         }
 
         // 浮点版
@@ -488,7 +510,7 @@ namespace YxModDll.Mod
             }
 
             string coloredName = GetColoredName(name);
-            GUIContent content = new GUIContent(coloredName);
+            GUIContent content = GetContent(coloredName);
 
             Rect buttonRect = GUILayoutUtility.GetRect(content, styleButton()); // 布局计算用 styleButton()
 
@@ -522,7 +544,7 @@ namespace YxModDll.Mod
 
             name = TranslateButtonText(name);
             string coloredName = GetColoredName(name); // 缓存彩色字符串
-            GUIContent content = new GUIContent(coloredName);
+            GUIContent content = GetContent(coloredName);
 
             Rect buttonRect = GUILayoutUtility.GetRect(content, styleButton());
 
@@ -556,7 +578,7 @@ namespace YxModDll.Mod
 
             name = TranslateButtonText(name);
             string coloredName = GetColoredName(name); // 缓存彩色字符串
-            GUIContent content = new GUIContent(coloredName);
+            GUIContent content = GetContent(coloredName);
 
             Rect buttonRect = GUILayoutUtility.GetRect(content, styleButton_Tab(tab));
 

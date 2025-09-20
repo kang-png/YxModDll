@@ -456,7 +456,7 @@ namespace YxModDll.Mod.Features
             glMaterial = new Material(Shader.Find("Particles/Alpha Blended"));
             stackTrace = new StackTrace();
             pc = new PerformanceCounter("Process", "Working Set - Private", Process.GetCurrentProcess().ProcessName);
-            HarmonyFileLog.Enabled = true;
+            HarmonyFileLog.Enabled = false;
             harmony = Harmony.CreateAndPatchAll(typeof(FeatureManager), "com.plcc.hff.humanmod");
         }
 
@@ -468,26 +468,6 @@ namespace YxModDll.Mod.Features
             }
             if (MenuSystem.keyboardState == KeyboardState.None && enableHotkeys)
             {
-                if (Input.GetKeyDown(KeyCode.G))
-                {
-                    if (FreeRoamCam.allowFreeRoam)
-                    {
-                        Vector3 position = freeRoamCam.transform.position + 1f * freeRoamCam.transform.forward;
-                        List<GameObject> allChildren = GetAllChildren(Game.currentLevel.gameObject, search: false);
-                        selected = allChildren.SelectMin((GameObject gameObject2) => Vector3.Distance(gameObject2.transform.position, position));
-                    }
-                    else if (!NetGame.isClient && Human.Localplayer.hasGrabbed)
-                    {
-                        selected = Utils.grabManager.Invoke(Human.Localplayer).grabbedObjects[0];
-                    }
-                    else
-                    {
-                        List<GameObject> allChildren2 = GetAllChildren(Game.currentLevel.gameObject, search: false);
-                        selected = allChildren2.SelectMin((GameObject gameObject2) => Vector3.Distance(gameObject2.transform.position, Human.Localplayer.ragdoll.partLeftHand.transform.position));
-                    }
-                    parent = selected.transform.parent.gameObject;
-                    RefreshObjects();
-                }
                 if (Input.GetKeyDown(KeyCode.H) && Human.Localplayer.hasGrabbed)
                 {
                     foreach (GameObject grabbedObject in Utils.grabManager.Invoke(Human.Localplayer).grabbedObjects)
@@ -495,27 +475,6 @@ namespace YxModDll.Mod.Features
                         grabbedObject.SetActive(value: false);
                     }
                     Chat.TiShi(NetGame.instance.local, "已隐藏抓取物体");
-                }
-                if (Input.GetKeyDown(KeyCode.L) && Input.GetKey(KeyCode.LeftControl))
-                {
-                    RatingMenu.instance.LevelOver();
-                    App.instance.KillGame();
-                    Dialogs.ConnectionLost(delegate
-                    {
-                        MenuSystem.instance.ShowMainMenu<MenuTransition>();
-                    });
-                }
-                if (Input.GetKeyDown(KeyCode.P) && Input.GetKey(KeyCode.LeftControl))
-                {
-                    if (bhopCoroutine == null)
-                        bhopCoroutine = StartCoroutine(TestBhop());
-                    else
-                    {
-                        StopCoroutine(bhopCoroutine);
-                        bhopCoroutine = null;
-                        yawOverride = null;  // 恢复状态
-                        jumpDir = 0;
-                    }
                 }
                 if (Input.GetKeyDown(KeyCode.N) && Input.GetKey(KeyCode.LeftControl))
                 {
@@ -558,66 +517,66 @@ namespace YxModDll.Mod.Features
                     cameraAdjusted = false;
                 }
             }
-            if (gameLevel != Game.instance.currentLevelNumber)
-            {
-                //RenderCheckpoints();
-                //RenderLoadingZones();
-                //RenderDeathZones();
-                RenderZoneVisuals();
-                RenderAirWalls();
-                RenderFakeObjects();
-                foreach (GameObject instance in instances)
-                {
-                    UnityEngine.Object.Destroy(instance);
-                }
-                instances.Clear();
-                lastCp = (from checkpoint in FindObjects<Checkpoint>()
-                          select checkpoint.number).MaxOr(0);
-                netBodyCount = FindObjects<NetBody>().Count((NetBody netBody) => !exceptScenes.Contains(netBody.gameObject.scene.name));
-                triggerVolumes = FindObjects<TriggerVolume>().ToArray();
-                triggerObjects = triggerVolumes.SelectMany(GetTriggerObjects).Distinct().ToArray();
-                labelVolumes = FindObjects<ColliderLabelTriggerVolume>().ToArray();
-                labelObjects = FindObjects<ColliderLabel>().ToArray();
-                grabSensors = (from c in ((IEnumerable<Component>)FindObjects<GrabSensor>()).Concat((IEnumerable<Component>)FindObjects<HumanAPI.Button>()).Concat(FindObjects<Lever>())
-                               select c.gameObject).ToArray();
-                otherSensors = FindObjects<OtherCollisionSensor>().ToArray();
-                if (newbieMode)
-                {
-                    CollectionExtensions.Do<LODGroup>(FindObjects<LODGroup>(), (Action<LODGroup>)UnityEngine.Object.Destroy);
-                }
-                gameLevel = Game.instance.currentLevelNumber;
-            }
+            //if (gameLevel != Game.instance.currentLevelNumber)
+            //{
+            //    //RenderCheckpoints();
+            //    //RenderLoadingZones();
+            //    //RenderDeathZones();
+            //    RenderZoneVisuals();
+            //    RenderAirWalls();
+            //    RenderFakeObjects();
+            //    foreach (GameObject instance in instances)
+            //    {
+            //        UnityEngine.Object.Destroy(instance);
+            //    }
+            //    instances.Clear();
+            //    lastCp = (from checkpoint in FindObjects<Checkpoint>()
+            //              select checkpoint.number).MaxOr(0);
+            //    netBodyCount = FindObjects<NetBody>().Count((NetBody netBody) => !exceptScenes.Contains(netBody.gameObject.scene.name));
+            //    triggerVolumes = FindObjects<TriggerVolume>().ToArray();
+            //    triggerObjects = triggerVolumes.SelectMany(GetTriggerObjects).Distinct().ToArray();
+            //    labelVolumes = FindObjects<ColliderLabelTriggerVolume>().ToArray();
+            //    labelObjects = FindObjects<ColliderLabel>().ToArray();
+            //    grabSensors = (from c in ((IEnumerable<Component>)FindObjects<GrabSensor>()).Concat((IEnumerable<Component>)FindObjects<HumanAPI.Button>()).Concat(FindObjects<Lever>())
+            //                   select c.gameObject).ToArray();
+            //    otherSensors = FindObjects<OtherCollisionSensor>().ToArray();
+            //    if (newbieMode)
+            //    {
+            //        CollectionExtensions.Do<LODGroup>(FindObjects<LODGroup>(), (Action<LODGroup>)UnityEngine.Object.Destroy);
+            //    }
+            //    gameLevel = Game.instance.currentLevelNumber;
+            //}
             if (lastHumanCount != Human.all.Count)
             {
                 IgnoreCollisionUpdate();
                 lastHumanCount = Human.all.Count;
             }
-            if (NetGame.isServer || NetGame.isClient)
-            {
-                previousLobbyID = ((NetTransportSteam)NetGame.instance.transport).lobbyID;
-                PlayerPrefs.SetInt("previousLobbyID", (int)(ulong)previousLobbyID);
-            }
-            if (FreeRoamCam.allowFreeRoam && controlCheat)
-            {
-                ControlObject();
-            }
-            if ((object)freeRoamCam == null)
-            {
-                freeRoamCam = UnityEngine.Object.FindObjectOfType<FreeRoamCam>();
-            }
-            if ((object)nodeGraphViewer == null)
-            {
-                nodeGraphViewer = ((Component)this).gameObject.AddComponent<NodeGraphViewer>();
-            }
-            foreach (Human item3 in Human.all)
-            {
-                if (!item3.player.host.players.Contains(item3.player) && !item3.IsLocalPlayer && removeBugHuman)
-                {
-                    Shell.Print("Removed Bug Human " + item3.player?.host.name);
-                    Human.all.Remove(item3);
-                    UnityEngine.Object.Destroy(item3.player);
-                }
-            }
+            //if (NetGame.isServer || NetGame.isClient)
+            //{
+            //    previousLobbyID = ((NetTransportSteam)NetGame.instance.transport).lobbyID;
+            //    PlayerPrefs.SetInt("previousLobbyID", (int)(ulong)previousLobbyID);
+            //}
+            //if (FreeRoamCam.allowFreeRoam && controlCheat)
+            //{
+            //    ControlObject();
+            //}
+            //if ((object)freeRoamCam == null)
+            //{
+            //    freeRoamCam = UnityEngine.Object.FindObjectOfType<FreeRoamCam>();
+            //}
+            //if ((object)nodeGraphViewer == null)
+            //{
+            //    nodeGraphViewer = ((Component)this).gameObject.AddComponent<NodeGraphViewer>();
+            //}
+            //foreach (Human item3 in Human.all)
+            //{
+            //    if (!item3.player.host.players.Contains(item3.player) && !item3.IsLocalPlayer && removeBugHuman)
+            //    {
+            //        Shell.Print("Removed Bug Human " + item3.player?.host.name);
+            //        Human.all.Remove(item3);
+            //        UnityEngine.Object.Destroy(item3.player);
+            //    }
+            //}
         }
 
         public void FixedUpdate()
@@ -625,28 +584,6 @@ namespace YxModDll.Mod.Features
             if (Game.instance == null || Human.Localplayer == null)
             {
                 return;
-            }
-            if (hookMode)
-            {
-                foreach (KeyValuePair<Human, HumanAttribute> human in humans)
-                {
-                    if (human.Value.hook.HasValue)
-                    {
-                        human.Key.GetComponent<Rigidbody>().AddForce((human.Value.hook.Value - human.Key.transform.position).normalized * 2000f);
-                    }
-                }
-            }
-            if (following != null)
-            {
-                if (FreeRoamCam.allowFreeRoam)
-                {
-                    freeRoamCam.transform.position = following.ragdoll.partHead.transform.position;
-                    freeRoamCam.transform.position -= 4f * freeRoamCam.transform.forward;
-                }
-                else
-                {
-                    following = null;
-                }
             }
             Vector3 position = Human.Localplayer.transform.position;
             reach = (position - oldPos).y < 0f;

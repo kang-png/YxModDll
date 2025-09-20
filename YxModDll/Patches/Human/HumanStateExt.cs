@@ -136,6 +136,13 @@ namespace YxModDll.Patches
         public bool bofangdonghua;
         public Human bei_human;
 
+        public float scaleHead = 1f;
+        public float scaleTorso = 1f;
+        public float scaleLeftArm = 1f;
+        public float scaleRightArm = 1f;
+        public float scaleLeftLeg = 1f;
+        public float scaleRightLeg = 1f;
+        public float scaleBall = 1f;
         // public bool PiLiWuDongJie;
         // public bool JiaoChaTiaoYue;
         // public bool YangWoQiZuo;

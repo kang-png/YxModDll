@@ -317,6 +317,27 @@ namespace YxModDll.Mod
                     GUILayout.Space(5);
 
                     GUILayout.Label(ColorfulSpeek.colorshows(UI.TranslateButtonText("服务端属性>>")));
+                    //UI.CreatShuZhi("头部缩放", ref human.GetExt().scaleHead, 0.1f, 5f, 0.1f,
+                    //    () => ScaleSync(human, head: human.GetExt().scaleHead), 1f);
+
+                    //UI.CreatShuZhi("躯干缩放", ref human.GetExt().scaleTorso, 0.1f, 5f, 0.1f,
+                    //    () => ScaleSync(human, torso: human.GetExt().scaleTorso), 1f);
+
+                    //UI.CreatShuZhi("左手缩放", ref human.GetExt().scaleLeftArm, 0.1f, 5f, 0.1f,
+                    //    () => ScaleSync(human, leftArm: human.GetExt().scaleLeftArm), 1f);
+
+                    //UI.CreatShuZhi("右手缩放", ref human.GetExt().scaleRightArm, 0.1f, 5f, 0.1f,
+                    //    () => ScaleSync(human, rightArm: human.GetExt().scaleRightArm), 1f);
+
+                    //UI.CreatShuZhi("左腿缩放", ref human.GetExt().scaleLeftLeg, 0.1f, 5f, 0.1f,
+                    //    () => ScaleSync(human, leftLeg: human.GetExt().scaleLeftLeg), 1f);
+
+                    //UI.CreatShuZhi("右腿缩放", ref human.GetExt().scaleRightLeg, 0.1f, 5f, 0.1f,
+                    //    () => ScaleSync(human, rightLeg: human.GetExt().scaleRightLeg), 1f);
+
+                    //UI.CreatShuZhi("球缩放", ref human.GetExt().scaleBall, 0.1f, 5f, 0.1f,
+                    //    () => ScaleSync(human, ball: human.GetExt().scaleBall), 1f);
+
                     UI.CreatShuZhi("自定义Y", ref human.GetExt().numY, 0, 10, 1, null, yuan: 0);
                     float drag = human.rigidbodies[0].drag;
                     float mass = human.mass;
@@ -388,6 +409,8 @@ namespace YxModDll.Mod
                         (FeatureManager.instance).StartCoroutine(FeatureManager.instance.OnReceiveSkinCoroutine(human.player));
                     }
                 }, "如果本地无皮肤数据，会向服务器请求一次（可能拿到旧皮肤）；已有本地数据时将直接应用。请勿重复点击。");
+                //UI.CreatShuZhi("头部缩放", ref human.GetExt().scaleHead, 0.1f, 5f, 0.1f,
+                //    () => SetHumanScaleByPart(human, head: human.GetExt().scaleHead), 1f);
                 if (NetGame.isServer || NetGame.isLocal || (NetGame.isClient && KeJiZiJi()))
                 {
                     GUILayout.BeginHorizontal();
@@ -630,9 +653,8 @@ namespace YxModDll.Mod
                             Human.all[i].GetExt().kejiquanxian = allkejiquanxian ;
                             Chat.SendYxModMsgServer(Human.all[i].player.host, Chat.YxModMsgStr("kejiquanxian"), human.GetExt().kejiquanxian ? "1" : "0");
                         }
-
-                        Chat.TiShi($"所有客机 的 客机权限 已 {(allkejiquanxian ? "打开" : "关闭")}");
                     }
+                    Chat.TiShi($"所有客机 的 客机权限 已 {(allkejiquanxian ? "打开" : "关闭")}");
                 }
                 else
                 {
@@ -667,7 +689,7 @@ namespace YxModDll.Mod
                 {
 
                     UI_GongNeng.dingdian_KaiGuan = true;
-                    UI_GongNeng. DingDian();
+                    UI_GongNeng.DingDian();
                 }
 
                 if(humanID==0)
@@ -1548,5 +1570,151 @@ namespace YxModDll.Mod
                 }
             }
         }
+        public static void SetHumanScaleByPart(
+            Human human,
+            float? head = null,
+            float? torso = null,
+            float? leftArm = null,
+            float? rightArm = null,
+            float? leftLeg = null,
+            float? rightLeg = null,
+            float? ball = null)
+        {
+            if (human == null) return;
+
+            // 头
+            if (head.HasValue)
+                human.ragdoll.partHead.transform.localScale = Vector3.one * head.Value;
+
+            // 躯干
+            if (torso.HasValue)
+            {
+                human.ragdoll.partChest.transform.localScale = Vector3.one * torso.Value;
+                human.ragdoll.partWaist.transform.localScale = Vector3.one * torso.Value;
+                human.ragdoll.partHips.transform.localScale = Vector3.one * torso.Value;
+            }
+
+            // 左手
+            if (leftArm.HasValue)
+            {
+                human.ragdoll.partLeftArm.transform.localScale = Vector3.one * leftArm.Value;
+                human.ragdoll.partLeftForearm.transform.localScale = Vector3.one * leftArm.Value;
+                human.ragdoll.partLeftHand.transform.localScale = Vector3.one * leftArm.Value;
+            }
+
+            // 右手
+            if (rightArm.HasValue)
+            {
+                human.ragdoll.partRightArm.transform.localScale = Vector3.one * rightArm.Value;
+                human.ragdoll.partRightForearm.transform.localScale = Vector3.one * rightArm.Value;
+                human.ragdoll.partRightHand.transform.localScale = Vector3.one * rightArm.Value;
+            }
+
+            // 左腿
+            if (leftLeg.HasValue)
+            {
+                human.ragdoll.partLeftThigh.transform.localScale = Vector3.one * leftLeg.Value;
+                human.ragdoll.partLeftLeg.transform.localScale = Vector3.one * leftLeg.Value;
+                human.ragdoll.partLeftFoot.transform.localScale = Vector3.one * leftLeg.Value;
+            }
+
+            // 右腿
+            if (rightLeg.HasValue)
+            {
+                human.ragdoll.partRightThigh.transform.localScale = Vector3.one * rightLeg.Value;
+                human.ragdoll.partRightLeg.transform.localScale = Vector3.one * rightLeg.Value;
+                human.ragdoll.partRightFoot.transform.localScale = Vector3.one * rightLeg.Value;
+            }
+
+            // 球
+            if (ball.HasValue)
+                human.ragdoll.partBall.transform.localScale = Vector3.one * ball.Value;
+        }
+        private static void ScaleSync(Human human,
+    float? head = null, float? torso = null, float? leftArm = null, float? rightArm = null,
+    float? leftLeg = null, float? rightLeg = null, float? ball = null)
+        {
+
+            foreach (var rb in human.rigidbodies)
+            {
+                if (rb != null)
+                {
+                    var netBody = rb.GetComponent<NetBody>();
+                    if (netBody != null)
+                    {
+                        // 打开 syncLocalScale
+                        //netBody.syncLocalScale = true;
+                        UnityEngine.Debug.Log($"Rigidbody: {rb.gameObject.name}, NetBody.syncLocalScale = {netBody.syncLocalScale}");
+                    }
+                }
+            }
+            DebugHumanRigidbodySync(human);
+            // 主机或本地 → 直接修改并广播
+            if (NetGame.isServer || NetGame.isLocal)
+            {
+                // 应用缩放
+                UI_WanJia.SetHumanScaleByPart(human,
+                    head ?? human.GetExt().scaleHead,
+                    torso ?? human.GetExt().scaleTorso,
+                    leftArm ?? human.GetExt().scaleLeftArm,
+                    rightArm ?? human.GetExt().scaleRightArm,
+                    leftLeg ?? human.GetExt().scaleLeftLeg,
+                    rightLeg ?? human.GetExt().scaleRightLeg,
+                    ball ?? human.GetExt().scaleBall);
+            }
+            // 客机 → 请求主机转发
+            else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
+            {
+                string msg = $"{human.player.host.hostId};{human.GetExt().scaleHead}|{human.GetExt().scaleTorso}|{human.GetExt().scaleLeftArm}|{human.GetExt().scaleRightArm}|{human.GetExt().scaleLeftLeg}|{human.GetExt().scaleRightLeg}|{human.GetExt().scaleBall}";
+                Chat.SendYxModMsgClient(Chat.YxModMsgStr("scale"), msg);
+            }
+        }
+        public static void DebugHumanRigidbodySync(Human human)
+        {
+            if (human == null || human.ragdoll == null)
+            {
+                UnityEngine.Debug.Log("Human 或 ragdoll 为 null");
+                return;
+            }
+
+            void PrintPart(string name, HumanSegment segment)
+            {
+                if (segment == null)
+                {
+                    UnityEngine.Debug.Log($"{name}: segment is null");
+                    return;
+                }
+
+                Rigidbody rb = segment.rigidbody;
+                NetBody netBody = rb.GetComponent<NetBody>();
+                string sync = netBody != null ? netBody.syncLocalScale.ToString() : "NetBody missing";
+
+                UnityEngine.Debug.Log($"{name}: Rigidbody = {(rb != null ? "存在" : "null")}, syncLocalScale = {sync}");
+            }
+
+            PrintPart("Head", human.ragdoll.partHead);
+            PrintPart("Chest", human.ragdoll.partChest);
+            PrintPart("Waist", human.ragdoll.partWaist);
+            PrintPart("Hips", human.ragdoll.partHips);
+
+            PrintPart("LeftArm", human.ragdoll.partLeftArm);
+            PrintPart("LeftForearm", human.ragdoll.partLeftForearm);
+            PrintPart("LeftHand", human.ragdoll.partLeftHand);
+
+            PrintPart("RightArm", human.ragdoll.partRightArm);
+            PrintPart("RightForearm", human.ragdoll.partRightForearm);
+            PrintPart("RightHand", human.ragdoll.partRightHand);
+
+            PrintPart("LeftThigh", human.ragdoll.partLeftThigh);
+            PrintPart("LeftLeg", human.ragdoll.partLeftLeg);
+            PrintPart("LeftFoot", human.ragdoll.partLeftFoot);
+
+            PrintPart("RightThigh", human.ragdoll.partRightThigh);
+            PrintPart("RightLeg", human.ragdoll.partRightLeg);
+            PrintPart("RightFoot", human.ragdoll.partRightFoot);
+
+            PrintPart("Ball", human.ragdoll.partBall);
+        }
+
     }
 }
