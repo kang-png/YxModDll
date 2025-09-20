@@ -4,6 +4,7 @@ using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using YxModDll.Mod;
+using YxModDll.Mod.HumanAnimator;
 
 namespace YxModDll.Patches
 {
@@ -134,6 +135,7 @@ namespace YxModDll.Patches
         public Rigidbody ntp_wuti;
 
         public bool bofangdonghua;
+        public SmoothAnimator animator;
         public Human bei_human;
 
         public float scaleHead = 1f;
@@ -162,6 +164,7 @@ namespace YxModDll.Patches
         // public bool HeiYingTaoWuBu;
 
         //public bool BoFangDongHua;
+        public float bufasudu = 1.5f;
 
 
         public HumanStateExt(Human human)
@@ -262,6 +265,10 @@ namespace YxModDll.Patches
             }
             chaichu = UI_WanJia.allchaichu;
             kongqipao = UI_WanJia.allkongqipao;
+
+            animator = human.gameObject.AddComponent<SmoothAnimator>();
+            animator.human = human;
+
 
 
         }

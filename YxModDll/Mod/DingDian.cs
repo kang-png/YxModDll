@@ -1,5 +1,6 @@
 ﻿using Multiplayer;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -245,6 +246,7 @@ namespace YxModDll.Mod
             if (!huisu)
             {
                 human.transform.position = now_positions[qudianId] + new Vector3(0, gaodu, 0);
+
                 for (int j = 0; j < human.rigidbodies.Length; j++)
                 {
                     if (!baoLiuDangQianSuDu)
@@ -254,6 +256,8 @@ namespace YxModDll.Mod
                 }
                 return;
             }
+
+
             for (int j = 0; j < human.rigidbodies.Length; j++)
             {
                 human.rigidbodies[j].transform.position = now_rigi_positions[qudianId][j];

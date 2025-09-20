@@ -1,21 +1,16 @@
-﻿//using HarmonyLib;
+﻿
 using HumanAPI;
 using Multiplayer;
 using Steamworks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Security.Cryptography;
-using System.Security.Policy;
-using System.Text;
 using UnityEngine;
-using UnityEngine.Animations;
-using UnityEngine.Networking;
-using UnityEngine.Playables;
+using YxModDll.Mod.HumanAnimator;
 using YxModDll.Patches;
+using YxMod测试;
 
 ////////修改的内容///////
 ///Human                             主要功能 <summary>
@@ -207,16 +202,20 @@ namespace YxModDll.Mod
             gameObject.AddComponent<DiTuSuoLueTu>();
             gameObject.AddComponent<JieMi_ZhaoBuTong>();
             gameObject.AddComponent<WuTiGuaJian>();
-            Debug.Log($"{SteamUser.GetSteamID().m_SteamID}");
+            //Debug.Log($"{SteamUser.GetSteamID().m_SteamID}");
             if (Chat.IsDeveloper(SteamUser.GetSteamID().m_SteamID.ToString()))
             {
                 gameObject.AddComponent<YxModScriptManager.YxModScriptManager>();
             }
 
-            gameObject.AddComponent<AssetBundleLoader>();
+            //gameObject.AddComponent<AssetBundleLoader>();
             gameObject.AddComponent<c_BeiRen>();
             gameObject.AddComponent<Patcher_YanHua>();
 
+            gameObject.AddComponent<PlayAnimator>();
+
+            gameObject.AddComponent<Patcher_LegMuscles>();
+            
             // 启动协程下载并解压
             //StartCoroutine(JianChaGengXin());
 
@@ -329,159 +328,6 @@ namespace YxModDll.Mod
                 }
                 catch { }
             }
-
-
-            if (NetGame.isServer)
-            {
-                foreach(Human human in Human.all)
-                {
-                    if (human.controls.unconscious)
-                    {
-                        if (human.GetExt().ntp)
-                            continue;
-                        // 根据当前 Y 动作编号（numY）执行对应功能
-                        switch (human.GetExt().numY)
-                        {
-                            case 10:
-                                if (!human.GetExt().bofangdonghua) // 防止重复启动
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.TuoMaSi));
-                                }
-                                break;
-                            case 11:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.PiLiWuDongJie));
-                                }
-                                break;
-                            case 12:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.JiaoChaTiaoYue));
-                                }
-                                break;
-                            case 13:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.YangWoQiZuo));
-                                }
-                                break;
-                            case 14:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.FuWoCheng));
-                                }
-                                break;
-                            case 15:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.XiHaWu));
-                                }
-                                break;
-                            case 16:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.XiHaWu2));
-                                }
-                                break;
-                            case 17:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.XiHaWu3));
-                                }
-                                break;
-                            case 18:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.TouXuan));
-                                }
-                                break;
-                            case 19:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.MuMaTi));
-                                }
-                                break;
-                            case 20:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.KaiHeTiao));
-                                }
-                                break;
-                            case 21:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.YaoBaiWu));
-                                }
-                                break;
-                            case 22:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.SangBaWu));
-                                }
-                                break;
-                            case 23:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.SangBaWu2));
-                                }
-                                break;
-                            case 24:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.DianTunWu));
-                                }
-                                break;
-                            case 25:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.QuanJi));
-                                }
-                                break;
-                            case 26:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.QiMaWu));
-                                }
-                                break;
-                            case 27:
-                                if (!human.GetExt().bofangdonghua)
-                                {
-                                    human.GetExt().bofangdonghua = true;
-                                    StartCoroutine(YxMod.DongZuo(human, DONGZUO_State.HeiYingTaoWuBu));
-                                }
-                                break;
-                        }
-                    }
-                    else // 松开 Y 键时
-                    {
-                        if (human.GetExt().bofangdonghua)
-                        {
-                            human.GetExt().bofangdonghua = false;
-                        }
-                    }
-                }
-            }
-
-
-
         }
         private void KuaiJieJian_Update()
         {
@@ -1166,7 +1012,8 @@ namespace YxModDll.Mod
                                           new Vector3(Mathf.Cos(radians), 0.2f, Mathf.Sin(radians)) * 0.5f;
 
                     // 设置新位置
-                    currentHuman.SetPosition(newPosition);
+                    //currentHuman.SetPosition(newPosition);
+                    currentHuman.StartCoroutine(SmoothMove(currentHuman, newPosition , 0.3f));
                 }
             }
         }
@@ -1541,232 +1388,6 @@ namespace YxModDll.Mod
         }
 
 
-        private static string GetDonghuaPath(DONGZUO_State type)
-        {
-            return $"assets/donghua/{type.ToString()}.fbx";
-        }
-        public static IEnumerator DongZuo(Human human, DONGZUO_State dongzuo)
-        {
-            if (human == null) yield break;
-
-            var ext = human.GetExt();
-            if (ext == null) yield break;
-
-            var go = AssetBundleLoader.LoadAsset<GameObject>(GetDonghuaPath(dongzuo));
-            if (go == null)
-            {
-                Debug.LogError("fbx 加载失败！");
-                yield break;
-            }
-
-            var clips = AssetBundleLoader.LoadAssetWithSubAssets<AnimationClip>(GetDonghuaPath(dongzuo));
-            if (clips == null || clips.Length == 0)
-            {
-                Debug.LogError("未能从fbx 中加载到动画片段！");
-                yield break;
-            }
-            var clip = clips[0];
-
-            Vector3 pospianyi = Vector3.zero;
-            //if (dongzuo==DONGZUO_State.PiLiWuDongJie)
-            //{
-            //    pospianyi = Vector3.up / 4;
-            //}
-
-            Vector3 pos = human.transform.position + pospianyi;
-            Quaternion rot = human.ragdoll.partHead.transform.rotation;
-
-            while (ext.bofangdonghua && human != null)
-            {
-                GameObject dancer = GameObject.Instantiate(go);
-                dancer.name = "AnimatorDriver";
-                dancer.transform.position = pos + Vector3.up * 3;
-                dancer.transform.rotation = rot;
-                dancer.transform.localScale = Vector3.one;
-
-
-                // 禁用dancer的所有Renderer组件，确保它不可见
-                Renderer[] renderers = dancer.GetComponentsInChildren<Renderer>();
-                foreach (var renderer in renderers)
-                {
-                    renderer.enabled = false; // 禁用渲染器
-                }
-
-
-                Animator animator = dancer.GetComponent<Animator>();
-                if (!animator) animator = dancer.AddComponent<Animator>();
-                //animator.applyRootMotion = false;// 禁用根运动（不自动移动位置）
-                // 关键：禁用动画裁剪，强制始终更新
-                animator.cullingMode = AnimatorCullingMode.AlwaysAnimate; // 添加这一行
-                // ✅ 创建 PlayableGraph
-                PlayableGraph graph = PlayableGraph.Create();
-                AnimationPlayableOutput output = AnimationPlayableOutput.Create(graph, "Animation", animator);
-                AnimationClipPlayable playable = AnimationClipPlayable.Create(graph, clip);
-                output.SetSourcePlayable(playable);
-
-                // ✅ 不用 Play()，而是手动 Evaluate
-                graph.Play();
-
-                // ✅ 初始化同步器
-                RagdollAnimatorSync sync = human.gameObject.AddComponent<RagdollAnimatorSync>();
-                sync.Initialize(animator, human);
-
-                float timer = 0f;
-                while (timer < clip.length && ext.bofangdonghua && human != null)
-                {
-                    timer += Time.deltaTime;
-
-                    // ✅ 手动设置播放时间
-                    if (playable.IsValid())
-                    {
-                        playable.SetTime(timer);
-                    }
-
-                    // ✅ 手动 Evaluate —— 关键！确保每帧更新
-                    if (graph.IsValid())
-                    {
-                        graph.Evaluate();
-                    }
-
-                    // ✅ 强制 animator 更新
-                    animator.Update(0f);
-
-                    // ✅ 每帧 yield，让协程继续
-                    yield return null;
-                }
-
-                // ✅ 清理
-                sync.StopSync();
-                //GameObject.Destroy(sync); // 可选
-                if (graph.IsValid())
-                {
-                    graph.Destroy();
-                }
-                GameObject.Destroy(dancer);
-
-                // 可选：短暂停顿再循环
-                // yield return new WaitForSeconds(0.1f);
-            }
-
-            //Debug.Log("托马斯回旋结束");
-        }
-
-        //public static IEnumerator TuoMaSi(Human human)
-        //{
-        //    if (human == null) yield break;
-
-        //    var go = AssetBundleLoader.LoadAsset<GameObject>("assets/flair (1).fbx");
-        //    if (go == null)
-        //    {
-        //        Debug.LogError("fbx 加载失败！");
-        //        yield break;
-        //    }
-
-        //    // ✅ 加载动画 clip 一次（不需要每次循环都加载）
-        //    var clips = AssetBundleLoader.LoadAssetWithSubAssets<AnimationClip>("assets/flair (1).fbx");
-        //    if (clips == null || clips.Length == 0)
-        //    {
-        //        Debug.LogError("未能从fbx 中加载到动画片段！");
-        //        yield break;
-        //    }
-        //    var clip = clips[0];
-
-
-        //    // ✅ 设置 dancer 初始位置
-        //    Vector3 pos = human.transform.position;
-        //    Quaternion rot = human.ragdoll.partHead.transform.rotation;
-
-        //    //Debug.Log($"human基础数据： Position = {pos}, Rotation = {rot}");
-
-        //    while (human.GetExt().tuomasi)
-        //    {
-        //        var dancer = GameObject.Instantiate(go);
-        //        dancer.name = "AnimatorDriver";
-
-        //        // ✅ 隐藏 SkinnedMeshRenderer
-        //        //foreach (var renderer in dancer.GetComponentsInChildren<SkinnedMeshRenderer>())
-        //        //{
-        //        //    foreach (var mat in renderer.materials)
-        //        //    {
-        //        //        mat.SetFloat("_Mode", 3); // Transparent
-        //        //        mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-        //        //        mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-        //        //        mat.SetInt("_ZWrite", 0);
-        //        //        mat.DisableKeyword("_ALPHATEST_ON");
-        //        //        mat.EnableKeyword("_ALPHABLEND_ON");
-        //        //        mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-        //        //        mat.renderQueue = 3000;
-
-        //        //        Color color = mat.color;
-        //        //        color.a = 0f;
-        //        //        mat.color = color;
-        //        //    }
-        //        //}
-
-        //        // ✅ Animator 初始化
-        //        Animator animator = dancer.GetComponent<Animator>();
-        //        if (!animator)
-        //        {
-        //            animator = dancer.AddComponent<Animator>();
-        //        }
-
-        //        animator.applyRootMotion = false;
-
-
-        //        // ✅ 使用 PlayableGraph 播放动画
-        //        var graph = UnityEngine.Playables.PlayableGraph.Create();
-        //        var output = AnimationPlayableOutput.Create(graph, "Animation", animator);
-        //        var playable = AnimationClipPlayable.Create(graph, clip);
-        //        output.SetSourcePlayable(playable);
-
-
-        //        animator.Rebind();
-        //        animator.Update(0);
-
-        //        playable.SetTime(0);
-        //        playable.SetTime(0);
-        //        graph.Evaluate();
-        //        graph.Play();
-
-
-
-        //        dancer.transform.position = pos  + (Vector3.up * 3);
-        //        dancer.transform.rotation = rot; //human.ragdoll.partLeftArm.transform
-        //        //dancer.transform.position = Human.all[0].transform.position + Vector3.up;
-        //        //dancer.transform.rotation = Human.all[0].transform.rotation;
-        //        dancer.transform.localScale = Vector3.one;
-
-
-        //        //RagdollAnimatorSync sync = human.GetComponent<RagdollAnimatorSync>();
-        //        //if (!sync)
-        //        //{
-        //        RagdollAnimatorSync sync = human.gameObject.AddComponent<RagdollAnimatorSync>();
-        //        //}
-
-        //        sync.Initialize(animator, human);
-
-        //        //Debug.Log($"✅ 开始第 {playedCount + 1} 次播放动画: {clip.name}");
-        //        //NetChat.Print($"✅ 开始第 {playedCount + 1} 次播放动画: {clip.name}");
-
-        //        yield return new WaitForSeconds(clip.length);
-
-        //        sync.StopSync();
-        //        graph.Stop();
-        //        graph.Destroy();
-        //        GameObject.Destroy(dancer);
-
-        //        //Debug.Log("✅ 播放结束");
-        //        //NetChat.Print($"播放结束: {clip.name}");
-
-
-        //    } 
-        //}
-
-
-
-
-
-
         public static void TiTui(Human human)
         {
             if (!human.GetExt().yititui)
@@ -1996,6 +1617,13 @@ namespace YxModDll.Mod
                 {
                     human.GetExt().ntp = false;
                     human.GetExt().ntp_human = null;
+
+                    foreach (Rigidbody rigidbody in human.rigidbodies)
+                    {
+                        //rigidbody.position += new Vector3(0f, 1f, 0f);
+                        rigidbody.isKinematic = false;
+                    }
+
                     enThrowing(human, true);
                 }
             }
@@ -2011,6 +1639,12 @@ namespace YxModDll.Mod
             ntphuman.GetExt().ntp = true;
             ntphuman.GetExt().ntp_human = human;
             enThrowing(ntphuman, false);
+
+            foreach(var rb in ntphuman.rigidbodies)
+            {
+                rb.isKinematic= true;
+            }
+
             Chat.TiShi($"玩家 {ntphuman.player.host.name} 悬浮到了 {human.player.host.name} 的头上");
             Chat.TiShi(ntphuman.player.host, $"您成为了 {human.player.host.name} 的头部挂件，跳跃上升，按Y下降，可前后左右移动调整位置。");//，跳跃上升，按Y下降，可前后左右移动调整位置。
         }
@@ -2027,6 +1661,7 @@ namespace YxModDll.Mod
                 foreach (Rigidbody rigidbody in human.rigidbodies)
                 {
                     rigidbody.position += new Vector3(0f, 1f, 0f);
+                    rigidbody.isKinematic = false;
                 }
                 human.GetExt().ntp_Offset = Vector3.zero;
                 human.GetExt().ntp_human = null;
@@ -2083,10 +1718,116 @@ namespace YxModDll.Mod
         }
         public static void ChuanSong(Human human1, Human human2)//human1 传送到 human2
         {
-            human1.SetPosition(human2.transform.position + new Vector3(0.5f, 0.2f, 0f));
+            //human1.SetPosition(human2.transform.position + new Vector3(0.5f, 0.2f, 0f));
+            human1.StartCoroutine(SmoothMove(human1, human2.transform.position + new Vector3(0.5f, 0.2f, 0f), 0.3f));
+
+
             Chat.TiShi($"玩家 {human1.player.host.name} 传送到了 {human2.player.host.name} 的身边");
         }
 
+
+        public static IEnumerator SmoothMove(Human human, Vector3 targetRoot, float duration, float checkRadius = 1f)
+        {
+            int count = human.rigidbodies.Length;
+            Vector3 rootStart = human.transform.position;
+
+            // 1. 找到 human 身上的所有 Collider
+            Collider[] humanColliders = human.GetComponentsInChildren<Collider>();
+
+            // 2. 路径检测，找到路径上的所有物体
+            Vector3 dir = targetRoot - rootStart;
+            float distance = dir.magnitude;
+            dir.Normalize();
+
+            List<Collider> ignoredColliders = new List<Collider>();
+            //RaycastHit[] hits = Physics.SphereCastAll(rootStart, checkRadius, dir, distance, mask, QueryTriggerInteraction.Ignore);
+            // ⚠️ 不再传 mask，直接检测所有层
+            RaycastHit[] hits = Physics.SphereCastAll(rootStart,checkRadius,dir,distance,~0, QueryTriggerInteraction.Ignore);
+
+            foreach (var hit in hits)
+            {
+                Collider hitCol = hit.collider;
+                if (hitCol == null) continue;
+
+                // 跳过自己
+                bool isSelf = humanColliders.Any(hc => hc == hitCol);
+                if (isSelf) continue;
+
+                // 忽略 human 和路径上物体的碰撞
+                foreach (var hc in humanColliders)
+                {
+                    Physics.IgnoreCollision(hc, hitCol, true);
+                    //IgnoreCollision.Ignore(hc.transform, hitCol.transform);
+                }
+
+                ignoredColliders.Add(hitCol);
+            }
+
+            // 3. 平滑移动
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = elapsed / duration;
+
+                // 根节点插值
+                human.transform.position = Vector3.Lerp(rootStart, targetRoot, t);
+
+                yield return new WaitForFixedUpdate(); // 跟物理帧对齐
+            }
+
+            // 最后精确对齐
+            human.transform.position = targetRoot;
+
+            //// 4. 恢复物理
+            //for (int i = 0; i < count; i++)
+            //{
+            //    human.rigidbodies[i].useGravity = true;
+            //}
+
+            foreach (var hitCol in ignoredColliders)
+            {
+                foreach (var hc in humanColliders)
+                {
+                    Physics.IgnoreCollision(hc, hitCol, false);
+                    //IgnoreCollision.Unignore(hc.transform, hitCol.transform);
+                }
+            }
+        }
+
+        //public static IEnumerator SmoothMove(Human human, Vector3 targetRoot, float duration)
+        //{
+        //    int count = human.rigidbodies.Length;
+
+        //    Vector3 rootStart = human.transform.position;
+
+        //    for (int i = 0; i < human.rigidbodies.Length; i++)
+        //    {
+        //        human.rigidbodies[i].useGravity = false;
+        //        human.rigidbodies[i].detectCollisions = false;
+        //    }
+
+        //    float elapsed = 0f;
+
+        //    while (elapsed < duration)
+        //    {
+        //        elapsed += Time.deltaTime;
+        //        float t = elapsed / duration;
+
+        //        // 根节点插值
+        //        human.transform.position = Vector3.Lerp(rootStart, targetRoot, t);
+        //        //human.transform.p(Vector3.Lerp(rootStart, targetRoot, t));
+        //        yield return new WaitForFixedUpdate(); // 跟物理帧对齐，更平滑
+        //    }
+
+        //    // 最后精确对齐 + 恢复物理
+        //    //human.transform.position = targetRoot;
+        //    for (int i = 0; i < human.rigidbodies.Length; i++)
+        //    {
+        //        human.rigidbodies[i].useGravity = true;
+        //        human.rigidbodies[i].detectCollisions = true;
+        //    }
+        //}
         public static void ShanXian_Fun(Human human)
         {
             if (human == null)

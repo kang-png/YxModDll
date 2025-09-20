@@ -179,6 +179,14 @@ namespace YxModDll.Mod
             //        }
             //    }
             //}
+            else if (nick == YxModMsgStr("bufasudu") && msg.Length != 0)
+            {
+                float result;
+                if (float.TryParse(msg, out result))
+                {
+                    UI_WanJia.bufasudu = result;
+                }
+            }
 
             //发送一些客机记录的至给服务器
             /////////////////////////
@@ -1531,6 +1539,15 @@ namespace YxModDll.Mod
                 }
                 return;
             }
+            else if (nick == YxModMsgStr("bufasudu") && msg.Length != 0)
+            {
+                float result;
+                if (float.TryParse(msg, out result))
+                {
+                    human.GetExt().bufasudu = result;
+                }
+                return;
+            }
             else if (nick == YxModMsgStr("kongqipao") && msg.Length != 0)
             {
                 if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
@@ -1870,7 +1887,7 @@ namespace YxModDll.Mod
                 SendStr("发送q/Q/S+E 存点，E键取点，E+A键取上一个点，E+D键取下一个点。", netHost);
             }
 
-            SendStr("发送 “Y+数字(0-27)” 更改 Y 键动作，如 “y1” 更改 Y 键为坐下。", netHost);
+            SendStr("发送 “Y+数字(0-28)” 更改 Y 键动作，如 “y1” 更改 Y 键为坐下。", netHost);
             SendStr("发送 “帮助” 查看更多功能。当前版本：YxMod3.0。", netHost);
             SendStr("文件下载地址: yxmod.cc，交流群: 385272989", netHost);
             SendStr("=== 作者：一心、飞鱼鱼    贡献者：plcc ===", netHost);
@@ -2191,6 +2208,13 @@ namespace YxModDll.Mod
                 {
                     return;
                 }
+                if(!UI_GongNeng.Y_KaiGuan)
+                {
+                    string str = $"Y键自定义系统已关闭";
+                    Chat.TiShi(netHost, str);
+                    return;
+                }
+
                 if (num == 0)
                 {
                     human.GetExt().numY = num;
@@ -2338,6 +2362,11 @@ namespace YxModDll.Mod
                 {
                     human.GetExt().numY = num;
                     Chat.TiShi(human.player.host, "Y键动作已更改为 黑鹰舞步");
+                }
+                else if (num == 28)
+                {
+                    human.GetExt().numY = num;
+                    Chat.TiShi(human.player.host, "Y键动作已更改为 慢跑");
                 }
             }
 
