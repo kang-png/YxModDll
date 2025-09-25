@@ -148,37 +148,37 @@ namespace YxModDll.Mod
                     YxMod.KeJiQuanXian = result == 1;
                 }
             }
-            //else if (nick == YxModMsgStr("scale") && msg.Length != 0)
-            //{
-            //    string[] split = msg.Split(';');
-            //    if (split.Length == 2)
-            //    {
-            //        int targetId = int.Parse(split[0]);
-            //        string[] parts = split[1].Split('|');
-            //        if (parts.Length == 7)
-            //        {
-            //            float head = float.Parse(parts[0]);
-            //            float torso = float.Parse(parts[1]);
-            //            float leftArm = float.Parse(parts[2]);
-            //            float rightArm = float.Parse(parts[3]);
-            //            float leftLeg = float.Parse(parts[4]);
-            //            float rightLeg = float.Parse(parts[5]);
-            //            float ball = float.Parse(parts[6]);
+            else if (nick == YxModMsgStr("scale") && msg.Length != 0)
+            {
+                string[] split = msg.Split(';');
+                if (split.Length == 2)
+                {
+                    int targetId = int.Parse(split[0]);
+                    string[] parts = split[1].Split('|');
+                    if (parts.Length == 7)
+                    {
+                        float head = float.Parse(parts[0]);
+                        float torso = float.Parse(parts[1]);
+                        float leftArm = float.Parse(parts[2]);
+                        float rightArm = float.Parse(parts[3]);
+                        float leftLeg = float.Parse(parts[4]);
+                        float rightLeg = float.Parse(parts[5]);
+                        float ball = float.Parse(parts[6]);
 
-            //            // 找目标人
-            //            NetHost targetHost = NetGame.instance.FindReadyHost((uint)targetId);
-            //            if (targetHost != null && targetHost.players.Count > 0)
-            //            {
-            //                Human target = targetHost.players[targetHost.players.Count - 1].human;
-            //                UI_WanJia.SetHumanScaleByPart(target,
-            //                    head: head, torso: torso,
-            //                    leftArm: leftArm, rightArm: rightArm,
-            //                    leftLeg: leftLeg, rightLeg: rightLeg,
-            //                    ball: ball);
-            //            }
-            //        }
-            //    }
-            //}
+                        // 找目标人
+                        NetHost targetHost = NetGame.instance.FindReadyHost((uint)targetId);
+                        if (targetHost != null && targetHost.players.Count > 0)
+                        {
+                            Human target = targetHost.players[targetHost.players.Count - 1].human;
+                            UI_WanJia.SetHumanScaleByPart(target,
+                                head: head, torso: torso,
+                                leftArm: leftArm, rightArm: rightArm,
+                                leftLeg: leftLeg, rightLeg: rightLeg,
+                                ball: ball);
+                        }
+                    }
+                }
+            }
             else if (nick == YxModMsgStr("bufasudu") && msg.Length != 0)
             {
                 float result;
@@ -1757,48 +1757,47 @@ namespace YxModDll.Mod
             }
             else if (nick == YxModMsgStr("scale") && msg.Length != 0)
             {
-                // msg: "targetId;1.2|1|1|1|1|1|1"
                 string[] split = msg.Split(';');
-                if (split.Length == 2)
+                if (split.Length != 2) return;
+
+                if (!int.TryParse(split[0], out int targetId)) return;
+
+                string[] parts = split[1].Split('|');
+                if (parts.Length != 7) return;
+
+                if (!float.TryParse(parts[0], out float head)) return;
+                if (!float.TryParse(parts[1], out float torso)) return;
+                if (!float.TryParse(parts[2], out float leftArm)) return;
+                if (!float.TryParse(parts[3], out float rightArm)) return;
+                if (!float.TryParse(parts[4], out float leftLeg)) return;
+                if (!float.TryParse(parts[5], out float rightLeg)) return;
+                if (!float.TryParse(parts[6], out float ball)) return;
+
+                NetHost targetHost = NetGame.instance.FindReadyHost((uint)targetId);
+                Human target = targetHost?.players.LastOrDefault()?.human;
+                if (target == null) return;
+
+                var ext = target.GetExt();
+                ext.scaleHead = head;
+                ext.scaleTorso = torso;
+                ext.scaleLeftArm = leftArm;
+                ext.scaleRightArm = rightArm;
+                ext.scaleLeftLeg = leftLeg;
+                ext.scaleRightLeg = rightLeg;
+                ext.scaleBall = ball;
+
+                UI_WanJia.SetHumanScaleByPart(target, head, torso, leftArm, rightArm, leftLeg, rightLeg, ball);
+
+                // 转发给其他装 Mod 的客机
+                foreach (var host in NetGame.instance.readyclients)
                 {
-                    int targetId = int.Parse(split[0]);
-                    string[] parts = split[1].Split('|');
-                    if (parts.Length == 7)
+                    if (host.players.Count > 0)
                     {
-                        float head = float.Parse(parts[0]);
-                        float torso = float.Parse(parts[1]);
-                        float leftArm = float.Parse(parts[2]);
-                        float rightArm = float.Parse(parts[3]);
-                        float leftLeg = float.Parse(parts[4]);
-                        float rightLeg = float.Parse(parts[5]);
-                        float ball = float.Parse(parts[6]);
-
-                        // 根据目标id找到Human
-                        NetHost targetHost = NetGame.instance.FindReadyHost((uint)targetId);
-                        if (targetHost != null && targetHost.players.Count > 0)
+                        Human h = host.players[0].human;
+                        if (h != null && h.GetExt().isClient)
                         {
-                            Human target = targetHost.players[targetHost.players.Count - 1].human;
-
-                            // 主机自己应用
-                            UI_WanJia.SetHumanScaleByPart(target,
-                                head: head, torso: torso,
-                                leftArm: leftArm, rightArm: rightArm,
-                                leftLeg: leftLeg, rightLeg: rightLeg,
-                                ball: ball);
-
-                            //// 转发给其他客机
-                            //foreach (var host in NetGame.instance.readyclients)
-                            //{
-                            //    if (host.players.Count > 0)
-                            //    {
-                            //        Human h = host.players[0].human;
-                            //        if (h != null && h.GetExt().isClient)
-                            //        {
-                            //            SendYxModMsgServer(host, YxModMsgStr("scale"),
-                            //                $"{targetId};{head}|{torso}|{leftArm}|{rightArm}|{leftLeg}|{rightLeg}|{ball}");
-                            //        }
-                            //    }
-                            //}
+                            Chat.SendYxModMsgServer(host, YxModMsgStr("scale"),
+                                $"{targetId};{head}|{torso}|{leftArm}|{rightArm}|{leftLeg}|{rightLeg}|{ball}");
                         }
                     }
                 }

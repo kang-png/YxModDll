@@ -3289,6 +3289,12 @@ namespace YxModDll.Mod.Features
             // 分屏开时走原方法
             return true;
         }
+        [HarmonyPatch(typeof(RagdollCustomization), "AllowPaint", MethodType.Getter)]
+        [HarmonyPostfix]
+        public static void AllowPaint(ref bool __result)
+        {
+            __result = true;
+        }
     }
 }
 

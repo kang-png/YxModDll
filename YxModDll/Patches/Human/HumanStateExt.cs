@@ -13,10 +13,6 @@ namespace YxModDll.Patches
     /// </summary>
     public class HumanStateExt
     {
-        public HumanStateExt()
-        {
-            // 这里可以留空或者初始化一些默认值
-        }
         /// <增加的>
         public bool isClient;
 

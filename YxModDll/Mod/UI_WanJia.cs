@@ -256,7 +256,7 @@ namespace YxModDll.Mod
 
 
                 GUILayout.BeginHorizontal();
-                if (NetGame.isServer || (NetGame.isClient && KeJiZiJi())) //是自己
+                if (NetGame.isServer || NetGame.isLocal || (NetGame.isClient && KeJiZiJi())) //是自己
                 {
                     UI.CreatAnNiu_AnXia("物品挂件", ref human.GetExt().wutiguajian, false, WuTiGuaJian2,"左手抓住物体，按M键设置为挂件，点击按钮取消");
                     
@@ -348,26 +348,6 @@ namespace YxModDll.Mod
                     GUILayout.Space(5);
 
                     GUILayout.Label(ColorfulSpeek.colorshows(UI.TranslateButtonText("服务端属性>>")));
-                    //UI.CreatShuZhi("头部缩放", ref human.GetExt().scaleHead, 0.1f, 5f, 0.1f,
-                    //    () => ScaleSync(human, head: human.GetExt().scaleHead), 1f);
-
-                    //UI.CreatShuZhi("躯干缩放", ref human.GetExt().scaleTorso, 0.1f, 5f, 0.1f,
-                    //    () => ScaleSync(human, torso: human.GetExt().scaleTorso), 1f);
-
-                    //UI.CreatShuZhi("左手缩放", ref human.GetExt().scaleLeftArm, 0.1f, 5f, 0.1f,
-                    //    () => ScaleSync(human, leftArm: human.GetExt().scaleLeftArm), 1f);
-
-                    //UI.CreatShuZhi("右手缩放", ref human.GetExt().scaleRightArm, 0.1f, 5f, 0.1f,
-                    //    () => ScaleSync(human, rightArm: human.GetExt().scaleRightArm), 1f);
-
-                    //UI.CreatShuZhi("左腿缩放", ref human.GetExt().scaleLeftLeg, 0.1f, 5f, 0.1f,
-                    //    () => ScaleSync(human, leftLeg: human.GetExt().scaleLeftLeg), 1f);
-
-                    //UI.CreatShuZhi("右腿缩放", ref human.GetExt().scaleRightLeg, 0.1f, 5f, 0.1f,
-                    //    () => ScaleSync(human, rightLeg: human.GetExt().scaleRightLeg), 1f);
-
-                    //UI.CreatShuZhi("球缩放", ref human.GetExt().scaleBall, 0.1f, 5f, 0.1f,
-                    //    () => ScaleSync(human, ball: human.GetExt().scaleBall), 1f);
 
                     UI.CreatShuZhi("自定义Y", ref human.GetExt().numY, 0, 10, 1, null, yuan: 0);
                     float drag = human.rigidbodies[0].drag;
@@ -440,8 +420,6 @@ namespace YxModDll.Mod
                         (FeatureManager.instance).StartCoroutine(FeatureManager.instance.OnReceiveSkinCoroutine(human.player));
                     }
                 }, "如果本地无皮肤数据，会向服务器请求一次（可能拿到旧皮肤）；已有本地数据时将直接应用。请勿重复点击。");
-                //UI.CreatShuZhi("头部缩放", ref human.GetExt().scaleHead, 0.1f, 5f, 0.1f,
-                //    () => SetHumanScaleByPart(human, head: human.GetExt().scaleHead), 1f);
                 if (NetGame.isServer || NetGame.isLocal || (NetGame.isClient && KeJiZiJi()))
                 {
                     GUILayout.BeginHorizontal();
@@ -512,6 +490,87 @@ namespace YxModDll.Mod
                             Chat.TiShi(NetGame.instance.local, $"已切换到皮肤: {preset.title}");
                         }, preset.title);
                     }
+                }
+
+                if (NetGame.isServer || NetGame.isLocal || (NetGame.isClient && KeJiZiJi())) //是自己
+                {
+
+                    GUILayout.Space(5);
+                    UI.CreatFenGeXian();//分割线
+                    GUILayout.Space(5);
+
+                    GUILayout.Label(ColorfulSpeek.colorshows(UI.TranslateButtonText("身体变形>>")));
+                    GUILayout.BeginHorizontal();
+                    UI.CreatAnNiu("大头萌", false, () =>
+                    {
+                        human.GetExt().scaleHead = 1.7f;
+                        human.GetExt().scaleTorso = 1.0f;
+                        human.GetExt().scaleLeftArm = 1.2f;
+                        human.GetExt().scaleRightArm = 1.2f;
+                        human.GetExt().scaleLeftLeg = 1.2f;
+                        human.GetExt().scaleRightLeg = 1.2f;
+                        human.GetExt().scaleBall = 1.2f;
+                        ScaleSync(human, head: human.GetExt().scaleHead, torso: human.GetExt().scaleTorso, leftArm: human.GetExt().scaleLeftArm, rightArm: human.GetExt().scaleRightArm, leftLeg: human.GetExt().scaleLeftLeg, rightLeg: human.GetExt().scaleRightLeg, ball: human.GetExt().scaleBall);
+                    });
+                    UI.CreatAnNiu("脑袋尖尖", false, () =>
+                    {
+                        human.GetExt().scaleHead = 0.7f;
+                        human.GetExt().scaleTorso = 1.1f;
+                        human.GetExt().scaleLeftArm = 1.4f;
+                        human.GetExt().scaleRightArm = 1.4f;
+                        human.GetExt().scaleLeftLeg = 1.0f;
+                        human.GetExt().scaleRightLeg = 1.0f;
+                        human.GetExt().scaleBall = 1.0f;
+                        ScaleSync(human, head: human.GetExt().scaleHead, torso: human.GetExt().scaleTorso, leftArm: human.GetExt().scaleLeftArm, rightArm: human.GetExt().scaleRightArm, leftLeg: human.GetExt().scaleLeftLeg, rightLeg: human.GetExt().scaleRightLeg, ball: human.GetExt().scaleBall);
+                    });
+                    UI.CreatAnNiu("小头高达", false, () =>
+                    {
+                        human.GetExt().scaleHead = 0.4f;
+                        human.GetExt().scaleTorso = 1.0f;
+                        human.GetExt().scaleLeftArm = 1.0f;
+                        human.GetExt().scaleRightArm = 1.0f;
+                        human.GetExt().scaleLeftLeg = 1.0f;
+                        human.GetExt().scaleRightLeg = 1.0f;
+                        human.GetExt().scaleBall = 1.0f; 
+                        ScaleSync(human, head: human.GetExt().scaleHead, torso: human.GetExt().scaleTorso, leftArm: human.GetExt().scaleLeftArm, rightArm: human.GetExt().scaleRightArm, leftLeg: human.GetExt().scaleLeftLeg, rightLeg: human.GetExt().scaleRightLeg, ball: human.GetExt().scaleBall);
+                    });
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.BeginHorizontal();
+                    UI.CreatAnNiu("重置", false, () =>
+                    {
+                        human.GetExt().scaleHead = 1.0f;
+                        human.GetExt().scaleTorso = 1.0f;
+                        human.GetExt().scaleLeftArm = 1.0f;
+                        human.GetExt().scaleRightArm = 1.0f;
+                        human.GetExt().scaleLeftLeg = 1.0f;
+                        human.GetExt().scaleRightLeg = 1.0f;
+                        human.GetExt().scaleBall = 1.0f; 
+                        ScaleSync(human, head: human.GetExt().scaleHead, torso: human.GetExt().scaleTorso, leftArm: human.GetExt().scaleLeftArm, rightArm: human.GetExt().scaleRightArm, leftLeg: human.GetExt().scaleLeftLeg, rightLeg: human.GetExt().scaleRightLeg, ball: human.GetExt().scaleBall);
+                    });
+                    GUILayout.EndHorizontal();
+
+
+                    UI.CreatShuZhi("头部缩放", ref human.GetExt().scaleHead, 0.1f, 5f, 0.1f,
+                        () => ScaleSync(human, head: human.GetExt().scaleHead), 1f);
+
+                    UI.CreatShuZhi("躯干缩放", ref human.GetExt().scaleTorso, 0.1f, 5f, 0.1f,
+                        () => ScaleSync(human, torso: human.GetExt().scaleTorso), 1f);
+
+                    UI.CreatShuZhi("左手缩放", ref human.GetExt().scaleLeftArm, 0.1f, 5f, 0.1f,
+                        () => ScaleSync(human, leftArm: human.GetExt().scaleLeftArm), 1f);
+
+                    UI.CreatShuZhi("右手缩放", ref human.GetExt().scaleRightArm, 0.1f, 5f, 0.1f,
+                        () => ScaleSync(human, rightArm: human.GetExt().scaleRightArm), 1f);
+
+                    UI.CreatShuZhi("左腿缩放", ref human.GetExt().scaleLeftLeg, 0.1f, 5f, 0.1f,
+                        () => ScaleSync(human, leftLeg: human.GetExt().scaleLeftLeg), 1f);
+
+                    UI.CreatShuZhi("右腿缩放", ref human.GetExt().scaleRightLeg, 0.1f, 5f, 0.1f,
+                        () => ScaleSync(human, rightLeg: human.GetExt().scaleRightLeg), 1f);
+
+                    UI.CreatShuZhi("球缩放", ref human.GetExt().scaleBall, 0.1f, 5f, 0.1f,
+                        () => ScaleSync(human, ball: human.GetExt().scaleBall), 1f);
                 }
             }
             GUILayout.EndScrollView();
@@ -1665,33 +1724,32 @@ namespace YxModDll.Mod
     float? head = null, float? torso = null, float? leftArm = null, float? rightArm = null,
     float? leftLeg = null, float? rightLeg = null, float? ball = null)
         {
+            // 先本地应用一次（所有情况都需要）
+            UI_WanJia.SetHumanScaleByPart(human,
+                head ?? human.GetExt().scaleHead,
+                torso ?? human.GetExt().scaleTorso,
+                leftArm ?? human.GetExt().scaleLeftArm,
+                rightArm ?? human.GetExt().scaleRightArm,
+                leftLeg ?? human.GetExt().scaleLeftLeg,
+                rightLeg ?? human.GetExt().scaleRightLeg,
+                ball ?? human.GetExt().scaleBall);
 
-            foreach (var rb in human.rigidbodies)
+            // 主机 → 广播
+            if (NetGame.isServer)
             {
-                if (rb != null)
+                string msg = $"{human.GetExt().scaleHead}|{human.GetExt().scaleTorso}|{human.GetExt().scaleLeftArm}|{human.GetExt().scaleRightArm}|{human.GetExt().scaleLeftLeg}|{human.GetExt().scaleRightLeg}|{human.GetExt().scaleBall}";
+                foreach (var host in NetGame.instance.readyclients)
                 {
-                    var netBody = rb.GetComponent<NetBody>();
-                    if (netBody != null)
+                    if (host.players.Count > 0)
                     {
-                        // 打开 syncLocalScale
-                        //netBody.syncLocalScale = true;
-                        UnityEngine.Debug.Log($"Rigidbody: {rb.gameObject.name}, NetBody.syncLocalScale = {netBody.syncLocalScale}");
+                        Human h = host.players[0].human;
+                        if (h != null && h.GetExt().isClient) // 只发给装了 Mod 的
+                        {
+                            Chat.SendYxModMsgServer(host, Chat.YxModMsgStr("scale"),
+                                $"{human.player.host.hostId};{msg}");
+                        }
                     }
                 }
-            }
-            DebugHumanRigidbodySync(human);
-            // 主机或本地 → 直接修改并广播
-            if (NetGame.isServer || NetGame.isLocal)
-            {
-                // 应用缩放
-                UI_WanJia.SetHumanScaleByPart(human,
-                    head ?? human.GetExt().scaleHead,
-                    torso ?? human.GetExt().scaleTorso,
-                    leftArm ?? human.GetExt().scaleLeftArm,
-                    rightArm ?? human.GetExt().scaleRightArm,
-                    leftLeg ?? human.GetExt().scaleLeftLeg,
-                    rightLeg ?? human.GetExt().scaleRightLeg,
-                    ball ?? human.GetExt().scaleBall);
             }
             // 客机 → 请求主机转发
             else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
@@ -1700,6 +1758,7 @@ namespace YxModDll.Mod
                 Chat.SendYxModMsgClient(Chat.YxModMsgStr("scale"), msg);
             }
         }
+
         public static void DebugHumanRigidbodySync(Human human)
         {
             if (human == null || human.ragdoll == null)

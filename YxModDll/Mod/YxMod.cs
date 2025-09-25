@@ -1700,7 +1700,7 @@ namespace YxModDll.Mod
                     // 本地分身（local.players 里多出来的）
                     if (num > NetGame.instance.readyclients.Count + 1)
                     {
-                        int localCloneIndex = num - (NetGame.instance.readyclients.Count + 2); // 偏移修正、减去全员和本地玩家0号
+                        int localCloneIndex = num - (NetGame.instance.readyclients.Count + 1); // 偏移修正、减去全员（本地玩家0号已经算在全员了）
                         if (localCloneIndex >= 0 && localCloneIndex < NetGame.instance.local.players.Count)
                         {
                             return NetGame.instance.local.players[localCloneIndex].human;
