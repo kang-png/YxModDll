@@ -170,6 +170,21 @@ namespace YxModDll.Mod
                         if (targetHost != null && targetHost.players.Count > 0)
                         {
                             Human target = targetHost.players[targetHost.players.Count - 1].human;
+
+
+                            if (target.player.isLocalPlayer) 
+                            {
+                                // 更新扩展数据
+                                var ext = target.GetExt();
+                                ext.scaleHead = head;
+                                ext.scaleTorso = torso;
+                                ext.scaleLeftArm = leftArm;
+                                ext.scaleRightArm = rightArm;
+                                ext.scaleLeftLeg = leftLeg;
+                                ext.scaleRightLeg = rightLeg;
+                                ext.scaleBall = ball;
+                            }
+                            // 应用变形
                             UI_WanJia.SetHumanScaleByPart(target,
                                 head: head, torso: torso,
                                 leftArm: leftArm, rightArm: rightArm,
@@ -1801,6 +1816,7 @@ namespace YxModDll.Mod
                         }
                     }
                 }
+                return;
             }
 
 

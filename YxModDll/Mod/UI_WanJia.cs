@@ -191,6 +191,45 @@ namespace YxModDll.Mod
                             FeatureManager.curSpeed = tempSpeed.ToString("0.00");
                         }, yuan: 1f);
                     }
+
+                    GUILayout.Space(5);
+                    UI.CreatFenGeXian();//分割线
+                    GUILayout.Space(5);
+
+                    GUILayout.Label(ColorfulSpeek.colorshows(UI.TranslateButtonText("身体变形>>")));
+
+                    GUILayout.BeginHorizontal();
+                    UI.CreatAnNiu("大头萌", false, () =>
+                    {
+                        foreach (Human human in Human.all)
+                        {
+                            ScaleSync(human, head: 1.7f, torso: 1.0f, leftArm: 1.2f, rightArm: 1.2f, leftLeg: 1.2f, rightLeg: 1.2f, ball: 1.2f);
+                        }
+                    });
+                    UI.CreatAnNiu("脑袋尖尖", false, () =>
+                    {
+                        foreach (Human human in Human.all)
+                        {
+                            ScaleSync(human, head: 0.7f, torso: 1.1f, leftArm: 1.4f, rightArm: 1.4f, leftLeg: 1.0f, rightLeg: 1.0f, ball: 1.0f);
+                        }
+                    });
+                    UI.CreatAnNiu("小头高达", false, () =>
+                    {
+                        foreach (Human human in Human.all)
+                        {
+                            ScaleSync(human, head: 0.4f, torso: 1.0f, leftArm: 1.0f, rightArm: 1.0f, leftLeg: 1.0f, rightLeg: 1.0f, ball: 1.0f);
+                        }
+                    });
+                    GUILayout.EndHorizontal();
+
+                    UI.CreatAnNiu("重置", false, () =>
+                    {
+                        foreach (Human human in Human.all)
+                        {
+                            ScaleSync(human, head: 1.0f, torso: 1.0f, leftArm: 1.0f, rightArm: 1.0f, leftLeg: 1.0f, rightLeg: 1.0f, ball: 1.0f);
+                        }
+                    });
+
                 }
 
                 GUILayout.Space(5);

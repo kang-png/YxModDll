@@ -31,7 +31,7 @@ namespace YxModDll.Mod
             GUILayout.Space(5);
             UI.CreatFenGeXian();//分割线
             GUILayout.Space(5);
-            UI.CreatAnNiu_AnXia("节点图查看器", ref FeatureManager.nodeGraphViewer.view, false, TryEnableNodeGraphViewer);
+            //UI.CreatAnNiu_AnXia("节点图查看器", ref FeatureManager.nodeGraphViewer.view, false, TryEnableNodeGraphViewer);
             GUILayout.Label($"<i>空空如也,开发中...</i>", UI.SetLabelStyle_JuZhong(), GUILayout.ExpandWidth(true));
 
 
