@@ -102,7 +102,10 @@ namespace YxModDll.Mod
                 {
                     HumanAPI.WorkshopLevelMetadata level = subscribedLevels[i];
                     //Chat.TiShi($"{level.title}", TiShiMsgId.GongNengBianGeng);
-                    UI.CreatAnNiu_Left(level.title, false, () =>
+
+                    string title = level.title;
+                    if (title.Length > 12) title = title.Substring(0, 12) + "...";
+                    UI.CreatAnNiu_Left(title, false, () =>
                     {
                         //if (GUILayout.Button(level.title))
                         //{
