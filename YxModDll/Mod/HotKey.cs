@@ -23,6 +23,7 @@ namespace YxModDll.Mod
         public static List<KuaiJieJian_Type> QuanYuanShanXian;
         public static List<KuaiJieJian_Type> QuanJiZiShi;
         public static List<KuaiJieJian_Type> WuPinGuaJian;
+        public static List<KuaiJieJian_Type> AutoReach;
 
         // 一个数字键
         public static List<KuaiJieJian_Type> KongZhiFenShen;
@@ -75,6 +76,7 @@ namespace YxModDll.Mod
             QuanYuanShanXian = INI.GetKuaiJieJianList("全员闪现", new KuaiJieJian_Type(KeyCode.F6));
             QuanJiZiShi = INI.GetKuaiJieJianList("拳击姿势", new KuaiJieJian_Type(KeyCode.R));
             WuPinGuaJian = INI.GetKuaiJieJianList("物品挂件", new KuaiJieJian_Type(KeyCode.M));
+            AutoReach = INI.GetKuaiJieJianList("自动伸手", new KuaiJieJian_Type(KeyCode.L));
 
             KongZhiFenShen = INI.GetKuaiJieJianList("控制分身", new KuaiJieJian_Type(KeyCode.LeftAlt));
             QieHuanFenShen = INI.GetKuaiJieJianList("切换分身", new KuaiJieJian_Type(KeyCode.LeftControl));
@@ -190,6 +192,32 @@ namespace YxModDll.Mod
             }
             return false;
         }
+        public static string GetKeyName(List<KuaiJieJian_Type> keycodes, int shuzi = 0)
+        {
+            if (keycodes == null || keycodes.Count == 0)
+                return "无快捷键";
+
+            List<string> keyStrings = new List<string>();
+
+            foreach (var keycode in keycodes)
+            {
+                if (keycode.keyCode1 == KeyCode.None) continue;
+
+                string keystring = keycode.keyCode1.ToString();
+
+                if (keycode.keyCode2 != KeyCode.None)
+                    keystring += $" + {keycode.keyCode2}";
+
+                if (shuzi == 1)
+                    keystring += " + Num";
+                else if (shuzi == 2)
+                    keystring += " + Num + Num";
+
+                keyStrings.Add(keystring);
+            }
+
+            return string.Join(" | ", keyStrings);
+        }
 
 
         public static void Draw()
@@ -212,38 +240,41 @@ namespace YxModDll.Mod
 
                 //using (UI.ScrollView(ref scrollPosition, GUILayout.ExpandWidth(true)))
                 //{
-                UI.CreateHotKey("存点：", ref CunDian);
-                UI.CreateHotKey("创建房间：", ref ChuangJianFangJian);
-                UI.CreateHotKey("UP：", ref UP);
-                    UI.CreateHotKey("IFG：", ref IFG);
-                UI.CreateHotKey("载入自己：", ref ZaiRuZiJi);
-                UI.CreateHotKey("集合：", ref JiHe);
-                UI.CreateHotKey("重置物品：", ref ChongZhiWuPin);
-                UI.CreateHotKey("全员飞天：", ref QuanYuanFeiTian);
-                UI.CreateHotKey("全员超人：", ref QuanYuanChaoRen);
-                UI.CreateHotKey("全员闪现：", ref QuanYuanShanXian);
-                UI.CreateHotKey("上一关：", ref ShangYiGuan);
-                UI.CreateHotKey("下一关：", ref XiaYiGuan);
-                UI.CreateHotKey("拳击姿势：", ref QuanJiZiShi);
-                UI.CreateHotKey("物体挂件：", ref WuPinGuaJian);
+                UI.CreateHotKey("存点", ref CunDian);
+                UI.CreateHotKey("创建房间", ref ChuangJianFangJian);
+                UI.CreateHotKey("UP", ref UP);
+                    UI.CreateHotKey("IFG", ref IFG);
+                UI.CreateHotKey("载入自己", ref ZaiRuZiJi);
+                UI.CreateHotKey("召集玩家", ref JiHe);
+                UI.CreateHotKey("重置物品", ref ChongZhiWuPin);
+                UI.CreateHotKey("全员飞天", ref QuanYuanFeiTian);
+                UI.CreateHotKey("全员超人", ref QuanYuanChaoRen);
+                UI.CreateHotKey("全员闪现", ref QuanYuanShanXian);
+                UI.CreateHotKey("上一关", ref ShangYiGuan);
+                UI.CreateHotKey("下一关", ref XiaYiGuan);
+                UI.CreateHotKey("拳击姿势", ref QuanJiZiShi);
+                UI.CreateHotKey("物体挂件", ref WuPinGuaJian);
+                UI.CreateHotKey("自动伸手", ref AutoReach);
 
                 //一个数字键
-                UI.CreateHotKey("控制分身：", ref KongZhiFenShen, 1);
-                UI.CreateHotKey("切换分身：", ref QieHuanFenShen, 1);
-                UI.CreateHotKey("指定飞天：", ref ZhiDingFeiTian, 1);
-                UI.CreateHotKey("指定超人：", ref ZhiDingChaoRen, 1);
-                UI.CreateHotKey("指定闪现：", ref ZhiDingShanXian, 1);
+                UI.CreateHotKey("控制分身", ref KongZhiFenShen, 1);
+                UI.CreateHotKey("切换分身", ref QieHuanFenShen, 1);
+                UI.CreateHotKey("指定飞天", ref ZhiDingFeiTian, 1);
+                UI.CreateHotKey("指定超人", ref ZhiDingChaoRen, 1);
+                UI.CreateHotKey("指定闪现", ref ZhiDingShanXian, 1);
                 //两个数字键
-                UI.CreateHotKey("传送至：", ref ChuanSong, 2);
-                UI.CreateHotKey("悬浮于：", ref XuanFu, 2);
-                UI.CreateHotKey("牵手：", ref QianShou, 2);
-                UI.CreateHotKey("背人：", ref Bei, 2);
+                UI.CreateHotKey("传送至", ref ChuanSong, 2);
+                UI.CreateHotKey("悬浮于", ref XuanFu, 2);
+                UI.CreateHotKey("牵手", ref QianShou, 2);
+                UI.CreateHotKey("背人", ref Bei, 2);
 
             }
             ;
 
         }
     }
+
+
     public class KuaiJieJian_Type
     {
         public KeyCode keyCode1;

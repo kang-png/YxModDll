@@ -505,6 +505,11 @@ namespace YxModDll.Mod.Features
                     }
                 }
 
+                if (HotKey.Is(HotKey.AutoReach))
+                {
+                    autoReach = !autoReach; 
+                    Chat.TiShi(NetGame.instance.local, $"按{HotKey.GetKeyName(HotKey.AutoReach)}键{(autoReach ? "开启" : "关闭")}自动伸手");
+                }
                 if (FreeRoamCam.allowFreeRoam && !cameraAdjusted)
                 {
                     MainCamera.farClipPlane = UI_SheZhi.freeRoamCamDistance;
