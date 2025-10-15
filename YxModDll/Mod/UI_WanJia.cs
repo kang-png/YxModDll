@@ -394,29 +394,29 @@ namespace YxModDll.Mod
                     float maxLiftForce = human.motionControl2.hands.maxLiftForce;
                     float weight = human.weight;
 
-                    UI.CreatShuZhi("体重", ref weight, 500f, 2000f, 10f, () => {
-                        human.weight = weight;
-                    }, yuan: 1020.24f);
+                    //UI.CreatShuZhi("体重", ref weight, 500f, 2000f, 10f, () => {
+                    //    human.weight = weight;
+                    //}, yuan: 1020.24f);
 
-                    GUILayout.BeginHorizontal();
-                    UI.CreatShuZhi("阻力", ref drag, 0f, 5f, 0.1f, () => {
-                        human.SetDrag(drag, true);
-                    });
-                    if (GUILayout.Button(ColorfulSpeek.colorshows(UI.TranslateButtonText("重置")), UI.styleButton()))
-                    {
-                        human.ResetDrag();
-                        drag = human.rigidbodies[0].drag;
-                    }
-                    //GUILayout.FlexibleSpace();
-                    GUILayout.EndHorizontal();
+                    //GUILayout.BeginHorizontal();
+                    //UI.CreatShuZhi("阻力", ref drag, 0f, 5f, 0.1f, () => {
+                    //    human.SetDrag(drag, true);
+                    //});
+                    //if (GUILayout.Button(ColorfulSpeek.colorshows(UI.TranslateButtonText("重置")), UI.styleButton()))
+                    //{
+                    //    human.ResetDrag();
+                    //    drag = human.rigidbodies[0].drag;
+                    //}
+                    ////GUILayout.FlexibleSpace();
+                    //GUILayout.EndHorizontal();
 
-                    UI.CreatShuZhi("手部力量", ref maxLiftForce, 0f, 1000f, 50f, () => {
-                        human.motionControl2.hands.maxLiftForce = maxLiftForce;
-                    }, yuan: 500f);
+                    //UI.CreatShuZhi("手部力量", ref maxLiftForce, 0f, 1000f, 50f, () => {
+                    //    human.motionControl2.hands.maxLiftForce = maxLiftForce;
+                    //}, yuan: 500f);
 
-                    UI.CreatShuZhi("跳跃间距", ref mass, 10f, 200f, 5f, () => {
-                        human.mass = mass;
-                    }, yuan: 104f);
+                    //UI.CreatShuZhi("跳跃间距", ref mass, 10f, 200f, 5f, () => {
+                    //    human.mass = mass;
+                    //}, yuan: 104f);
 
                 }
                 if (NetGame.isServer || NetGame.isLocal || (NetGame.isClient && KeJiZiJi()))
