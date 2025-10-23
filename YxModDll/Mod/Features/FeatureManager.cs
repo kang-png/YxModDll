@@ -458,6 +458,8 @@ namespace YxModDll.Mod.Features
             pc = new PerformanceCounter("Process", "Working Set - Private", Process.GetCurrentProcess().ProcessName);
             HarmonyFileLog.Enabled = false;
             harmony = Harmony.CreateAndPatchAll(typeof(FeatureManager), "com.plcc.hff.humanmod");
+            // 确保外部补丁类也被注册（如黑名单入房拦截）
+            Harmony.CreateAndPatchAll(typeof(YxModDll.Mod.BlacklistJoinPatch), "com.plcc.hff.humanmod");
         }
 
         public void Update()
@@ -2379,6 +2381,22 @@ namespace YxModDll.Mod.Features
         [HarmonyPrefix]
         public static bool SpawnPlayer(uint id, NetHost host, bool isLocal, string skinUserId, uint localCoopIndex, byte[] skinCRC, ref NetPlayer __result)
         {
+            // 黑名单拦截（主机侧、非本地玩家）
+            try
+            {
+                if (NetGame.isServer && !isLocal && HeiMingDan.Enabled)
+                {
+                    string playerName = host != null ? host.name : "玩家";
+                    if (HeiMingDan.ShouldBlockPlayerJoin(skinUserId, playerName))
+                    {
+                        if (host != null) NetGame.instance.Kick(host);
+                        __result = null;
+                        return false;
+                    }
+                }
+            }
+            catch { }
+
             if (!modifyScale)
             {
                 return true;

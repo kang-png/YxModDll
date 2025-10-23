@@ -183,6 +183,7 @@ namespace YxModDll.Mod
             gameObject.AddComponent<KeyDisplayUI>();//键盘UI
             gameObject.AddComponent<MiniMap>();//小地图
             gameObject.AddComponent<ColorfulSpeek>();//颜色发言
+            HeiMingDan.Initialize();
             gameObject.AddComponent<FPSCounter>();//FPS
             gameObject.AddComponent<YxModDll.Mod.Features.FeatureManager>();
 

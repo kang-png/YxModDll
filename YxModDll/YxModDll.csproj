@@ -233,6 +233,8 @@
     <Compile Include="Mod\MiniMap.cs" />
     <Compile Include="Mod\state.cs" />
     <Compile Include="Mod\UI.cs" />
+    <Compile Include="Mod\HeiMingDan.cs" />
+    <Compile Include="Mod\BlacklistJoinPatch.cs" />
     <Compile Include="Mod\UI_CaiDan.cs" />
     <Compile Include="Mod\UI_ChuanSong.cs" />
     <Compile Include="Mod\UI_GongNeng.cs" />
