@@ -1,5 +1,5 @@
 # YxMod
-
+加入黑名单功能
 YxMod 是一个基于 C# 的 Unity 注入模组框架，适用于《人类一败涂地》。该项目旨在提供强大而灵活的功能扩展能力，包括玩家属性控制、自定义 UI、音频卸载优化、多人生效等。
 
 YxMod is a C# modding framework for *Human: Fall Flat*. It enables custom gameplay logic, runtime UI, memory optimizations, and multiplayer-compatible enhancements via Harmony patches and UnityDoorstop injection.
