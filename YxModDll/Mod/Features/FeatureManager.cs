@@ -2677,35 +2677,35 @@ namespace YxModDll.Mod.Features
             clone.Release();
             return true;
         }
-        //[HarmonyPatch(typeof(NetGame), "OnServerReceive")]
-        //[HarmonyPrefix]
-        //public static bool Prefix_OnServerReceive(NetHost client, NetStream stream)
-        //{
-        //    NetStream clone = NetStream.AllocStream(stream);
-        //    NetMsgId netMsgId = clone.ReadMsgId();
-        //    clone.Release();
+        [HarmonyPatch(typeof(NetGame), "OnServerReceive")]
+        [HarmonyPrefix]
+        public static bool Prefix_OnServerReceive(NetHost client, NetStream stream)
+        {
+            try
+            {
+                if (!NetGame.isServer || !HeiMingDan.Enabled || client == null || stream == null)
+                {
+                    return true;
+                }
+                // 只读取消息ID用于判定，不破坏原始流
+                NetStream clone = NetStream.AllocStream(stream);
+                NetMsgId netMsgId = clone.ReadMsgId();
+                clone.Release();
 
-        //    string playerId = client?.connection.ToString();
-        //    string playerName = client?.name ?? "未知玩家";
-
-        //    if (netMsgId == NetMsgId.SendSkin)
-        //    {
-        //        if (lastSkinReceiveTime.TryGetValue(playerId, out DateTime lastTime) &&
-        //            (DateTime.Now - lastTime).TotalMinutes < 5)
-        //        {
-        //            //UnityEngine.Debug.Log($"玩家 {playerName}（{playerId}）5分钟内重复发送皮肤，已拦截。");
-        //            Chat.TiShi($"玩家 {playerName}（{playerId}）5分钟内重复发送皮肤，已拦截。");
-        //            return false;
-        //        }
-
-        //        lastSkinReceiveTime[playerId] = DateTime.Now;
-
-        //        // 可选：提示有人换皮肤
-        //        //UnityEngine.Debug.Log($"玩家 {playerName}（{playerId}）正在更换皮肤");
-        //    }
-
-        //    return true;
-        //}
+                if (netMsgId == NetMsgId.AddPlayer)
+                {
+                    string steamID = client.connection != null ? client.connection.ToString() : null;
+                    string playerName = client.name ?? "玩家";
+                    if (!string.IsNullOrEmpty(steamID) && HeiMingDan.ShouldBlockPlayerJoin(steamID, playerName))
+                    {
+                        NetGame.instance.Kick(client);
+                        return false;
+                    }
+                }
+            }
+            catch { }
+            return true;
+        }
         //[HarmonyPatch(typeof(App), "EnterLobbyAsync")]
         //[HarmonyPostfix]
         //static IEnumerator EnterLobbyAsyncPostfix(IEnumerator __result, App __instance)

@@ -149,6 +149,24 @@ namespace YxModDll.Patches
             if (num == VersionDisplay.netCode)
             {
                 client.name = msg.ReadString();
+
+                // 黑名单源头拦截：在握手阶段根据连接ID/名称直接拒绝
+                try
+                {
+                    if (NetGame.isServer && HeiMingDan.Enabled)
+                    {
+                        string steamID = client?.connection != null ? client.connection.ToString() : null;
+                        string playerName = client?.name ?? "玩家";
+                        if (!string.IsNullOrEmpty(steamID) && HeiMingDan.ShouldBlockPlayerJoin(steamID, playerName))
+                        {
+                            // 不下发 AddHost/AddPlayer 等后续消息，直接踢出，避免出现“正在进入”
+                            NetGame.instance.Kick(client);
+                            return; // 提前返回，阻断后续握手流程
+                        }
+                    }
+                }
+                catch { }
+
                 if (NetGame.instance.transport.IsRelayed(client))
                 {
                     App.instance.OnRelayConnection(client);
