@@ -26,7 +26,7 @@ namespace YxModDll.Mod
         public static string shezhiIdName = "定点设置";
 
 
-        private static string[] shezhiNames = { "定点设置", "开房设置", "聊天设置", "快捷键设置", "UI显示设置", "游戏设置", "YxMod设置" };
+        private static string[] shezhiNames = { "定点设置", "开房设置", "聊天设置", "快捷键设置", "UI显示设置", "游戏设置", "YxMod设置", "黑名单设置" };
         private static string[] daxiaoNames = { "固定", "渐变", "跳跃", "随机" };
         private static string[] yanseNames = { "固定", "渐变", "跳跃", "随机" };
 
@@ -106,6 +106,12 @@ namespace YxModDll.Mod
         public static ColorfulSpeek.GradientSeed MingZiSeed = default(ColorfulSpeek.GradientSeed);
 
         public static int CaiDanColorType;
+
+        ///////黑名单设置
+        public static bool heimingdanEnabled = false;
+        public static List<string> heimingdanList = new List<string>();
+        public static string newHeimingdanSteamID = "";
+        public static Vector2 heimingdanScrollPosition;
 
         ///////开放设置
         private static string[] guajidongzuoNames = { "跌落", "睡觉", "气球", "坐下", "挂件" };
@@ -620,6 +626,71 @@ namespace YxModDll.Mod
                     UI.CreatAnNiu_AnXia("客机时禁止其他客机控制我", ref jinzhibeikong, false, JinZhiBeiKong, "开启后，其他客机无法控制你，连自己也不行。如需控制自己，请关闭此选项");
                 
                     break;
+                case "黑名单设置":
+                    // 标题
+                    GUILayout.Label(ColorfulSpeek.colorshows(UI.TranslateButtonText("黑名单设置")), UI.SetLabelStyle_JuZhong());
+
+                    // 防御性初始化
+                    if (heimingdanList == null) heimingdanList = new List<string>();
+
+                    // 启用/禁用
+                    UI.CreatAnNiu_AnXia("启用黑名单", ref heimingdanEnabled, false, () => {
+                        HeiMingDan.Enabled = heimingdanEnabled;
+                        HeiMingDan.SaveHeiMingDan();
+                    });
+
+                    GUILayout.Space(5);
+                    UI.CreatFenGeXian();
+                    GUILayout.Space(5);
+
+                    // 添加条目（改为纵向排列，文字与按钮换行）
+                    GUILayout.Label(UI.TranslateButtonText("添加SteamID"), UI.SetLabelStyle_JuZhong());
+                    UI.CreatWenBenKuang(null, ref newHeimingdanSteamID, 100, 280, null);
+                    GUILayout.Space(3);
+                    UI.CreatAnNiu("添加", false, () => {
+                        if (HeiMingDan.AddPlayer(newHeimingdanSteamID))
+                        {
+                            heimingdanList = new List<string>(HeiMingDan.SteamIDs);
+                            newHeimingdanSteamID = string.Empty;
+                        }
+                    });
+                    GUILayout.Space(3);
+                    UI.CreatAnNiu("查看个人资料", false, () => {
+                        HeiMingDan.OpenSteamProfile(newHeimingdanSteamID);
+                    });
+
+                    GUILayout.Space(5);
+                    UI.CreatFenGeXian();
+                    GUILayout.Space(5);
+
+                    // 列表（提高可视高度）
+                    using (UI.ScrollView(ref heimingdanScrollPosition, GUILayout.Height(160)))
+                    {
+                        foreach (var sid in heimingdanList.ToArray())
+                        {
+                            // 每条目分两行：先显示ID，再显示按钮（换行）
+                            GUILayout.Label(sid, UI.SetLabelStyle_JuZhong());
+                            GUILayout.BeginHorizontal();
+                            UI.CreatAnNiu("查看", false, () => HeiMingDan.OpenSteamProfile(sid));
+                            GUILayout.Space(6);
+                            UI.CreatAnNiu("移除", false, () => {
+                                if (HeiMingDan.RemovePlayer(sid))
+                                {
+                                    heimingdanList = new List<string>(HeiMingDan.SteamIDs);
+                                }
+                            });
+                            GUILayout.EndHorizontal();
+                            GUILayout.Space(4);
+                        }
+                    }
+
+                    GUILayout.Space(5);
+                    UI.CreatFenGeXian();
+                    GUILayout.Space(5);
+
+                    // 帮助（缩小字号且自动换行）
+                    GUILayout.Label(HeiMingDan.GetSteamIDHelpText(), UI.SetLabelStyle_JuZhong());
+                    break;
             }
 
             GUILayout.EndScrollView();
@@ -761,6 +832,9 @@ namespace YxModDll.Mod
             guajishijian = PlayerPrefs.GetInt("guajishijian", 5);
             guajidongzuoID = PlayerPrefs.GetInt("guajidongzuoID", 1);
 
+            // 黑名单（从文件加载到UI状态）
+            heimingdanEnabled = HeiMingDan.Enabled;
+            heimingdanList = new List<string>(HeiMingDan.SteamIDs);
 
             //游戏设置
             quchuqidonghuamian = PlayerPrefs.GetInt("quchuqidonghuamian", 1) > 0;

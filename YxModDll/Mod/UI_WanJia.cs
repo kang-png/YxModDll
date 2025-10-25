@@ -262,6 +262,7 @@ namespace YxModDll.Mod
                 {
                     UI.CreatAnNiu("个人资料", false, GeRenZiLiao);
                     UI.CreatAnNiu("加好友", false, JiaHaoYou);
+                    UI.CreatAnNiu("拉黑", false, JiaRuHeiMingDan);
                 }
                 if ((NetGame.isServer && humanID != 1) || (NetGame.isClient && !KeJiZiJi() && humanID != 1)) //不是自己/房主/
                 {
@@ -699,6 +700,26 @@ namespace YxModDll.Mod
             ulong ulSteamID2 = 0UL;
             ulong.TryParse(human.player.skinUserId, out ulSteamID2);
             SteamFriends.ActivateGameOverlayToUser("friendadd", new CSteamID(ulSteamID2));
+        }
+        private static void JiaRuHeiMingDan()
+        {
+            if (human == null || human.player == null) return;
+            string steamID = human.player.skinUserId;
+            if (HeiMingDan.AddPlayer(steamID))
+            {
+                // 同步设置页的黑名单列表，以便立刻显示
+                UI_SheZhi.heimingdanList = new List<string>(HeiMingDan.SteamIDs);
+
+                Chat.TiShi($"已将玩家 {human.player.host.name} (SteamID: {steamID}) 加入黑名单", TiShiMsgId.XiTongTiShi);
+                if (!HeiMingDan.Enabled)
+                {
+                    Chat.TiShi(NetGame.instance.local, "黑名单未启用，添加后不会拦截入房");
+                }
+            }
+            else
+            {
+                Chat.TiShi(NetGame.instance.local, "加入黑名单失败：SteamID无效或已存在");
+            }
         }
         private static void TiChuFangJian()//有效果
         {

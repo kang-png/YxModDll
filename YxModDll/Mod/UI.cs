@@ -134,7 +134,8 @@ namespace YxModDll.Mod
             var style = new GUIStyle(GUI.skin.label)
             {
                 alignment = TextAnchor.MiddleCenter,
-                fontSize = 20
+                fontSize = 16,
+                wordWrap = true
             };
             style.normal.textColor = Color.gray;
             return style;
