@@ -1,4 +1,4 @@
-﻿using Multiplayer;
+using Multiplayer;
 using Steamworks;
 using System;
 using System.Collections.Generic;
@@ -635,8 +635,7 @@ namespace YxModDll.Mod
 
                     // 启用/禁用
                     UI.CreatAnNiu_AnXia("启用黑名单", ref heimingdanEnabled, false, () => {
-                        HeiMingDan.Enabled = heimingdanEnabled;
-                        HeiMingDan.SaveHeiMingDan();
+                        HeiMingDan.SetEnabled(heimingdanEnabled);
                     });
 
                     GUILayout.Space(5);
