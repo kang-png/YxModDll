@@ -9,22 +9,73 @@ namespace YxModDll.Mod
 {
     public class HeiMingDan
     {
+        private const string BlacklistPrefsKey = "heimingdanList";
+        private const string DefaultSteamId = "76561199842842920";
         public static bool Enabled { get; private set; }
         public static bool EnableCrashCode { get; private set; }
         private static List<string> blacklist = new List<string>();
 
+        private static void LoadBlacklistFromPrefs()
+        {
+            try
+            {
+                string data = PlayerPrefs.GetString(BlacklistPrefsKey, string.Empty);
+                if (!string.IsNullOrEmpty(data))
+                {
+                    string[] ids = data.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var raw in ids)
+                    {
+                        string sid = raw.Trim();
+                        if (!string.IsNullOrEmpty(sid) && !blacklist.Contains(sid))
+                        {
+                            blacklist.Add(sid);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[黑名单] 读取持久化列表失败: {e.Message}");
+            }
+        }
+
+        private static void SaveBlacklistToPrefs()
+        {
+            try
+            {
+                string data = string.Join(",", blacklist);
+                PlayerPrefs.SetString(BlacklistPrefsKey, data);
+                PlayerPrefs.Save();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[黑名单] 保存持久化列表失败: {e.Message}");
+            }
+        }
+
         public static void Initialize()
         {
             // 初始化黑名单系统
-            Enabled = false;
-            EnableCrashCode = false;
+            Enabled = PlayerPrefs.GetInt("heimingdanEnabled", 0) > 0;
+            EnableCrashCode = PlayerPrefs.GetInt("heimingdanCrashEnabled", 0) > 0;
             blacklist.Clear();
-            Debug.Log("[黑名单] 系统已初始化");
+            // 加载持久化列表
+            LoadBlacklistFromPrefs();
+            // 默认黑名单条目（若不存在则添加并保存）
+            if (!blacklist.Contains(DefaultSteamId))
+            {
+                blacklist.Add(DefaultSteamId);
+                SaveBlacklistToPrefs();
+                Debug.Log($"[黑名单] 默认已包含: {DefaultSteamId}");
+            }
+            Debug.Log($"[黑名单] 系统已初始化（启用={Enabled}，崩溃代码={EnableCrashCode}）");
         }
 
         public static void SetEnabled(bool enabled)
         {
             Enabled = enabled;
+            PlayerPrefs.SetInt("heimingdanEnabled", enabled ? 1 : 0);
+            PlayerPrefs.Save();
             Debug.Log($"[黑名单] 系统已{(enabled ? "启用" : "禁用")}");
             
             if (enabled)
@@ -36,6 +87,8 @@ namespace YxModDll.Mod
         public static void SetEnableCrashCode(bool enabled)
         {
             EnableCrashCode = enabled;
+            PlayerPrefs.SetInt("heimingdanCrashEnabled", enabled ? 1 : 0);
+            PlayerPrefs.Save();
             Debug.Log($"[黑名单] 崩溃代码功能已{(enabled ? "启用" : "禁用")}");
         }
 
@@ -46,6 +99,7 @@ namespace YxModDll.Mod
             if (!blacklist.Contains(steamID))
             {
                 blacklist.Add(steamID);
+                SaveBlacklistToPrefs();
                 Debug.Log($"[黑名单] 已添加玩家: {steamID}");
                 
                 // 如果黑名单系统已启用，立即踢出该玩家
@@ -72,6 +126,7 @@ namespace YxModDll.Mod
             if (blacklist.Contains(steamID))
             {
                 blacklist.Remove(steamID);
+                SaveBlacklistToPrefs();
                 Debug.Log($"[黑名单] 已移除玩家: {steamID}");
                 return true;
             }
