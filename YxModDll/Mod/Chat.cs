@@ -246,9 +246,26 @@ namespace YxModDll.Mod
             uint clientId = stream.ReadNetId();
             string nick = stream.ReadString();
             string msg = stream.ReadString();
-            NetHost netHost = NetGame.instance.FindReadyHost(clientId);
-            Human human = netHost.players[netHost.players.Count - 1].human;
-            bool isDev = IsDeveloper(netHost.players[netHost.players.Count - 1].skinUserId);
+
+            // 服务端网络层发送者
+            NetPlayer player = NetGame.instance.players
+                .Find(p => p.host == client);
+
+            if (player == null)
+            {
+                Debug.LogError("[Chat] 找不到对应的 Player（p.host != client）");
+                return;
+            }
+
+            NetHost netHost = client;
+            Human human = player.human;
+            bool isDev = IsDeveloper(player.skinUserId);
+
+            //Debug.Log($"[Chat Debug] streamId={clientId}, client.hostId={client.hostId}");
+
+            //NetHost netHost = NetGame.instance.FindReadyHost(clientId);
+            //Human human = netHost.players[netHost.players.Count - 1].human;
+            //bool isDev = IsDeveloper(netHost.players[netHost.players.Count - 1].skinUserId);
 
             if (nick == "[YxMod]" && msg.Length == 0)//客机有Mod
             {
