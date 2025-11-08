@@ -1,4 +1,4 @@
-﻿using HumanAPI;
+using HumanAPI;
 using Multiplayer;
 using Steamworks;
 using System;
@@ -711,7 +711,15 @@ namespace YxModDll.Mod
                 UI_SheZhi.heimingdanList = new List<string>(HeiMingDan.SteamIDs);
 
                 Chat.TiShi($"已将玩家 {human.player.host.name} (SteamID: {steamID}) 加入黑名单", TiShiMsgId.XiTongTiShi);
-                if (!HeiMingDan.Enabled)
+                
+                // 如果黑名单已启用，立即踢出该玩家
+                if (HeiMingDan.Enabled)
+                {
+                    // 直接对该玩家执行踢出操作
+                    HeiMingDan.KickBannedPlayer(human);
+                    Chat.TiShi("已立即踢出该黑名单玩家", TiShiMsgId.XiTongTiShi);
+                }
+                else
                 {
                     Chat.TiShi(NetGame.instance.local, "黑名单未启用，添加后不会拦截入房");
                 }

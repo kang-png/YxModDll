@@ -3709,8 +3709,46 @@ namespace YxModDll.Mod
             //StringBuilder sb = new StringBuilder();
             if (str.Length <= 1)
             {
-                int daxiao = daxiaoID == 3 ? _random.Next(size1, size2+1) : size1;
-                string yanse = yanseID == 3 ? SuiJiLiangSe(liangdu) : yanse1;
+                // 单字符：颜色/大小渐变应取中值而不是使用起始色
+                int daxiao;
+                if (daxiaoID == 3)
+                {
+                    daxiao = _random.Next(size1, size2 + 1);
+                }
+                else if (daxiaoID == 1)
+                {
+                    // 大小渐变：取中间值
+                    daxiao = (size1 + size2) / 2;
+                }
+                else
+                {
+                    daxiao = size1;
+                }
+
+                string yanse;
+                if (yanseID == 1)
+                {
+                    // 颜色渐变：取中间颜色（t=0.5）
+                    var gradient = mingzi ? UI_SheZhi.MingZiSeed.gradient : UI_SheZhi.FaYanSeed.gradient;
+                    Color color = gradient.Evaluate(0.5f);
+                    yanse = $"#{ColorUtility.ToHtmlStringRGB(color)}";
+                }
+                else if (yanseID == 2)
+                {
+                    // 跳跃颜色，单字符用第一色
+                    yanse = yanse1;
+                }
+                else if (yanseID == 3)
+                {
+                    // 随机颜色
+                    yanse = SuiJiLiangSe(liangdu);
+                }
+                else
+                {
+                    // 固定颜色
+                    yanse = yanse1;
+                }
+
                 retStr = $"<size={daxiao}><color={yanse}>{str}</color></size>";
             }
             else
@@ -3730,7 +3768,7 @@ namespace YxModDll.Mod
                             string currentColor="#FFFFFF";
                             if (yanseID == 1)
                             {
-                                float t = i / (float)(Length - 1); // 从 0 到 1 的比例
+                                float t = Length == 1 ? 0.5f : i / (float)(Length - 1); // 单字符时使用中间颜色，避免除零
                                 Color color = Color.white; 
                                 if (mingzi)
                                 {
@@ -3803,7 +3841,7 @@ namespace YxModDll.Mod
                             string currentColor = "#FFFFFF";
                             if (yanseID == 1)
                             {
-                                float t = i / (float)(Length - 1); // 从 0 到 1 的比例
+                                float t = Length == 1 ? 0.5f : i / (float)(Length - 1); // 单字符时使用中间颜色，避免除零
                                 Color color = Color.white;
                                 if (mingzi)
                                 {
