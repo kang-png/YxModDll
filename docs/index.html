@@ -1,11 +1,13 @@
 <script>
     const urlParams = new URLSearchParams(location.search);
+
+    const app = urlParams.get("app");
     const lobby = urlParams.get("lobby");
     const user = urlParams.get("user");
 
-    if (!lobby || !user) {
+    if (!app || !lobby || !user) {
         document.body.innerText = "Invalid parameters";
     } else {
-        location.href = `steam://joinlobby/477160/${lobby}/${user}`;
+        location.href = `steam://joinlobby/${app}/${lobby}/${user}`;
     }
 </script>
