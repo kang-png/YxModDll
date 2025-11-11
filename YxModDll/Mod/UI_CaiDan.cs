@@ -95,6 +95,36 @@ namespace YxModDll.Mod
             {
                 UI.CreatAnNiu("邀请好友", false, YaoQingHaoYou);
                 gaodu += UI.buttonHeight;
+                UI.CreatAnNiu("邀请链接", false, () =>
+                {
+                    var transport = (NetTransportSteam)NetGame.instance.transport;
+
+                    // 处理 lobbyID 的两种类型：CSteamID or ulong
+                    ulong lobbyId;
+                    if (transport.lobbyID is CSteamID cid)
+                        lobbyId = cid.m_SteamID;
+                    else
+                        lobbyId = (ulong)transport.lobbyID;
+
+                    // 当前玩家 SteamID
+                    ulong myId = SteamUser.GetSteamID().m_SteamID;
+
+                    // 当前游戏的 AppID（动态）
+                    uint appId = (uint)SteamUtils.GetAppID();   // 自动获得当前 Steam 游戏的 AppID
+
+                    // 拼 HTTPS 跳转链接（GitHub Pages）
+                    string httpUrl = $"https://kang-png.github.io/YxModDll/?app={appId}&lobby={lobbyId}&user={myId}";
+
+                    // 给玩家复制一个更友好、易懂、可点击的内容
+                    GUIUtility.systemCopyBuffer =
+                    "我在《人类一败涂地》开房啦！\n" +
+                    "点下面这个链接就能直接进房：\n" +
+                    httpUrl + "\n" +
+                    "打不开的话，用浏览器打开试试～";
+
+                    //Debug.Log("[YxMod] Invite link copied: " + httpUrl);
+                },"复制邀请链接，让好友直接点击加入《人类一败涂地》房间");
+                gaodu += UI.buttonHeight;
             }
             //if (NetGame.isServer || (NetGame.isClient && YxMod.YxModServer && YxMod.KeJiQuanXian))
             //{
