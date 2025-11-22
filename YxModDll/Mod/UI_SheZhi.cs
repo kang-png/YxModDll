@@ -1201,16 +1201,19 @@ namespace YxModDll.Mod
                     }
                     if (human.GetExt().guajiNtpHuman != null)
                     {
-                        //human.GetExt().ntp = true;
-                        YxMod.enThrowing(human, false);
-                        for (int i = 0; i < human.rigidbodies.Length; i++)
+                        if(human.GetExt().bei_human ==null && !human.GetExt().ntp)//当 被背 或者是 挂件 的时候 不执行 挂机的挂头
                         {
-                            human.rigidbodies[i].rotation = human.GetExt().guajiNtpHuman.rigidbodies[i].rotation;
-                            Vector3 position = human.GetExt().guajiNtpHuman.rigidbodies[i].position;
-                            position.y += 2f;
-                            human.rigidbodies[i].position = position;
-                            human.rigidbodies[i].velocity = human.GetExt().guajiNtpHuman.rigidbodies[i].velocity;
+                            YxMod.enThrowing(human, false);
+                            for (int i = 0; i < human.rigidbodies.Length; i++)
+                            {
+                                human.rigidbodies[i].rotation = human.GetExt().guajiNtpHuman.rigidbodies[i].rotation;
+                                Vector3 position = human.GetExt().guajiNtpHuman.rigidbodies[i].position;
+                                position.y += 2f;
+                                human.rigidbodies[i].position = position;
+                                human.rigidbodies[i].velocity = human.GetExt().guajiNtpHuman.rigidbodies[i].velocity;
+                            }
                         }
+
                     }
                     else
                     {
