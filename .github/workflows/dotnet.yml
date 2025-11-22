@@ -71,8 +71,9 @@ jobs:
 
         Copy-Item ../YxModDll/bin/Release/YxModDll.dll ./YxModDll.dll -Force
         Copy-Item ../YxModRelease.zip ./YxModRelease.zip -Force
+        Copy-Item ../YxModDll/Animator ./Animator -Recurse -Force
 
-        git add YxModDll.dll YxModRelease.zip
+        git add YxModDll.dll YxModRelease.zip Animator
         git commit -m "Update YxModDll.dll and YxModRelease.zip from GitHub Actions build" -a || Write-Host "No changes to commit."
         git push origin master
       shell: pwsh
@@ -97,8 +98,9 @@ jobs:
         
         Copy-Item ../YxModDll/bin/Release/YxModDll.dll ./YxModDll.dll -Force
         Copy-Item ../YxModRelease.zip ./YxModRelease.zip -Force
+        Copy-Item ../YxModDll/Animator ./Animator -Recurse -Force
 
-        git add YxModDll.dll YxModRelease.zip
+        git add YxModDll.dll YxModRelease.zip Animator
         git commit -m "Update YxModDll.dll and YxModRelease.zip from GitHub Actions build" -a || Write-Host "No changes to commit."
         git push origin main
       shell: pwsh
