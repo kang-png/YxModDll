@@ -102,9 +102,9 @@ namespace YxModDll.Mod
             if(human==null)
             { return; }
             human.GetExt().bei_human = null;
-            if (human.transform.parent != null)
+            if (human.transform.parent != human.player.transform)
             {
-                human.transform.SetParent(null);
+                human.transform.SetParent(human.player.transform);
             }
             foreach (var rb in human.rigidbodies)
             {
