@@ -110,7 +110,7 @@ namespace YxModDll.Mod.HumanAnimator
         // 预缓存每个动作
         private IEnumerator PreloadState(DONGZUO_State stateEnum)
         {
-            string dzpath=  GetPath(stateEnum);
+            string dzpath = GetPath(stateEnum);
             if (File.Exists(dzpath))
             {
                 LoadFromBinary(stateEnum);
@@ -118,15 +118,29 @@ namespace YxModDll.Mod.HumanAnimator
             else
             {
                 string filename = stateEnum.ToString().ToLower();
-                if (_fileDownloadUrls.TryGetValue(filename, out string url))
+                if (_fileDownloadUrls.TryGetValue(filename, out string[] urls))
                 {
                     Debug.Log($"📥 动画 {filename} 不存在，开始下载...");
-                    yield return DownloadFile(url, dzpath);
 
-                    if (File.Exists(dzpath))
+                    bool success = false;
+                    foreach (var url in urls)
+                    {
+                        yield return DownloadFile(url, dzpath);
+                        if (File.Exists(dzpath))
+                        {
+                            success = true;
+                            break;
+                        }
+                    }
+
+                    if (success)
                     {
                         LoadFromBinary(stateEnum);
                         Debug.Log($"✅ {filename} 下载并缓存完成");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"⚠ 下载 {filename} 失败，尝试了所有 URL");
                     }
                 }
                 else
@@ -174,29 +188,28 @@ namespace YxModDll.Mod.HumanAnimator
             }
         }
 
-        private static readonly Dictionary<string, string> _fileDownloadUrls = new Dictionary<string, string>
+        // 文件下载地址字典
+        private static readonly Dictionary<string, string[]> _fileDownloadUrls = new Dictionary<string, string[]>
         {
-            { "tuomasi", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156013806/TuoMaSi.txt" },
-            { "piliwudongjie", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156009662/PiLiWuDongJie.txt" },
-            { "yaobaiwu", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156016437/YaoBaiWu.txt" },
-            { "yangwoqizuo", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156015975/YangWoQiZuo.txt" },
-            { "xihawu3", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156015404/XiHaWu3.txt" },
-            { "xihawu2", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156014785/XiHaWu2.txt" },
-            { "xihawu", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156014282/XiHaWu.txt" },
-            { "touxuan", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156013450/TouXuan.txt" },
-            { "sangbawu2", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156013028/SangBaWu2.txt" },
-            { "sangbawu", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156012205/SangBaWu.txt" },
-            { "quanji", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156011309/QuanJi.txt" },
-            { "qimawu", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156010643/QiMaWu.txt" },
-            { "mumati", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156008759/MuMaTi.txt" },
-            { "kaihetiao", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156008235/KaiHeTiao.txt" },
-            { "jiaochatiaoyue", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156007705/JiaoChaTiaoYue.txt" },
-            { "heiyingtaowubu", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156007145/HeiYingTaoWuBu.txt" },
-            { "fuwocheng", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156006696/FuWoCheng.txt" },
-            { "diantunwu", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757156006256/DianTunWu.txt" },
-            { "manpao", "https://suye.bce.baidu.com/resources/upload/95fa5d1312ce/1757165013211/ManPao.txt" }
-
-
+            { "tuomasi", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/TuoMaSi", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/TuoMaSi" } },
+            { "piliwudongjie", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/PiLiWuDongJie", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/PiLiWuDongJie" } },
+            { "yaobaiwu", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/YaoBaiWu", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/YaoBaiWu" } },
+            { "yangwoqizuo", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/YangWoQiZuo", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/YangWoQiZuo" } },
+            { "xihawu3", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/XiHaWu3", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/XiHaWu3" } },
+            { "xihawu2", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/XiHaWu2", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/XiHaWu2" } },
+            { "xihawu", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/XiHaWu", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/XiHaWu" } },
+            { "touxuan", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/TouXuan", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/TouXuan" } },
+            { "sangbawu2", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/SangBaWu2", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/SangBaWu2" } },
+            { "sangbawu", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/SangBaWu", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/SangBaWu" } },
+            { "quanji", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/QuanJi", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/QuanJi" } },
+            { "qimawu", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/QiMaWu", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/QiMaWu" } },
+            { "mumati", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/MuMaTi", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/MuMaTi" } },
+            { "kaihetiao", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/KaiHeTiao", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/KaiHeTiao" } },
+            { "jiaochatiaoyue", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/JiaoChaTiaoYue", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/JiaoChaTiaoYue" } },
+            { "heiyingtaowubu", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/HeiYingTaoWuBu", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/HeiYingTaoWuBu" } },
+            { "fuwocheng", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/FuWoCheng", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/FuWoCheng" } },
+            { "diantunwu", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/DianTunWu", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/DianTunWu" } },
+            { "manpao", new [] { "https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/Animator/ManPao", "https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/Animator/ManPao" } }
         };
         private static string GetPath(DONGZUO_State type)
         {

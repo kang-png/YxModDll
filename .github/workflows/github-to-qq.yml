@@ -2,8 +2,8 @@ name: GitHub Commit to QQ
 
 on:
   push:
-    branches:
-      - master
+    paths-ignore:
+      - 'docs/**'   # docs 改动不触发构建
 
 jobs:
   send-to-qq:

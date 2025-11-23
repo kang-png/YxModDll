@@ -2,9 +2,11 @@ name: Build YxModDll
 
 on:
   push:
-    branches: [ master ]
+    paths-ignore:
+      - 'docs/**'   # docs 改动不触发构建
   pull_request:
-    branches: [ master ]
+    paths-ignore:
+      - 'docs/**'
 
 permissions:
   contents: write
