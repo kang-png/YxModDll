@@ -1,13 +1,167 @@
-<script>
-    const urlParams = new URLSearchParams(location.search);
-
-    const app = urlParams.get("app");
-    const lobby = urlParams.get("lobby");
-    const user = urlParams.get("user");
-
-    if (!app || !lobby || !user) {
-        document.body.innerText = "Invalid parameters";
-    } else {
-        location.href = `steam://joinlobby/${app}/${lobby}/${user}`;
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>YxMod 人类定点飞天文件</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f5f7fa;
+        margin: 0;
+        padding: 20px;
+        color: #333;
     }
-</script>
+    header {
+        text-align: center;
+        padding: 30px 10px;
+        background: linear-gradient(45deg, #4caf50, #3f8fdb);
+        color: #fff;
+        border-radius: 10px;
+    }
+    h1 { margin: 10px 0; }
+    .container {
+        max-width: 800px;
+        margin: 20px auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .download-btn {
+        display: inline-block;
+        padding: 12px 18px;
+        background: linear-gradient(45deg, #4caf50, #3f8fdb);;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: 0.3s;
+        margin-right: 10px;
+    }
+    .download-btn:hover {
+        background: #e64a19;
+    }
+
+    .backup-btn {
+        display: inline-block;
+        padding: 12px 18px;
+        background: linear-gradient(45deg, #4caf50, #3f8fdb);;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: 0.3s;
+    }
+    .backup-btn:hover {
+        background: #e64a19;
+    }
+    .section-title {
+        font-size: 20px;
+        margin-top: 25px;
+        font-weight: bold;
+        border-left: 5px solid #4caf50;
+        padding-left: 10px;
+    }
+    img {
+        max-width: 100%;
+        border-radius: 10px;
+        margin: 10px 0;
+    }
+    .link-box a {
+        display: block;
+        margin: 8px 0;
+        color: #1976d2;
+        text-decoration: none;
+        font-size: 17px;
+    }
+    .link-box a:hover {
+        text-decoration: underline;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>YxMod 人类定点飞天文件</h1>
+    <p>永久免费 · 定点 · 飞天 · 闪现 · 挂件 · 娱乐功能</p>
+        <p>QQ群: 385272989</p>
+</header>
+
+<div class="container">
+    <div class="section-title">关于 YxMod</div>
+    <p>YxMod 是为《人类一败涂地》打造的高自由度娱乐模组，提供定点、飞天、闪现、挂件等丰富玩法，永久免费向玩家开放。本页面提供最新版本的下载，并为玩家提供交流群与反馈渠道。</p>
+
+
+<div class="container">
+
+	<a class="download-btn"
+	href="https://gitee.com/feiyuuy2019/YxModDll-mirror/raw/master/YxModRelease.zip"
+	target="_blank">
+	🔥 点击下载最新版本
+	</a>
+	
+	<a class="backup-btn"
+	href="https://cdn.jsdelivr.net/gh/kang-png/YxModDll-Static@main/YxModDll.dll"
+	target="_blank">
+	🧩 备用下载链接
+	</a>
+
+    <div class="section-title">加入玩家交流群（QQ群）</div>
+    <p>官方交流群，反馈问题、讨论玩法：</p>
+	<p>QQ群: 385272989 📦 群内也有最新版本下载</p>
+    <a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=iogA2WDffF0rVFl37BfiIQ2_Czf_lUaf&jump_from=webapi&authKey=dO9G8cm4iAVqvZJ6aglLsL7pUNgOV/+d3xJSeKMbuXcsydb1tok4UQrVHNM6c4Fa">
+        <img src="//pub.idqqimg.com/wpa/images/group.png" alt="QQ群加入">
+    </a>
+
+    <div class="section-title">加入 QQ 频道（语音连麦 / 建议反馈）</div>
+    <p>频道支持语音连麦、帖子、建议收集：</p>
+    <div class="link-box">
+        <a href="https://pd.qq.com/s/cojih16cu" target="_blank">👉 点击加入腾讯频道：YxMod</a>
+    </div>
+
+    <div class="section-title">项目开源（贡献代码 / 语言翻译）</div>
+
+
+	<p>🔧 项目开源地址 👉 
+		<a href="https://github.com/kang-png/YxModDll" target="_blank">Github</a>
+	</p>
+	
+	<p>💬 提交 Issue（反馈问题 / 提建议） 👉 
+		<a href="https://github.com/kang-png/YxModDll/issues" target="_blank">Issues 页面</a>
+	</p>
+	
+	<!-- GitHub Stars -->
+	<a href="https://github.com/kang-png/YxModDll" target="_blank">
+		<img src="https://img.shields.io/github/stars/kang-png/YxModDll?style=for-the-badge" alt="GitHub Stars">
+	</a>
+	
+	<!-- GitHub Issues -->
+	<a href="https://github.com/kang-png/YxModDll/issues" target="_blank">
+		<img src="https://img.shields.io/github/issues/kang-png/YxModDll?style=for-the-badge" alt="GitHub Issues">
+	</a>
+	
+	<!-- Releases 下载徽章 -->
+	<a href="https://github.com/kang-png/YxModDll/releases" target="_blank">
+		<img src="https://img.shields.io/github/v/release/kang-png/YxModDll?style=for-the-badge" alt="GitHub Releases">
+	</a>
+	
+	<!-- License 徽章 -->
+	<a href="https://github.com/kang-png/YxModDll/blob/main/LICENSE" target="_blank">
+		<img src="https://img.shields.io/github/license/kang-png/YxModDll?style=for-the-badge" alt="License">
+	</a>
+	
+	<!-- CI 构建状态（如果你以后设置了 CI，会自动更新） -->
+	<a href="https://github.com/kang-png/YxModDll/actions" target="_blank">
+		<img src="https://img.shields.io/github/actions/workflow/status/kang-png/YxModDll/dotnet.yml?style=for-the-badge" alt="CI Status">
+	</a>
+    </div>
+
+    <div class="section-title">展示图片（可替换）</div>
+    <img src="https://via.placeholder.com/600x200?text=示例图片1" />
+    <img src="https://via.placeholder.com/600x200?text=示例图片2" />
+
+</div>
+
+</body>
+</html>
