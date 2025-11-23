@@ -113,11 +113,11 @@ namespace YxModDll.Mod
                     uint appId = (uint)SteamUtils.GetAppID();   // 自动获得当前 Steam 游戏的 AppID
 
                     // 拼 HTTPS 跳转链接（GitHub Pages）
-                    string httpUrl = $"https://kang-png.github.io/YxModDll/?app={appId}&lobby={lobbyId}&user={myId}";
+                    string httpUrl = $"https://yxmod.cc/invite.html?app={appId}&lobby={lobbyId}&user={myId}";
 
                     // 给玩家复制一个更友好、易懂、可点击的内容
                     GUIUtility.systemCopyBuffer =
-                    "我在《人类一败涂地》开房啦！\n" +
+                    "我正在玩《人类一败涂地》！\n" +
                     "点下面这个链接就能直接进房：\n" +
                     httpUrl + "\n" +
                     "打不开的话，用浏览器打开试试～";
