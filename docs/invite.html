@@ -1,3 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Steam 房间跳转</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f5f7fa;
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+        line-height: 1.8;
+        color: #333;
+    }
+    header {
+        text-align: center;
+        padding: 30px 10px;
+        background: linear-gradient(45deg, #4caf50, #3f8fdb);
+        color: #fff;
+        border-radius: 10px;
+    }
+    .btn {
+        display: inline-block;
+        padding: 10px 18px;
+        margin: 8px;
+        background: #3498db;
+        color: white;
+        border-radius: 6px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 16px;
+    }
+    .btn:hover {
+        background: #2980b9;
+    }
+    .warn {
+        margin-top: 20px;
+        color: #e67e22;
+        font-weight: bold;
+    }
+    footer {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+	
+		text-align: center;
+		padding: 10px 0;
+		background: #f5f5f5;
+	
+		font-size: 0.9em;
+		color: #666;
+	}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>YxMod 人类定点飞天文件</h1>
+    <p>永久免费 · 定点 · 飞天 · 闪现 · 挂件 · 娱乐功能</p>
+        <p>QQ群: 385272989</p>
+</header>
+
+<h2>正在为你打开 Steam 房间…</h2>
+
+<div id="info"></div>
+
+<a id="againBtn" class="btn">再次唤起 Steam</a>
+<a id="copyBtn" class="btn">复制房间链接</a>
+
+<div class="warn">
+    请在电脑浏览器打开，请确保已安装 Steam。
+</div>
+<footer>
+    YxMod © 2025   由 一心 & 飞鱼鱼 制作
+</footer>
+
 <script>
     const urlParams = new URLSearchParams(location.search);
 
@@ -6,8 +84,32 @@
     const user = urlParams.get("user");
 
     if (!app || !lobby || !user) {
-        document.body.innerText = "Invalid parameters";
+        document.body.innerText = "参数错误：缺少 app / lobby / user";
     } else {
-        location.href = `steam://joinlobby/${app}/${lobby}/${user}`;
+        const steamUrl = `steam://joinlobby/${app}/${lobby}/${user}`;
+
+        document.getElementById("info").innerText =
+            `App: ${app}\nLobby: ${lobby}\nUser: ${user}`;
+
+        // 自动跳转
+        location.href = steamUrl;
+
+        // 再次唤起按钮
+        document.getElementById("againBtn").onclick = () => {
+            location.href = steamUrl;
+        };
+
+        // 复制按钮
+        document.getElementById("copyBtn").onclick = async () => {
+            try {
+                await navigator.clipboard.writeText(steamUrl);
+                alert("已复制房间链接！");
+            } catch (e) {
+                alert("复制失败，请手动复制：" + steamUrl);
+            }
+        };
     }
 </script>
+
+</body>
+</html>
