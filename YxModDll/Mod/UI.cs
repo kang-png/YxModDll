@@ -628,7 +628,7 @@ namespace YxModDll.Mod
                 tooltipStyle = new GUIStyle(GUI.skin.box)
                 {
                     wordWrap = true,
-                    alignment = TextAnchor.UpperLeft,
+                    alignment = TextAnchor.MiddleCenter,
                     padding = new RectOffset(8, 8, 6, 6)
                 };
             }
