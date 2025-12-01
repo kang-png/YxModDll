@@ -112,6 +112,7 @@ namespace YxModDll.Mod
         public static List<string> heimingdanList = new List<string>();
         public static string newHeimingdanSteamID = "";
         public static Vector2 heimingdanScrollPosition;
+        public static Vector2 kickedScrollPosition;
 
         ///////开放设置
         private static string[] guajidongzuoNames = { "跌落", "睡觉", "气球", "坐下", "挂件" };
@@ -160,6 +161,7 @@ namespace YxModDll.Mod
         public static bool skinCheckEnabled;
         public static bool skinUseRGB24Format;
         public static bool SkipTextureCompression;
+        public static bool DelaySkinApply;
         public static bool splitScreenEnabled;
 
         public static float playerCamDistance = 300f;
@@ -584,6 +586,10 @@ namespace YxModDll.Mod
                     {
                         PlayerPrefs.SetInt("SkipTextureCompression", SkipTextureCompression ? 1 : 0);
                     }, "跳过贴图压缩，减少 CPU 和内存占用，降低崩溃风险。虽增加 GPU 负担，但更稳定。关闭恢复默认。");
+                    UI.CreatAnNiu_AnXia("延迟加载皮肤", ref DelaySkinApply, false, () => 
+                    { 
+                        PlayerPrefs.SetInt("DelaySkinApply", DelaySkinApply ? 1 : 0); 
+                    }, "玩家生成后延迟 1 秒再加载皮肤，避免 BakeTexture 与初始化叠在一起造成内存峰值。人多或弱设备建议开启，更稳定。");
 
                     UI.CreatAnNiu_AnXia("清除Bug玩家", ref FeatureManager.removeBugHuman, false, () =>
                     {
@@ -686,6 +692,61 @@ namespace YxModDll.Mod
                     GUILayout.Space(5);
                     UI.CreatFenGeXian();
                     GUILayout.Space(5);
+
+                    GUILayout.Label(ColorfulSpeek.colorshows("踢出列表管理"), UI.SetLabelStyle_JuZhong());
+
+                    GUILayout.Space(5);
+                    UI.CreatFenGeXian();
+                    GUILayout.Space(5);
+
+                    // 列表
+                    using (UI.ScrollView(ref kickedScrollPosition, GUILayout.Height(160)))
+                    {
+                        foreach (var obj in NetGame.kickedUsers.ToArray())  // 直接遍历本体
+                        {
+                            string sid = obj.ToString();  // object → SteamID/ulong
+
+                            GUILayout.Label(sid, UI.SetLabelStyle_JuZhong());
+
+                            GUILayout.BeginHorizontal();
+
+                            // 查看资料
+                            UI.CreatAnNiu("查看", false, () =>
+                            {
+                                HeiMingDan.OpenSteamProfile(sid);
+                            });
+
+                            GUILayout.Space(6);
+
+                            // 移除单个
+                            UI.CreatAnNiu("移除", false, () =>
+                            {
+                                // 按 ToString() 匹配删除
+                                for (int i = 0; i < NetGame.kickedUsers.Count; i++)
+                                {
+                                    if (NetGame.kickedUsers[i].ToString() == sid)
+                                    {
+                                        NetGame.kickedUsers.RemoveAt(i);
+                                        break;
+                                    }
+                                }
+                            });
+
+                            GUILayout.EndHorizontal();
+
+                            GUILayout.Space(5);
+                        }
+                    }
+
+                    GUILayout.Space(8);
+                    UI.CreatFenGeXian();
+                    GUILayout.Space(8);
+
+                    // 清空全部
+                    UI.CreatAnNiu("清空全部踢出记录", false, () =>
+                    {
+                        NetGame.kickedUsers.Clear();
+                    });
 
                     // 帮助（缩小字号且自动换行）
                     GUILayout.Label(HeiMingDan.GetSteamIDHelpText(), UI.SetLabelStyle_JuZhong());
@@ -846,6 +907,7 @@ namespace YxModDll.Mod
             skinCheckEnabled = PlayerPrefs.GetInt("skinCheckEnabled", 1) > 0;
             skinUseRGB24Format = PlayerPrefs.GetInt("skinUseRGB24Format", 1) > 0;
             SkipTextureCompression = PlayerPrefs.GetInt("SkipTextureCompression", 1) > 0;
+            DelaySkinApply = PlayerPrefs.GetInt("DelaySkinApply", 1) > 0;
             splitScreenEnabled = PlayerPrefs.GetInt("splitScreenEnabled", 1) > 0;
             freeRoamCamDistance = PlayerPrefs.GetFloat("freeRoamCamDistance", 300f);
 

@@ -2445,10 +2445,18 @@ namespace YxModDll.Mod.Features
             {
                 App.StartPlaytimeForItem(ragdollPresetMetadata.workshopId);
             }
-            host.AddPlayer(component);
+            host.AddPlayer(component); 
             if (ragdollPresetMetadata != null)
             {
-                component.ApplyPreset(ragdollPresetMetadata, bake: true, !isLocal && Options.parental == 1);
+                if (UI_SheZhi.DelaySkinApply)
+                {
+                    // 延迟加载自定义皮肤（避开大内存峰值）
+                    component.StartCoroutine(DelayedApplyPreset(component, ragdollPresetMetadata));
+                }
+                else
+                {
+                    component.ApplyPreset(ragdollPresetMetadata, bake: true);
+                }
             }
             else
             {
@@ -2477,6 +2485,11 @@ namespace YxModDll.Mod.Features
             humans[component.human].scale = result;
             Physics.gravity = Vector3.down * 9.81f * result;
             return false;
+        }
+        private static IEnumerator DelayedApplyPreset(NetPlayer player, RagdollPresetMetadata preset)
+        {
+            yield return new WaitForSeconds(1f); // 1 秒延迟避免峰值
+            player.ApplyPreset(preset, bake: true);
         }
 
         //[HarmonyPatch(typeof(Resources), "UnloadUnusedAssets")]
