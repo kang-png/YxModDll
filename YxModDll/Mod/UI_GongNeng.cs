@@ -69,6 +69,9 @@ namespace YxModDll.Mod
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
             UI.CreatAnNiu_AnXia("Y系统", ref Y_KaiGuan, false, YXiTong);
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            UI.CreatAnNiu_AnXia("번역기", ref Chat.isTranslate, false, TranslateLog, "번역기를 켜두면 Show 채팅로그에 번역되어 나타납니다.(사용안할때는 꺼두시기 바랍니다.)");
 
             GUILayout.EndHorizontal();
             GUILayout.FlexibleSpace();
@@ -95,6 +98,7 @@ namespace YxModDll.Mod
             qianshouxitong_KaiGuan = PlayerPrefs.GetInt("qianshouxitong_KaiGuan", 1) > 0;
             chaojitiao_KaiGuan = PlayerPrefs.GetInt("chaojitiao_KaiGuan", 1) > 0;
             Y_KaiGuan = PlayerPrefs.GetInt("Y_KaiGuan", 1) > 0;
+            Chat.isTranslate = PlayerPrefs.GetInt("isTranslate", 1) > 0;
 
         }
 
@@ -346,6 +350,19 @@ namespace YxModDll.Mod
             else if (NetGame.isClient)
             {
                 Chat.TiShi(NetGame.instance.local, $"{str}，仅房主有效");
+            }
+        }
+        public static void TranslateLog()
+        {
+            string str = $"번역기{(Chat.isTranslate ? "활성화" : "비활성")}";
+            PlayerPrefs.SetInt("isTranslate", Chat.isTranslate ? 1 : 0);
+            if (NetGame.isServer)
+            {
+                Chat.TiShi(NetGame.instance.local, $"{str}");
+            }
+            else if (NetGame.isClient)
+            {
+                Chat.TiShi(NetGame.instance.local, $"{str}");
             }
         }
     }

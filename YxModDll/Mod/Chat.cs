@@ -2,6 +2,7 @@
 using Multiplayer;
 using Steamworks;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -9,13 +10,18 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Interop;
 using UnityEngine;
+using UnityEngine.Networking;
 using YxModDll.Mod.Features;
 using YxModDll.Patches;
+using static YxModDll.Patches.Patcher_NetChat;
 
 namespace YxModDll.Mod
 {
     public class Chat
     {
+        public static string ChatLogName;
+        string ChatLog1;
+        public static bool isTranslate;
         private static readonly System.Random _random = new System.Random();//全局随机种子，只创建一个
 
         public static bool JinRuLiKai_XiaoXi = true;
@@ -62,6 +68,35 @@ namespace YxModDll.Mod
         //public static string GeRenLiaoTian_XiaoXi_JianBianSe1 = "#FF00FF";
         //public static string GeRenLiaoTian_XiaoXi_JianBianSe2 = "#9F2EFF";
         //public static string GeRenLiaoTian_XiaoXi_LiangDu = "50";
+        public static IEnumerator TranslateText(string text, string targetLang, Action<string> onResult)
+        {
+            string url =
+                $"https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl= {targetLang}&dt=t&q={Uri.EscapeDataString(text)}";
+
+            using (UnityWebRequest request = UnityWebRequest.Get(url))
+            {
+                // Unity 2019 이상에서 사용
+                yield return request.SendWebRequest();
+
+                // 결과 처리 (Unity 버전별 호환)
+#if UNITY_2020_2_OR_NEWER
+            if (request.result == UnityWebRequest.Result.Success)
+#else
+                if (!request.isNetworkError && !request.isHttpError)
+#endif
+                {
+                    string json = request.downloadHandler.text;
+                    Match match = Regex.Match(json, @"\[\[\[""(.*?)""");
+                    string translated = match.Success ? match.Groups[1].Value : text;
+                    onResult?.Invoke(translated);
+                }
+                else
+                {
+                    Debug.Log($"번역 실패: {request.error}");
+                    onResult?.Invoke(text);
+                }
+            }
+        }
         public static void SendYxModMsgClient(string YxModMsg)//客机向服务器发送功能
         {
             string humanID = "";
@@ -217,8 +252,61 @@ namespace YxModDll.Mod
                 }
                 NetChat.OnReceive(clientId, nick, msg);
 
-                string msg1 = QuDiaoDaiMa($"{nick} : {msg}", "");
+                string ChatLog1;
                 string time = DateTime.Now.ToString("HH:mm:ss");
+                if (isTranslate)
+                {
+                    ChatLog1 = $"[{time}]{nick} {msg}";
+                    if (Regex.IsMatch(msg, "[가-힣ㄱ-ㅎㅏ-ㅣ]"))
+                    {
+                        if (nick.Contains("<color="))
+                        {
+                            ChatLog1 = $"[{time}]{nick} {msg}";
+
+                        }
+                        else
+                        {
+                            ChatLog1 = $"[{time}]<color=#{HexConverter.ColorToHex(NetChat.instance.colors[clientId % NetChat.instance.colors.Length])}>{nick}</color> {msg}";
+                        }
+
+                        ChatLog.AddMessageToLog($"{ChatLog1}");
+                    }
+                    else
+                    {
+                        string msg2 = QuDiaoDaiMa($"{msg}", "");
+                        CoroutineRunner.Instance.RunCoroutine(TranslateText(msg2, "ko", result =>
+                        {
+                            msg = result;
+                            if (nick.Contains("<color="))
+                            {
+                                ChatLog1 = $"[{time}]{nick} {msg}";
+
+                            }
+                            else
+                            {
+                                ChatLog1 = $"[{time}]<color=#{HexConverter.ColorToHex(NetChat.instance.colors[clientId % NetChat.instance.colors.Length])}>{nick}</color> {msg}";
+                            }
+
+                            ChatLog.AddMessageToLog($"{ChatLog1}");
+                        }));
+                    }
+                }
+                else
+                if (!isTranslate)
+                {
+                    ChatLog1 = $"[{time}]<color=#{HexConverter.ColorToHex(NetChat.instance.colors[clientId % NetChat.instance.colors.Length])}>{nick}</color> {msg}";
+                    if (nick.Contains("<color="))
+                    {
+                        ChatLog1 = $"[{time}]{nick} {msg}";
+
+                    }
+                    else
+                    {
+                        ChatLog1 = $"[{time}]<color=#{HexConverter.ColorToHex(NetChat.instance.colors[clientId % NetChat.instance.colors.Length])}>{nick}</color> {msg}";
+                    }
+                    ChatLog.AddMessageToLog($"{ChatLog1}");
+                }
+                string msg1 = QuDiaoDaiMa($"{nick} : {msg}", "");
                 Debug.Log($"[{time}] [消息]{clientId}.{msg1}");
             }
 
@@ -1889,6 +1977,60 @@ namespace YxModDll.Mod
                 string text = QuDiaoDaiMa(msg, netHost.name); // 去掉富文本代码
                 MsgSetGongNeng(text, netHost, human);
             }
+            if (nick != "[YxMod]")
+            {
+                string ChatLog1;
+                string time = DateTime.Now.ToString("HH:mm:ss");
+                if (isTranslate)
+                {
+                    if (Regex.IsMatch(msg, "[가-힣ㄱ-ㅎㅏ-ㅣ]"))
+                    {
+                        if (nick.Contains("<color="))
+                        {
+                            ChatLog1 = $"[{time}]{nick} {msg}";
+
+                        }
+                        else
+                        {
+                            ChatLog1 = $"[{time}]<color=#{HexConverter.ColorToHex(NetChat.instance.colors[clientId % NetChat.instance.colors.Length])}>{nick}</color> {msg}";
+                        }
+
+                        ChatLog.AddMessageToLog($"{ChatLog1}");
+                    }
+                    else
+                    {
+                        string msg2 = QuDiaoDaiMa($"{msg}", "");
+                        CoroutineRunner.Instance.RunCoroutine(TranslateText(msg2, "ko", result =>
+                        {
+                            msg = result;
+                            if (nick.Contains("<color="))
+                            {
+                                ChatLog1 = $"[{time}]{nick} {msg}";
+
+                            }
+                            else
+                            {
+                                ChatLog1 = $"[{time}]<color=#{HexConverter.ColorToHex(NetChat.instance.colors[clientId % NetChat.instance.colors.Length])}>{nick}</color> {msg}";
+                            }
+
+                            ChatLog.AddMessageToLog($"{ChatLog1}");
+                        }));
+                    }
+                }
+                if (!isTranslate)
+                {
+                    if (nick.Contains("<color="))
+                    {
+                        ChatLog1 = $"[{time}]{nick} {msg}";
+
+                    }
+                    else
+                    {
+                        ChatLog1 = $"[{time}]<color=#{HexConverter.ColorToHex(NetChat.instance.colors[clientId % NetChat.instance.colors.Length])}>{nick}</color> {msg}";
+                    }
+                    ChatLog.AddMessageToLog($"{ChatLog1}");
+                }
+            }
             /////////////////////////////
         }
         private static void SendStr(string str, NetHost netHost = null)
@@ -3264,26 +3406,127 @@ namespace YxModDll.Mod
         {
             if (NetGame.isNetStarted)
             {
-                if (!UI_SheZhi.MingZiSheZhi && !UI_SheZhi.FaYanSheZhi)
+                if (CurrentMode == ChatTranslateMode.None)
+                //if (!GeRenLiaoTian_MingZi && !GeRenLiaoTian_XiaoXi)
+                {
+                    if (!UI_SheZhi.MingZiSheZhi && !UI_SheZhi.FaYanSheZhi)
                     //if (!GeRenLiaoTian_MingZi && !GeRenLiaoTian_XiaoXi)
-                {
-                    NetGame.instance.SendChatMessage(msg);
-                }
-                else
-                {
-                    Chat.FaYan(msg, formatMsg);
-                }
+                    {
+                        NetGame.instance.SendChatMessage(msg);
+                    }
+                    else
+                    {
+                        Chat.FaYan(msg, formatMsg);
+                    }
 
-                if (NetGame.isServer)
-                {
-                    //Debug.Log(msg);
-                    MsgSetGongNeng(msg, NetGame.instance.server, NetGame.instance.server.players[0].human);
-                }
+                    if (NetGame.isServer)
+                    {
+                        //Debug.Log(msg);
+                        MsgSetGongNeng(msg, NetGame.instance.server, NetGame.instance.server.players[0].human);
+                    }
+                    string ChatLog1;
+                    string time = DateTime.Now.ToString("HH:mm:ss");
 
-                string msg1 = QuDiaoDaiMa(msg,"");
-                string time = DateTime.Now.ToString("HH:mm:ss");
-                Debug.Log($"[{time}] [消息]我 : {msg1}");
+                    ChatLog1 = $"[{time}]{ChatLogName} {msg}";
+                    string msg1 = QuDiaoDaiMa(msg, "");
+                    ChatLog.AddMessageToLog($"{ChatLog1}");
+                    Debug.Log($"[{time}] [消息]我 : {msg1}");
+                }
+                else if (CurrentMode == ChatTranslateMode.TranslateToCN)
+                {
+                    string msg2 = QuDiaoDaiMa($"{msg}", "");
+                    CoroutineRunner.Instance.RunCoroutine(TranslateText(msg2, "zh-CN", result =>
+                    {
+                        msg = result;
+                        if (!UI_SheZhi.MingZiSheZhi && !UI_SheZhi.FaYanSheZhi)
+                        //if (!GeRenLiaoTian_MingZi && !GeRenLiaoTian_XiaoXi)
+                        {
+                            NetGame.instance.SendChatMessage(msg);
+                        }
+                        else
+                        {
+                            Chat.FaYan(msg, formatMsg);
+                        }
+
+                        if (NetGame.isServer)
+                        {
+                            //Debug.Log(msg);
+                            MsgSetGongNeng(msg, NetGame.instance.server, NetGame.instance.server.players[0].human);
+                        }
+                        string ChatLog1;
+                        string time = DateTime.Now.ToString("HH:mm:ss");
+
+                        ChatLog1 = $"[{time}]{ChatLogName} {msg}";
+                        string msg1 = QuDiaoDaiMa(msg, "");
+                        ChatLog.AddMessageToLog($"{ChatLog1}");
+                        Debug.Log($"[{time}] [消息]我 : {msg1}");
+                    }));
+
+                }
+                else if (CurrentMode == ChatTranslateMode.TranslateToEN)
+                {
+                    string msg2 = QuDiaoDaiMa($"{msg}", "");
+                    CoroutineRunner.Instance.RunCoroutine(TranslateText(msg2, "en", result =>
+                    {
+                        msg = result;
+                        if (!UI_SheZhi.MingZiSheZhi && !UI_SheZhi.FaYanSheZhi)
+                        //if (!GeRenLiaoTian_MingZi && !GeRenLiaoTian_XiaoXi)
+                        {
+                            NetGame.instance.SendChatMessage(msg);
+                        }
+                        else
+                        {
+                            Chat.FaYan(msg, formatMsg);
+                        }
+
+
+                        if (NetGame.isServer)
+                        {
+                            //Debug.Log(msg);
+                            MsgSetGongNeng(msg, NetGame.instance.server, NetGame.instance.server.players[0].human);
+                        }
+                        string ChatLog1;
+                        string time = DateTime.Now.ToString("HH:mm:ss");
+
+                        ChatLog1 = $"[{time}]{ChatLogName} {msg}";
+                        string msg1 = QuDiaoDaiMa(msg, "");
+                        ChatLog.AddMessageToLog($"{ChatLog1}");
+                        Debug.Log($"[{time}] [消息]我 : {msg1}");
+                    }));
+                }
+                else if (CurrentMode == ChatTranslateMode.TranslateToJP)
+                {
+                    string msg2 = QuDiaoDaiMa($"{msg}", "");
+                    CoroutineRunner.Instance.RunCoroutine(TranslateText(msg2, "ja", result =>
+                    {
+                        msg = result;
+                        if (!UI_SheZhi.MingZiSheZhi && !UI_SheZhi.FaYanSheZhi)
+                        //if (!GeRenLiaoTian_MingZi && !GeRenLiaoTian_XiaoXi)
+                        {
+                            NetGame.instance.SendChatMessage(msg);
+                        }
+                        else
+                        {
+                            Chat.FaYan(msg, formatMsg);
+                        }
+
+                        if (NetGame.isServer)
+                        {
+                            //Debug.Log(msg);
+                            MsgSetGongNeng(msg, NetGame.instance.server, NetGame.instance.server.players[0].human);
+                        }
+                        string ChatLog1;
+                        string time = DateTime.Now.ToString("HH:mm:ss");
+
+                        ChatLog1 = $"[{time}]{ChatLogName} {msg}";
+                        string msg1 = QuDiaoDaiMa(msg, "");
+                        ChatLog.AddMessageToLog($"{ChatLog1}");
+                        Debug.Log($"[{time}] [消息]我 : {msg1}");
+                    }));
+                }
             }
+                
+            
         }
         public static void FaYan(string msg, bool formatMsg = true)
         {
@@ -3333,7 +3576,7 @@ namespace YxModDll.Mod
             {
                 SendChatMessage(name, msg);
             }
-
+            ChatLogName = name;
         }
         public static void TiShi(NetHost netHost, string neirong, TiShiMsgId chatMsgId = TiShiMsgId.GeRenTiShi)//服务端发送单人通知消息
         {
