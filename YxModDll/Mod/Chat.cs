@@ -679,6 +679,7 @@ namespace YxModDll.Mod
                         Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
                         return;
                     }
+                    human.GetExt().dishu=!human.GetExt().dishu;
                     YxMod.DiShu(Human.all[result]);
                 }
                 return;
