@@ -2481,27 +2481,36 @@ namespace YxModDll.Mod.Features
 
         [ThreadStatic] static bool inDelayedCall;
 
-        [HarmonyPatch(nameof(NetPlayer.ApplyPreset))]
+        [HarmonyPatch(typeof(NetPlayer), nameof(NetPlayer.ApplyPreset))]
         [HarmonyPrefix]
         public static bool ApplyPreset_Prefix(NetPlayer __instance,
             RagdollPresetMetadata preset, ref bool bake, bool useBaseTexture)
         {
-            if (!UI_SheZhi.DelaySkinApply || !bake || inDelayedCall)
-                return true; // 正常执行原方法
+            // 条件判断：
+            // ①功能未开启 → 正常执行
+            // ②延迟回调中 → 正常执行，避免死循环
+            // ③不需要 Bake → 默认非常快，不延迟
+            if (!UI_SheZhi.DelaySkinApply || inDelayedCall || !bake)
+                return true;
 
-            __instance.StartCoroutine(CallDelayed(__instance, preset, bake, useBaseTexture));
-            return false; // 拦截首次执行，转到延迟协程
+            // 延迟执行 ApplyPreset
+            __instance.StartCoroutine(DelayedApplyPreset(__instance, preset, bake, useBaseTexture));
+
+            // 拦截原调用，稍后我们自己调用
+            return false;
         }
 
-        private static IEnumerator CallDelayed(
-            NetPlayer player, RagdollPresetMetadata preset, bool bake, bool useBaseTexture)
+        private static IEnumerator DelayedApplyPreset(
+            NetPlayer player, RagdollPresetMetadata preset,
+            bool bake, bool useBaseTexture)
         {
             yield return new WaitForSeconds(1f);
 
             inDelayedCall = true;
-            player.ApplyPreset(preset, bake, useBaseTexture); // 执行一次原方法
+            player.ApplyPreset(preset, bake, useBaseTexture);
             inDelayedCall = false;
         }
+
         //[HarmonyPatch(typeof(Resources), "UnloadUnusedAssets")]
         //[HarmonyPrefix]
         //public static void Patch_UnloadUnusedAssets()
