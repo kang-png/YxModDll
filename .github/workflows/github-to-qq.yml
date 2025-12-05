@@ -20,7 +20,7 @@ jobs:
           $AccessToken = '${{ secrets.ONEBOT_TOKEN }}'
 
           # 构建消息
-          $CommitMsg = $CommitMsg -replace "`(.+?)`", "「$1」"
+          $CommitMsg = $CommitMsg -replace "`(.+?)`", "『`$1』"
           $Message = "[GitHub] $Repo 有新的提交`n提交者: $Author`n- $CommitMsg `n $CommitUrl "
           
           $Json = @{ group_id = $GroupId; message = $Message } | ConvertTo-Json -Compress
