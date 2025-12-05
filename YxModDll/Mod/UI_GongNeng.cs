@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using YxModDll.Patches;
 
 namespace YxModDll.Mod
 {
@@ -315,6 +316,14 @@ namespace YxModDll.Mod
             PlayerPrefs.SetInt("yulexitong_KaiGuan", yulexitong_KaiGuan ? 1 : 0);
             if (NetGame.isServer)
             {
+                foreach(Human human in Human.all)
+                {
+                    if(human.GetExt().dishu)
+                    {
+                        YxMod.DiShu(human,false);
+                    }
+                }
+
                 Chat.TiShi(str, TiShiMsgId.XiTongTiShi);
             }
             else if (NetGame.isClient)

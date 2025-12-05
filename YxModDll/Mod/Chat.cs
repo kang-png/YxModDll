@@ -648,6 +648,43 @@ namespace YxModDll.Mod
                 }
                 return;
             }
+
+            else if (nick == YxModMsgStr("dishu") && msg.Length != 0)
+            {
+                if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
+                {
+                    TiShi(netHost, $"客机权限系统已关闭");
+                    return;
+                }
+                if (!isDev && !UI_GongNeng.yulexitong_KaiGuan)
+                {
+                    TiShi(netHost, $"娱乐系统已关闭");
+                    return;
+                }
+                int result;
+                if (int.TryParse(msg, out result))
+                {
+                    if (!isDev && UI_SheZhi.fangzhububeikong && result == 0)
+                    {
+                        Chat.TiShi(netHost, $"房主不让你控制他");
+                        return;
+                    }
+                    if (human.GetExt().jinzhibeikong && human != Human.all[result])
+                    {
+                        Chat.TiShi(netHost, $"你禁止其他客机控制你,所有你也无法控制他人");
+                        return;
+                    }
+                    if (!isDev && Human.all[result].GetExt().jinzhibeikong && human != Human.all[0])
+                    {
+                        Chat.TiShi(netHost, $"玩家 {Human.all[result].name} 禁止其他客机控制他");
+                        return;
+                    }
+                    YxMod.DiShu(Human.all[result]);
+                }
+                return;
+            }
+
+
             else if (nick == YxModMsgStr("huabing") && msg.Length == 0)
             {
                 if (!isDev && !UI_GongNeng.kejiquanxian_KaiGuan)
@@ -3005,6 +3042,26 @@ namespace YxModDll.Mod
                         human.GetExt().diantun = !human.GetExt().diantun;
                         YxMod.DianTun(human);
                         Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().diantun ? "学会了" : "忘记了")} 电臀");
+                        break;
+                    case "地鼠":
+                        if (!UI_GongNeng.liaotiankuangquanxian_KaiGuan)
+                        {
+                            TiShi(netHost, $"聊天框权限系统已关闭");
+                            break;
+                        }
+                        if (!human.GetExt().liaotiankuangquanxian)
+                        {
+                            TiShi(netHost, $"你没有聊天框权限");
+                            break;
+                        }
+                        if (!UI_GongNeng.yulexitong_KaiGuan)
+                        {
+                            TiShi(netHost, $"娱乐系统已关闭");
+                            break;
+                        }
+                        human.GetExt().dishu = !human.GetExt().dishu;
+                        YxMod.DiShu(human);
+                        //Chat.TiShi($"玩家 {human.player.host.name} {(human.GetExt().diantun ? "学会了" : "忘记了")} 电臀");
                         break;
                     case "气球":
                         if (!UI_GongNeng.liaotiankuangquanxian_KaiGuan)

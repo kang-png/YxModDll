@@ -376,6 +376,24 @@ namespace YxModDll.Mod
                     GUILayout.BeginHorizontal();
                     UI.CreatAnNiu_AnXia("拆除", ref human.GetExt().chaichu, false, ChaiChu);
                     UI.CreatAnNiu_AnXia("空气炮", ref human.GetExt().kongqipao, false, KongQiPao);
+
+                    UI.CreatAnNiu_AnXia("地鼠", ref human.GetExt().dishu, false, ()=>
+                    {
+                        if (NetGame.isServer || NetGame.isLocal)
+                        {
+                            if (!UI_GongNeng.yulexitong_KaiGuan)
+                            {
+                                UI_GongNeng.yulexitong_KaiGuan = true;
+                                UI_GongNeng.YuLeXiTong();
+                            }
+
+                            YxMod.DiShu(human);
+                        }
+                        else if (NetGame.isClient && YxMod.YxModServer && (YxMod.KeJiQuanXian || KeJiZiJi()))
+                        {
+                            Chat.SendYxModMsgClient(Chat.YxModMsgStr("dishu"), $"{humanID - 1}");
+                        }
+                    });
                     GUILayout.EndHorizontal();
 
                 }

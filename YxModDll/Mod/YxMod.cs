@@ -990,6 +990,50 @@ namespace YxModDll.Mod
         //        }
         //    }
         //}
+        public static void DiShu(Human human)
+        {
+            if (human.GetExt(). dishu)
+            {
+                for (int i = 0; i < human.rigidbodies.Length; i++)
+                {
+                    human.rigidbodies[i].detectCollisions = false;
+                }
+                human.ragdoll.partHead.rigidbody.detectCollisions = true;
+                //human.SetPosition(human.transform.position - Vector3.up * 0.99F);
+
+                return;
+            }
+            human.SetPosition(human.transform.position + Vector3.up * 1.3f);
+            for (int i = 0; i < human.rigidbodies.Length; i++)
+            {
+                human.rigidbodies[i].detectCollisions = true;
+            }
+            
+        }
+
+        public static void DiShu(Human human,bool KaiGuan)
+        {
+            human.GetExt().dishu = KaiGuan;
+            if (KaiGuan)
+            {
+                //human.SetPosition(human.transform.position - Vector3.up * 0.99F);
+                for (int i = 0; i < human.rigidbodies.Length; i++)
+                {
+                    human.rigidbodies[i].detectCollisions = false;
+                }
+                human.ragdoll.partHead.rigidbody.detectCollisions = true;
+                
+            }
+            else
+            {
+                human.SetPosition(human.transform.position + Vector3.up * 1.3f);
+                for (int i = 0; i < human.rigidbodies.Length; i++)
+                {
+                    human.rigidbodies[i].detectCollisions = true;
+                }
+                
+            }
+        }
 
         public static void JiHe(Human centerHuman)
         {
