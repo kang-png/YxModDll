@@ -133,7 +133,7 @@ namespace YxModDll.Patches
         public bool bofangdonghua;
         public SmoothAnimator animator;
         public Human bei_human;
-
+        public bool dishu;
         public float scaleHead = 1f;
         public float scaleTorso = 1f;
         public float scaleLeftArm = 1f;
