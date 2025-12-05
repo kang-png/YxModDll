@@ -2448,15 +2448,7 @@ namespace YxModDll.Mod.Features
             host.AddPlayer(component); 
             if (ragdollPresetMetadata != null)
             {
-                if (UI_SheZhi.DelaySkinApply)
-                {
-                    // 延迟加载自定义皮肤（避开大内存峰值）
-                    component.StartCoroutine(DelayedApplyPreset(component, ragdollPresetMetadata));
-                }
-                else
-                {
-                    component.ApplyPreset(ragdollPresetMetadata, bake: true);
-                }
+                component.ApplyPreset(ragdollPresetMetadata, bake: true, !isLocal && Options.parental == 1);
             }
             else
             {
@@ -2486,12 +2478,30 @@ namespace YxModDll.Mod.Features
             Physics.gravity = Vector3.down * 9.81f * result;
             return false;
         }
-        private static IEnumerator DelayedApplyPreset(NetPlayer player, RagdollPresetMetadata preset)
+
+        [ThreadStatic] static bool inDelayedCall;
+
+        [HarmonyPatch(nameof(NetPlayer.ApplyPreset))]
+        [HarmonyPrefix]
+        public static bool ApplyPreset_Prefix(NetPlayer __instance,
+            RagdollPresetMetadata preset, ref bool bake, bool useBaseTexture)
         {
-            yield return new WaitForSeconds(1f); // 1 秒延迟避免峰值
-            player.ApplyPreset(preset, bake: true);
+            if (!UI_SheZhi.DelaySkinApply || !bake || inDelayedCall)
+                return true; // 正常执行原方法
+
+            __instance.StartCoroutine(CallDelayed(__instance, preset, bake, useBaseTexture));
+            return false; // 拦截首次执行，转到延迟协程
         }
 
+        private static IEnumerator CallDelayed(
+            NetPlayer player, RagdollPresetMetadata preset, bool bake, bool useBaseTexture)
+        {
+            yield return new WaitForSeconds(1f);
+
+            inDelayedCall = true;
+            player.ApplyPreset(preset, bake, useBaseTexture); // 执行一次原方法
+            inDelayedCall = false;
+        }
         //[HarmonyPatch(typeof(Resources), "UnloadUnusedAssets")]
         //[HarmonyPrefix]
         //public static void Patch_UnloadUnusedAssets()
