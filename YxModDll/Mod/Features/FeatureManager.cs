@@ -2448,7 +2448,15 @@ namespace YxModDll.Mod.Features
             host.AddPlayer(component); 
             if (ragdollPresetMetadata != null)
             {
-                component.ApplyPreset(ragdollPresetMetadata, bake: true, !isLocal && Options.parental == 1);
+                if (UI_SheZhi.DelaySkinApply)
+                {
+                    // 延迟加载自定义皮肤（避开大内存峰值）
+                    component.StartCoroutine(DelayedApplyPreset(component, ragdollPresetMetadata));
+                }
+                else
+                {
+                    component.ApplyPreset(ragdollPresetMetadata, bake: true);
+                }
             }
             else
             {
@@ -2478,49 +2486,12 @@ namespace YxModDll.Mod.Features
             Physics.gravity = Vector3.down * 9.81f * result;
             return false;
         }
-
-        [ThreadStatic] static bool inDelayedCall;
-
-        [HarmonyPatch(typeof(NetPlayer), nameof(NetPlayer.ApplyPreset))]
-        [HarmonyPrefix]
-        public static bool ApplyPreset_Prefix(NetPlayer __instance,
-            RagdollPresetMetadata preset, ref bool bake, bool useBaseTexture)
+        private static IEnumerator DelayedApplyPreset(NetPlayer player, RagdollPresetMetadata preset)
         {
-            // 条件判断：
-            // ①功能未开启 → 正常执行
-            // ②延迟回调中 → 正常执行，避免死循环
-            // ③不需要 Bake → 默认非常快，不延迟
-            if (!UI_SheZhi.DelaySkinApply || inDelayedCall || !bake)
-                return true;
-
-            // 延迟执行 ApplyPreset
-            __instance.StartCoroutine(DelayedApplyPreset(__instance, preset, bake, useBaseTexture));
-
-            // 拦截原调用，稍后我们自己调用
-            return false;
+            yield return new WaitForSeconds(1f); // 1 秒延迟避免峰值
+            player.ApplyPreset(preset, bake: true);
         }
 
-        private static IEnumerator DelayedApplyPreset(
-            NetPlayer player, RagdollPresetMetadata preset,
-            bool bake, bool useBaseTexture)
-        {
-            yield return new WaitForSeconds(1f);
-
-            inDelayedCall = true;
-            player.ApplyPreset(preset, bake, useBaseTexture);
-            inDelayedCall = false;
-        }
-
-        //[HarmonyPatch(typeof(Resources), "UnloadUnusedAssets")]
-        //[HarmonyPrefix]
-        //public static void Patch_UnloadUnusedAssets()
-        //{
-        //    UnityEngine.Debug.Log("UnloadUnusedAssets 补丁触发");
-        //    if (NetGame.instance?.local != null)
-        //    {
-        //        Chat.TiShi(NetGame.instance.local, "[YxMod] 正在卸载未使用的资源，请稍候...");
-        //    }
-        //}
 
         [HarmonyPatch(typeof(RagdollTexture), "BakeTexture")]
         [HarmonyPrefix]
