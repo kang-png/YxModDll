@@ -173,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntryPoint.cs" />
+    <Compile Include="Mod\CoroutineRunner.cs" />
     <Compile Include="Mod\HumanAnimator\DONGZUO_State.cs" />
     <Compile Include="Mod\HumanAnimator\PlayAnimator.cs" />
     <Compile Include="Mod\HumanAnimator\SmoothAnimator.cs" />
